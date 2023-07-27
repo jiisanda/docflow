@@ -1,12 +1,12 @@
 import os
 
 from dotenv import load_dotenv
-from pydantic import BaseConfig
+from pydantic_settings import BaseSettings
 
 load_dotenv()
 
 
-class GlobalConfig(BaseConfig):
+class GlobalConfig(BaseSettings):
     title: str = os.environ.get("TITLE")
     version: str = "1.0.0"
     description: str = os.environ.get("DESCRIPTION")
