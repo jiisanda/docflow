@@ -4,11 +4,12 @@ from schemas.base_schemas import DocumentBase
 
 
 class DocumentCreate(DocumentBase):
-    ...
+    name: str
+    s3_url: str
 
 
 class Document(DocumentBase):
     id: UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True
