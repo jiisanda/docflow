@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from schemas.base_schemas import DocumentBase
+from schemas.bands import DocumentBase
 
 
 class DocumentCreate(DocumentBase):
@@ -13,3 +13,7 @@ class Document(DocumentBase):
 
     class Config:
         from_attributes = True
+
+
+class DocumentPatch(DocumentBase):
+    ...
