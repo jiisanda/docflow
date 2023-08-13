@@ -1,14 +1,15 @@
-from uuid import UUID
 from typing import List, Optional
 
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import aliased
+from sqlalchemy.orm import aliased, class_mapper
+from pydantic import parse_obj_as
 
 from db.errors import EntityDoesNotExist
 from db.tables.documents import Document
 from db.tables.base_class import StatusEnum
-from schemas.documents import DocumentCreate, DocumentPatch, Document
+from schemas.documents import DocumentCreate, DocumentPatch, DocumentRead
 
 
 class DocumentRepository:
@@ -29,18 +30,23 @@ class DocumentRepository:
 
         return result.first()
 
+    async def model_to_dict(self, model):
+        return {column.name: getattr(model, column.name) for column in class_mapper(model.__class__).mapped_table.columns}
 
-    async def upload(self, document_upload: DocumentCreate) -> Document:
+
+    async def upload(self, document_upload: DocumentCreate) -> DocumentRead:
         db_document = Document(**document_upload.dict())
 
         self.session.add(db_document)
         await self.session.commit()
         await self.session.refresh(db_document)
 
-        return Document(**db_document.dict())
+        db_document_dict = await self.model_to_dict(db_document)
+
+        return parse_obj_as(DocumentRead, db_document_dict)
 
 
-    async def doc_list(self, limit: int = 10, offset: int = 0) -> List[Document]:
+    async def doc_list(self, limit: int = 10, offset: int = 0) -> List[DocumentRead]:
 
         stmt = (
             (select(self.doc_cls).where(Document.status != StatusEnum.deleted))
@@ -50,21 +56,21 @@ class DocumentRepository:
 
         result = await self.session.execute(statement=stmt)
 
-        return [Document(**document.dict()) for document in result]
+        return [DocumentRead(**document.dict()) for document in result]
 
 
-    async def get(self, document_id: UUID) -> Optional[Document]:
+    async def get(self, document_id: UUID) -> Optional[DocumentRead]:
 
         db_document = await self._get_instance(document_id=document_id)
 
         if db_document is None:
             return EntityDoesNotExist
-        return Document(**db_document.dict())
+        return DocumentRead(**db_document.dict())
 
 
     async def patch(
         self, document_id: UUID, document_patch: DocumentPatch
-    ) -> Optional[Document]:
+    ) -> Optional[DocumentRead]:
 
         db_document = await self._get_instance(document_id=document_id)
 
@@ -79,7 +85,7 @@ class DocumentRepository:
         await self.session.commit()
         await self.session.refresh(db_document)
 
-        return Document(**db_document.dict())
+        return DocumentRead(**db_document.dict())
 
     async def delete(self, document_id: UUID) -> None:
 
