@@ -1,10 +1,11 @@
 from fastapi import FastAPI, status, Depends
 from sqlalchemy.orm import Session
 
+from api.router import router
 from core.config import settings
 from db.models import Base, engine, session
 from db.tables.documents import create_table
-from schemas import schemas
+from schemas import documents
 
 Base.metadata.create_all(bind=engine)
 
@@ -15,6 +16,8 @@ app = FastAPI(
     docs_url=settings.docs_url,
     openapi_url=settings.openapi_url,
 )
+
+app.include_router(router=router, prefix=settings.api_prefix)
 
 # Dependency
 def get_db():
@@ -31,7 +34,7 @@ async def root():
 
 
 @app.get("/init-tables")
-async def init_tables(document: schemas.DocumentCreate, db: Session = Depends(get_db)):
+async def init_tables(document: documents.DocumentCreate, db: Session = Depends(get_db)):
     create_table(db=db, document=document)
     
     return "Created"

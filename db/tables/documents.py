@@ -7,7 +7,8 @@ from sqlalchemy import Column, LargeBinary, String, Integer, ARRAY, text, DateTi
 from sqlalchemy.orm import Session
 
 from db.models import Base, metadata, engine
-from schemas.schemas import DocumentCreate
+from db.tables.base_class import StatusEnum
+from schemas.documents import DocumentCreate
 
 
 class Document(Base):
@@ -21,6 +22,7 @@ class Document(Base):
     file_type: Optional[str] = Column(String)
     tags: Optional[List[str]] = Column(ARRAY(String))
     categories: Optional[List[str]] = Column(ARRAY(String))
+    status: StatusEnum = Column(String, default=StatusEnum.private)
 
 
 def create_table(db: Session, document: DocumentCreate):
