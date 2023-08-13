@@ -1,7 +1,7 @@
 from fastapi import UploadFile
 from io import BytesIO
 
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -16,7 +16,8 @@ engine = create_engine(
 
 async_engine = create_async_engine(
     url=settings.async_database_url,
-    echo=True
+    echo=True,
+    query_cache_size=0,
 )
 
 session = sessionmaker(
