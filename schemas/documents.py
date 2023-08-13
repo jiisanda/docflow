@@ -8,8 +8,8 @@ class DocumentCreate(DocumentBase):
     s3_url: str
 
 
-class Document(DocumentBase):
-    id: UUID
+class DocumentRead(DocumentBase):
+    _id: UUID
 
     class Config:
         from_attributes = True
