@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 
 from fastapi import UploadFile, File
 from typing import List, Optional
-from sqlalchemy import Column, LargeBinary, String, Integer, ARRAY, text, DateTime
+from sqlalchemy import Column, LargeBinary, String, Integer, ARRAY, text, DateTime, Enum
 from sqlalchemy.orm import Session
 
 from db.models import Base, metadata, engine
@@ -22,15 +22,22 @@ class Document(Base):
     file_type: Optional[str] = Column(String)
     tags: Optional[List[str]] = Column(ARRAY(String))
     categories: Optional[List[str]] = Column(ARRAY(String))
-    status: StatusEnum = Column(String, default=StatusEnum.private)
+    status: Enum = Column(Enum(StatusEnum), default=StatusEnum.private)
 
 
-def create_table(db: Session, document: DocumentCreate):
-    db_document = Document(
+def create_document():
+    document = Document(
         name="codeakey_logo.png",
-        s3_url="s3://docflow-trial/codeakey_logo.png"
+        s3_url="s3://docflow-trial/codeakey_logo.png",
+        status="private",
     )
-    db.add(db_document)
-    db.commit()
-    db.refresh(db_document)
-    return db_document
+
+    with Session(engine) as session:
+        session.add(document)
+        session.commit()
+
+
+def create_table():
+    metadata.drop_all(engine)
+    metadata.create_all(engine)
+    create_document()

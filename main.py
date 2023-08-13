@@ -34,7 +34,6 @@ async def root():
 
 
 @app.get("/init-tables")
-async def init_tables(document: documents.DocumentCreate, db: Session = Depends(get_db)):
-    create_table(db=db, document=document)
-    
-    return "Created"
+async def init_tables():
+
+    create_table()

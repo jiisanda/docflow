@@ -33,5 +33,5 @@ async_session = sessionmaker(
     expire_on_commit=False
 )
 
-metadata = MetaData()
 Base = declarative_base()
+metadata = Base.metadata
