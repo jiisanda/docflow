@@ -33,6 +33,7 @@ class DocumentRepository:
 
         return result.first()
 
+
     async def model_to_dict(self, model):
         return {column.name: getattr(model, column.name) for column in class_mapper(model.__class__).mapped_table.columns}
 
@@ -86,6 +87,19 @@ class DocumentRepository:
         if db_document is None:
             return EntityDoesNotExist
         return DocumentRead(**db_document.dict())
+
+
+    async def get_from_name(self, document_name: str) -> Optional[DocumentRead]:
+
+        stmt = (
+            select(self.doc_cls)
+            .where(doc_cls.name == document_name)
+            .where(doc_cls.status != StatusEnum.deleted)
+        )
+
+        result = await self.session.execute(stmt)
+
+        return result.first()
 
 
     async def patch(
