@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, join
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, class_mapper
@@ -13,6 +13,9 @@ from schemas.documents import DocumentCreate, DocumentPatch, DocumentRead
 
 
 class DocumentRepository:
+    """
+    TODO: Add the user field for CRUD
+    """
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
         self.doc_cls = aliased(Document, name="doc_cls")
@@ -35,6 +38,10 @@ class DocumentRepository:
 
 
     async def upload(self, document_upload: DocumentCreate) -> DocumentRead:
+        """
+        TODO: Add Try Except and handle error cases
+        """
+
         db_document = Document(**document_upload.dict())
 
         self.session.add(db_document)
@@ -47,16 +54,29 @@ class DocumentRepository:
 
 
     async def doc_list(self, limit: int = 10, offset: int = 0) -> List[DocumentRead]:
+        """
+        TODO: Add try except and handle error cases
+        """
 
         stmt = (
-            (select(self.doc_cls).where(Document.status != StatusEnum.deleted))
+            select(self.doc_cls)
+            .select_from(
+                join(Document, self.doc_cls, Document._id == self.doc_cls._id)        # Adjusting the join condition
+            )
+            .where(Document.status != StatusEnum.deleted)
             .offset(offset)
             .limit(limit)
         )
 
         result = await self.session.execute(statement=stmt)
+        result_list = result.fetchall()
 
-        return [DocumentRead(**document.dict()) for document in result]
+        result_dict = [row.doc_cls.__dict__ for row in result_list]
+
+        for each in result_list:
+            each.doc_cls.__dict__.pop('_sa_instance_state', None)
+
+        return [DocumentRead(**row.doc_cls.__dict__) for row in result_list]
 
 
     async def get(self, document_id: UUID) -> Optional[DocumentRead]:
