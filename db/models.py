@@ -16,7 +16,7 @@ engine = create_engine(
 
 async_engine = create_async_engine(
     url=settings.async_database_url,
-    echo=True,
+    echo=settings.db_echo_log,
     query_cache_size=0,
 )
 
