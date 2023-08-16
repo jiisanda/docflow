@@ -104,14 +104,17 @@ class DocumentRepository:
             .where(self.doc_cls.status != StatusEnum.deleted)
         )
 
-        result = await self.session.execute(stmt)
+        response = await self.session.execute(stmt)
+        result = response.first()
+        result_dict = result.doc_cls.__dict__
+        del result_dict['_sa_instance_state']
 
-        return result.first()
+        return parse_obj_as(DocumentRead, result_dict)
 
 
     async def patch(
         self, document_id: UUID, document_patch: DocumentPatch
-    ) -> Optional[DocumentRead]:
+    )-> Optional[DocumentRead]:
 
         db_document = await self._get_instance(document_id=document_id)
 

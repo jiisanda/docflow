@@ -39,7 +39,7 @@ async def get_documents(
 
 
 @router.get(
-    "/get-a-document/{document_id}",
+    "/get-document/{document_id}",
     response_model=Optional[DocumentRead],
     status_code=status.HTTP_200_OK,
     name="get-document-by-id",
@@ -56,3 +56,23 @@ async def get_document_by_id(
         )
 
     return await repository.get(document_id=document_id)
+
+
+@router.get(
+    "/get-document-by-name/{name}",
+    response_model=Optional[DocumentRead],
+    status_code=status.HTTP_200_OK,
+    name="get_doc_by_name",
+)
+async def get_document_by_name(
+    name: str,
+    repository: DocumentRepository = Depends(get_repository(DocumentRepository)),
+)-> Optional[DocumentRead]:
+    try:
+        await repository.get_from_name(document_name=name)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with the name: {name}"
+        )
+
+    return await repository.get_from_name(document_name=name)
