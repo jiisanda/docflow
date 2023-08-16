@@ -1,7 +1,8 @@
 from typing import List, Optional
+from uuid import UUID
 
+from fastapi import HTTPException
 from sqlalchemy import select, join
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, class_mapper
 from pydantic import parse_obj_as
@@ -16,7 +17,7 @@ class DocumentRepository:
     """
     TODO: Add the user field for CRUD
     """
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession)-> None:
         self.session = session
         self.doc_cls = aliased(Document, name="doc_cls")
 
@@ -25,8 +26,8 @@ class DocumentRepository:
 
         stmt = (
             select(self.doc_cls)
-            .where(doc_cls._id == document_id)
-            .where(doc_cls.status != StatusEnum.deleted)
+            .where(self.doc_cls._id == document_id)
+            .where(self.doc_cls.status != StatusEnum.deleted)
         )
 
         result = await self.session.execute(stmt)
@@ -38,7 +39,7 @@ class DocumentRepository:
         return {column.name: getattr(model, column.name) for column in class_mapper(model.__class__).mapped_table.columns}
 
 
-    async def upload(self, document_upload: DocumentCreate) -> DocumentRead:
+    async def upload(self, document_upload: DocumentCreate)-> DocumentRead:
         """
         TODO: Add Try Except and handle error cases
         """
@@ -54,7 +55,7 @@ class DocumentRepository:
         return parse_obj_as(DocumentRead, db_document_dict)
 
 
-    async def doc_list(self, limit: int = 10, offset: int = 0) -> List[DocumentRead]:
+    async def doc_list(self, limit: int = 10, offset: int = 0)-> List[DocumentRead]:
         """
         TODO: Add try except and handle error cases
         """
@@ -80,21 +81,27 @@ class DocumentRepository:
         return [DocumentRead(**row.doc_cls.__dict__) for row in result_list]
 
 
-    async def get(self, document_id: UUID) -> Optional[DocumentRead]:
+    async def get(self, document_id: UUID)-> Optional[DocumentRead]:
 
         db_document = await self._get_instance(document_id=document_id)
 
         if db_document is None:
-            return EntityDoesNotExist
-        return DocumentRead(**db_document.dict())
+            return HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with the id {document_id}"
+            )
+
+        ans_dict = db_document.doc_cls.__dict__
+        del ans_dict['_sa_instance_state']
+
+        return parse_obj_as(DocumentRead, ans_dict)
 
 
-    async def get_from_name(self, document_name: str) -> Optional[DocumentRead]:
+    async def get_from_name(self, document_name: str)-> Optional[DocumentRead]:
 
         stmt = (
             select(self.doc_cls)
-            .where(doc_cls.name == document_name)
-            .where(doc_cls.status != StatusEnum.deleted)
+            .where(self.doc_cls.name == document_name)
+            .where(self.doc_cls.status != StatusEnum.deleted)
         )
 
         result = await self.session.execute(stmt)
