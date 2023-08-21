@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from uuid import UUID
 
 from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
@@ -47,7 +47,7 @@ async def get_documents(
 async def get_document_by_id(
     document_id: UUID,
     repository: DocumentRepository = Depends(get_repository(DocumentRepository)),
-)-> Optional[DocumentRead]:
+) -> Optional[DocumentRead]:
     try:
         await repository.get(document_id=document_id)
     except:
@@ -67,7 +67,7 @@ async def get_document_by_id(
 async def get_document_by_name(
     name: str,
     repository: DocumentRepository = Depends(get_repository(DocumentRepository)),
-)-> Optional[DocumentRead]:
+) -> Optional[DocumentRead]:
     try:
         await repository.get_from_name(document_name=name)
     except:
@@ -88,7 +88,7 @@ async def update_doc_details(
     document_name: str,
     document_patch: DocumentPatch = Body(...),
     repository: DocumentRepository = Depends(get_repository(DocumentRepository)),
-)-> DocumentRead:
+) -> DocumentRead:
     try:
         await repository.get_from_name(document_name=document_name)
     except:
@@ -100,3 +100,22 @@ async def update_doc_details(
         document_name=document_name,
         document_patch=document_patch
     )
+
+
+@router.delete(
+    "/delete-doc/{document_name}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    name="delete_document",
+)
+async def delete_document(
+    document: Union[str, UUID],
+    repository: DocumentRepository = Depends(get_repository(DocumentRepository)),
+) -> None:
+    try:
+        await repository.get(document_id=document)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"No document with the detail: {document}."
+        )
+
+    return await repository.delete(document=document)

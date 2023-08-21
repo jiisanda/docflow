@@ -1,7 +1,7 @@
 from typing import List, Optional, Union
 from uuid import UUID
 
-from fastapi import HTTPException
+from fastapi import status, HTTPException
 from sqlalchemy import select, join, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, class_mapper
@@ -24,7 +24,7 @@ class DocumentRepository:
 
     async def _get_instance(self, document: Union[str, UUID]) -> None:
 
-        if isinstance(document, UUID):
+        if UUID(str(document)):
             stmt = (
                 select(self.doc_cls)
                 .where(self.doc_cls._id == document)
@@ -112,7 +112,7 @@ class DocumentRepository:
                 status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with the id {document_id}"
             )
 
-        ans_dict = db_document.doc_cls.__dict__
+        ans_dict = db_document.__dict__
         del ans_dict['_sa_instance_state']
 
         return parse_obj_as(DocumentRead, ans_dict)
@@ -151,9 +151,9 @@ class DocumentRepository:
         return DocumentRead(**db_document.__dict__)
 
 
-    async def delete(self, document_id: UUID) -> None:
+    async def delete(self, document: Union[str, UUID]) -> None:
 
-        db_document = await self._get_instance(document=document_id)
+        db_document = await self._get_instance(document=document)
 
         if db_document is None:
             raise EntityDoesNotExist
