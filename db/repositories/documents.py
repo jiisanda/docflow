@@ -1,8 +1,8 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy import select, join
+from sqlalchemy import select, join, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, class_mapper
 from pydantic import parse_obj_as
@@ -17,29 +17,51 @@ class DocumentRepository:
     """
     TODO: Add the user field for CRUD
     """
-    def __init__(self, session: AsyncSession)-> None:
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
         self.doc_cls = aliased(Document, name="doc_cls")
 
 
-    async def _get_instance(self, document_id: UUID):
+    async def _get_instance(self, document: Union[str, UUID]) -> None:
 
-        stmt = (
-            select(self.doc_cls)
-            .where(self.doc_cls._id == document_id)
-            .where(self.doc_cls.status != StatusEnum.deleted)
-        )
+        if isinstance(document, UUID):
+            stmt = (
+                select(self.doc_cls)
+                .where(self.doc_cls._id == document)
+                .where(self.doc_cls.status != StatusEnum.deleted)
+            )
+        else:
+            stmt = (
+                select(self.doc_cls)
+                .where(self.doc_cls.name == document)
+                .where(self.doc_cls.status != StatusEnum.deleted)
+            )
 
         result = await self.session.execute(stmt)
 
-        return result.first()
+        return result.scalar_one_or_none()
 
 
-    async def model_to_dict(self, model):
+    async def _extract_changes(self, document_patch: DocumentPatch) -> dict:
+
+        return {field: value for field, value in document_patch if value is not None}
+
+
+    async def _execute_update(self, db_document: Document, changes: dict) -> None:
+
+        stmt = (
+            update(Document)
+            .where(Document._id == db_document._id)
+            .values(changes)
+        )
+        await self.session.execute(stmt)
+
+
+    async def model_to_dict(self, model) -> dict:
         return {column.name: getattr(model, column.name) for column in class_mapper(model.__class__).mapped_table.columns}
 
 
-    async def upload(self, document_upload: DocumentCreate)-> DocumentRead:
+    async def upload(self, document_upload: DocumentCreate) -> DocumentRead:
         """
         TODO: Add Try Except and handle error cases
         """
@@ -55,7 +77,7 @@ class DocumentRepository:
         return parse_obj_as(DocumentRead, db_document_dict)
 
 
-    async def doc_list(self, limit: int = 10, offset: int = 0)-> List[DocumentRead]:
+    async def doc_list(self, limit: int = 10, offset: int = 0) -> List[DocumentRead]:
         """
         TODO: Add try except and handle error cases
         """
@@ -81,9 +103,9 @@ class DocumentRepository:
         return [DocumentRead(**row.doc_cls.__dict__) for row in result_list]
 
 
-    async def get(self, document_id: UUID)-> Optional[DocumentRead]:
+    async def get(self, document_id: UUID) -> Optional[DocumentRead]:
 
-        db_document = await self._get_instance(document_id=document_id)
+        db_document = await self._get_instance(document=document_id)
 
         if db_document is None:
             return HTTPException(
@@ -96,7 +118,7 @@ class DocumentRepository:
         return parse_obj_as(DocumentRead, ans_dict)
 
 
-    async def get_from_name(self, document_name: str)-> Optional[DocumentRead]:
+    async def get_from_name(self, document_name: str) -> Optional[DocumentRead]:
 
         stmt = (
             select(self.doc_cls)
@@ -112,28 +134,26 @@ class DocumentRepository:
         return parse_obj_as(DocumentRead, result_dict)
 
 
-    async def patch(
-        self, document_id: UUID, document_patch: DocumentPatch
-    )-> Optional[DocumentRead]:
+    async def patch(self, document_name: str, document_patch: DocumentPatch) -> DocumentRead:
+        """
+        TODO: To add user permissions for patching
+        """
 
-        db_document = await self._get_instance(document_id=document_id)
+        db_document = await self._get_instance(document=document_name)
 
         if db_document is None:
             raise EntityDoesNotExist
 
-        document_details = document_patch.dict(exclude_unset=True, exclude={"id"})
-        for key, value in document_details.items():
-            setattr(db_document, key, value)
+        changes = await self._extract_changes(document_patch)
+        if changes:
+            await self._execute_update(db_document, changes)
 
-        self.session.add(db_document)
-        await self.session.commit()
-        await self.session.refresh(db_document)
+        return DocumentRead(**db_document.__dict__)
 
-        return DocumentRead(**db_document.dict())
 
     async def delete(self, document_id: UUID) -> None:
 
-        db_document = await self._get_instance(document_id=document_id)
+        db_document = await self._get_instance(document=document_id)
 
         if db_document is None:
             raise EntityDoesNotExist
