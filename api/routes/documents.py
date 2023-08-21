@@ -39,43 +39,23 @@ async def get_documents(
 
 
 @router.get(
-    "/get-document/{document_id}",
+    "/get-document/{document}",
     response_model=Optional[DocumentRead],
     status_code=status.HTTP_200_OK,
-    name="get-document-by-id",
+    name="get-document"
 )
 async def get_document_by_id(
-    document_id: UUID,
+    document: Union[str, UUID],
     repository: DocumentRepository = Depends(get_repository(DocumentRepository)),
 ) -> Optional[DocumentRead]:
-    try:
-        await repository.get(document_id=document_id)
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with the id {document_id}"
-        )
+    # try:
+    await repository.get(document=document)
+    # except:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with {document}"
+    #     )
 
-    return await repository.get(document_id=document_id)
-
-
-@router.get(
-    "/get-document-by-name/{name}",
-    response_model=Optional[DocumentRead],
-    status_code=status.HTTP_200_OK,
-    name="get_doc_by_name",
-)
-async def get_document_by_name(
-    name: str,
-    repository: DocumentRepository = Depends(get_repository(DocumentRepository)),
-) -> Optional[DocumentRead]:
-    try:
-        await repository.get_from_name(document_name=name)
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with the name: {name}"
-        )
-
-    return await repository.get_from_name(document_name=name)
+    return await repository.get(document=document)
 
 
 @router.put(
@@ -88,7 +68,7 @@ async def update_doc_details(
     document_name: str,
     document_patch: DocumentPatch = Body(...),
     repository: DocumentRepository = Depends(get_repository(DocumentRepository)),
-) -> DocumentRead:
+) -> Optional[DocumentRead]:
     try:
         await repository.get_from_name(document_name=document_name)
     except:

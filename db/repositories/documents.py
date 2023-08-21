@@ -5,7 +5,6 @@ from fastapi import status, HTTPException
 from sqlalchemy import select, join, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, class_mapper
-from pydantic import parse_obj_as
 
 from db.errors import EntityDoesNotExist
 from db.tables.documents import Document
@@ -24,13 +23,14 @@ class DocumentRepository:
 
     async def _get_instance(self, document: Union[str, UUID]) -> None:
 
-        if UUID(str(document)):
+        try:
+            UUID(str(document))
             stmt = (
                 select(self.doc_cls)
                 .where(self.doc_cls._id == document)
                 .where(self.doc_cls.status != StatusEnum.deleted)
             )
-        else:
+        except ValueError:
             stmt = (
                 select(self.doc_cls)
                 .where(self.doc_cls.name == document)
@@ -57,10 +57,6 @@ class DocumentRepository:
         await self.session.execute(stmt)
 
 
-    async def model_to_dict(self, model) -> dict:
-        return {column.name: getattr(model, column.name) for column in class_mapper(model.__class__).mapped_table.columns}
-
-
     async def upload(self, document_upload: DocumentCreate) -> DocumentRead:
         """
         TODO: Add Try Except and handle error cases
@@ -72,9 +68,9 @@ class DocumentRepository:
         await self.session.commit()
         await self.session.refresh(db_document)
 
-        db_document_dict = await self.model_to_dict(db_document)
+        db_document_dict = db_document.__dict__
 
-        return parse_obj_as(DocumentRead, db_document_dict)
+        return DocumentRead(**db_document.__dict__)
 
 
     async def doc_list(self, limit: int = 10, offset: int = 0) -> List[DocumentRead]:
@@ -103,38 +99,19 @@ class DocumentRepository:
         return [DocumentRead(**row.doc_cls.__dict__) for row in result_list]
 
 
-    async def get(self, document_id: UUID) -> Optional[DocumentRead]:
+    async def get(self, document: Union[str, UUID]) -> Optional[DocumentRead]:
 
-        db_document = await self._get_instance(document=document_id)
+        db_document = await self._get_instance(document=document)
 
         if db_document is None:
             return HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with the id {document_id}"
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with {document}"
             )
 
-        ans_dict = db_document.__dict__
-        del ans_dict['_sa_instance_state']
-
-        return parse_obj_as(DocumentRead, ans_dict)
+        return DocumentRead(**db_document.__dict__)
 
 
-    async def get_from_name(self, document_name: str) -> Optional[DocumentRead]:
-
-        stmt = (
-            select(self.doc_cls)
-            .where(self.doc_cls.name == document_name)
-            .where(self.doc_cls.status != StatusEnum.deleted)
-        )
-
-        response = await self.session.execute(stmt)
-        result = response.first()
-        result_dict = result.doc_cls.__dict__
-        del result_dict['_sa_instance_state']
-
-        return parse_obj_as(DocumentRead, result_dict)
-
-
-    async def patch(self, document_name: str, document_patch: DocumentPatch) -> DocumentRead:
+    async def patch(self, document_name: str, document_patch: DocumentPatch) -> Optional[DocumentRead]:
         """
         TODO: To add user permissions for patching
         """
