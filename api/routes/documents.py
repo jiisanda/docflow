@@ -5,7 +5,7 @@ from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
 
 from api.dependencies.repositories import get_repository
 from db.repositories.documents import DocumentRepository
-from schemas.documents import DocumentCreate, DocumentRead
+from schemas.documents import DocumentCreate, DocumentRead, DocumentPatch
 
 
 router = APIRouter()
@@ -76,3 +76,27 @@ async def get_document_by_name(
         )
 
     return await repository.get_from_name(document_name=name)
+
+
+@router.put(
+    "/update-doc-details/{document_name}",
+    response_model=DocumentRead,
+    status_code=status.HTTP_200_OK,
+    name="update-doc-details",
+)
+async def update_doc_details(
+    document_name: str,
+    document_patch: DocumentPatch = Body(...),
+    repository: DocumentRepository = Depends(get_repository(DocumentRepository)),
+)-> DocumentRead:
+    try:
+        await repository.get_from_name(document_name=document_name)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with name: {document_name}"
+        )
+
+    return await repository.patch(
+        document_name=document_name,
+        document_patch=document_patch
+    )
