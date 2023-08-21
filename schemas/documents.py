@@ -10,6 +10,7 @@ class DocumentCreate(DocumentBase):
 
 class DocumentRead(DocumentBase):
     _id: UUID
+    name: str
 
     class Config:
         from_attributes = True
