@@ -8,7 +8,7 @@ from db.repositories.documents import DocumentRepository
 from schemas.documents import DocumentCreate, DocumentRead, DocumentPatch
 
 
-router = APIRouter()
+router = APIRouter(tags=["Document MetaData"])
 
 
 @router.post(
@@ -42,7 +42,7 @@ async def get_documents(
     "/get-document/{document}",
     response_model=Optional[DocumentRead],
     status_code=status.HTTP_200_OK,
-    name="get-document"
+    name="get_document"
 )
 async def get_document_by_id(
     document: Union[str, UUID],
@@ -62,7 +62,7 @@ async def get_document_by_id(
     "/update-doc-details/{document_name}",
     response_model=DocumentRead,
     status_code=status.HTTP_200_OK,
-    name="update-doc-details",
+    name="update_doc_details",
 )
 async def update_doc_details(
     document_name: str,

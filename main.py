@@ -28,12 +28,12 @@ def get_db():
         db.close()
 
 
-@app.get("/")
+@app.get("/", tags=["Default"])
 async def root():
     return {"API": "Document Management API"}
 
 
-@app.get("/init-tables")
+@app.get("/init-tables", tags=["Default"])
 async def init_tables():
 
     create_table()
