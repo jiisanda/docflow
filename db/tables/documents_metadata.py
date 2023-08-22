@@ -9,11 +9,10 @@ from sqlalchemy.orm import Session
 
 from db.models import Base, metadata, engine
 from db.tables.base_class import StatusEnum
-from schemas.documents import DocumentCreate
 
 
-class Document(Base):
-    __tablename__ = "documents"
+class DocumentMetadata(Base):
+    __tablename__ = "document_metadata"
 
     _id: UUID = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, index=True, nullable=False)
     name: str = Column(String, unique=True)
@@ -27,14 +26,14 @@ class Document(Base):
 
 
 def create_document():
-    document = Document(
+    document_metadata = DocumentMetadata(
         name="codeakey_logo.png",
         s3_url="s3://docflow-trial/codeakey_logo.png",
         status="private",
     )
 
     with Session(engine) as session:
-        session.add(document)
+        session.add(document_metadata)
         session.commit()
 
 

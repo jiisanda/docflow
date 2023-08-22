@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from api.router import router
 from core.config import settings
 from db.models import Base, engine, session
-from db.tables.documents import create_table
-from schemas import documents
+from db.tables.documents_metadata import create_table
+from schemas import documents_metadata
 
 Base.metadata.create_all(bind=engine)
 
@@ -18,14 +18,6 @@ app = FastAPI(
 )
 
 app.include_router(router=router, prefix=settings.api_prefix)
-
-# Dependency
-def get_db():
-    db = session()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @app.get("/", tags=["Default"])
