@@ -7,6 +7,7 @@ from sqlalchemy import Column, LargeBinary, String, Integer, ARRAY, text, DateTi
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session
 
+from core.config import settings
 from db.models import Base, metadata, engine
 from db.tables.base_class import StatusEnum
 
@@ -28,7 +29,7 @@ class DocumentMetadata(Base):
 def create_document():
     document_metadata = DocumentMetadata(
         name="codeakey_logo.png",
-        s3_url="s3://docflow-trial/codeakey_logo.png",
+        s3_url=f"s3://{settings.s3_bucket}/codeakey_logo.png",
         status="private",
     )
 
