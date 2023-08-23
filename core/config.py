@@ -21,6 +21,8 @@ class GlobalConfig(BaseSettings):
     postgres_port: int = int(os.environ.get("POSTGRES_PORT"))
     postgres_db: str = os.environ.get("POSTGRES_DB")
     db_echo_log: bool = True if os.environ.get("DEBUG") == True else False
+    s3_bucket: str = os.environ.get("S3_BUCKET")
+    s3_test_bucket: str = os.environ.get("S3_TEST_BUCKET")
 
     @property
     def sync_database_url(self)-> str:
