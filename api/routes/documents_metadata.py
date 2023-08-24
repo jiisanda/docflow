@@ -12,12 +12,12 @@ router = APIRouter(tags=["Document MetaData"])
 
 
 @router.post(
-    "/upload-document",
+    "/upload-document-metadata",
     response_model=DocumentMetadataRead,
     status_code=status.HTTP_201_CREATED,
-    name="upload_documents"
+    name="upload_documents_metadata"
 )
-async def upload_document(
+async def upload_document_metadata(
     document_upload: DocumentMetadataCreate = Body(...),
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ) -> DocumentMetadataRead:
@@ -25,12 +25,12 @@ async def upload_document(
 
 
 @router.get(
-    "/documents",
+    "/documents-metadata",
     response_model=List[DocumentMetadataRead],
     status_code=status.HTTP_200_OK,
-    name="get_documents",
+    name="get_documents_metadata",
 )
-async def get_documents(
+async def get_documents_metadata(
     limit: int = Query(default=10, lte=100),
     offset: int = Query(default=0),
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
@@ -39,12 +39,12 @@ async def get_documents(
 
 
 @router.get(
-    "/get-document/{document}",
+    "/get-document-metadata/{document}",
     response_model=Optional[DocumentMetadataRead],
     status_code=status.HTTP_200_OK,
-    name="get_document"
+    name="get_document-metadata"
 )
-async def get_document(
+async def get_document_metadata(
     document: Union[str, UUID],
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ) -> Optional[DocumentMetadataRead]:
@@ -59,12 +59,12 @@ async def get_document(
 
 
 @router.put(
-    "/update-doc-details/{document}",
+    "/update-doc-metadata-details/{document}",
     response_model=DocumentMetadataRead,
     status_code=status.HTTP_200_OK,
-    name="update_doc_details",
+    name="update_doc_metadata_details",
 )
-async def update_doc_details(
+async def update_doc_metadata_details(
     document: Union[str, UUID],
     document_patch: DocumentMetadataPatch = Body(...),
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
@@ -83,11 +83,11 @@ async def update_doc_details(
 
 
 @router.delete(
-    "/delete-doc/{document}",
+    "/delete-doc-metadata/{document}",
     status_code=status.HTTP_204_NO_CONTENT,
-    name="delete_document",
+    name="delete_document_metadata",
 )
-async def delete_document(
+async def delete_document_metadata(
     document: Union[str, UUID],
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ) -> None:
