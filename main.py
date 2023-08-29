@@ -1,4 +1,5 @@
 from fastapi import FastAPI, status, Depends
+from fastapi.responses import  FileResponse
 from sqlalchemy.orm import Session
 
 from api.router import router
@@ -19,6 +20,13 @@ app = FastAPI(
 
 app.include_router(router=router, prefix=settings.api_prefix)
 
+
+favicon_path = 'favicon.ico'
+
+
+@app.get(favicon_path, include_in_schema=False, tags=["Default"])
+async def favicon():
+    return FileResponse(favicon_path)
 
 @app.get("/", tags=["Default"])
 async def root():
