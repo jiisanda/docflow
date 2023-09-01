@@ -1,3 +1,4 @@
+from typing import Any, Dict
 import boto3
 
 from fastapi import File
@@ -13,12 +14,31 @@ class DocumentRepository:
         self.s3_bucket = self.s3_client.Bucket(settings.s3_bucket)
 
 
-    async def upload(self, file: File):
+    async def _get_s3_url(self, key: str) -> str:
+        return f"https://{settings.s3_bucket}.s3.{settings.aws_region}.amazonaws.com/{key}"
+    """
+        url = boto3.client('s3').generate_presigned_url(
+            ClientMethod="get_object",
+            Params={
+                "Bucket": settings.s3_bucket,
+                "Key": key
+            }
+        )
+
+        return url
+    """
+
+    async def upload(self, file: File) -> Dict[str, Any]:
 
         file_type = file.content_type
         if file_type in SUPPORTED_FILE_TYPES:
-            key = f"{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
+            key = f"username/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
         contents = file.file.read()
+
         self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
 
-        return key
+        return {
+            "name": file.filename,
+            "s3_url": await self._get_s3_url(key=key),
+            "size": file.file.tell(),
+        }
