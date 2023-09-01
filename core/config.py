@@ -23,6 +23,7 @@ class GlobalConfig(BaseSettings):
     db_echo_log: bool = True if os.environ.get("DEBUG") == True else False
     aws_access_key_id: str = os.environ.get("AWS_ACCESS_KEY_ID")
     aws_secret_key: str = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    aws_region: str = os.environ.get("AWS_REGION")
     s3_bucket: str = os.environ.get("S3_BUCKET")
     s3_test_bucket: str = os.environ.get("S3_TEST_BUCKET")
 
