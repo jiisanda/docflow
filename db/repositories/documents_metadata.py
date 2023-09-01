@@ -62,7 +62,10 @@ class DocumentMetadataRepository:
         TODO: Add Try Except and handle error cases
         """
 
-        db_document = DocumentMetadata(**document_upload.dict())
+        if not isinstance(document_upload, dict):
+            db_document = DocumentMetadata(**document_upload.dict())
+        else:
+            db_document = DocumentMetadata(**document_upload)
 
         self.session.add(db_document)
         await self.session.commit()
