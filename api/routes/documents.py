@@ -1,6 +1,9 @@
-from fastapi import APIRouter, status, File, UploadFile, HTTPException
+from fastapi import APIRouter, status, File, UploadFile, HTTPException, Depends
 
 from schemas.documents_metadata import DocumentMetadataRead
+
+from api.dependencies.repositories import get_repository
+from db.repositories.documents import DocumentRepository
 
 router = APIRouter(tags=["Document"])
 
@@ -12,6 +15,7 @@ router = APIRouter(tags=["Document"])
 )
 async def upload(
     file: UploadFile = File(...),
+    repository: DocumentRepository = Depends(DocumentRepository)
 ):
     if not file:
         raise HTTPException(
@@ -19,7 +23,4 @@ async def upload(
             detail="No file"
         )
 
-    name = file.filename
-    file_type = file.content_type
-
-    return {"name": name, "type": file_type}
+    return await repository.upload(file=file)
