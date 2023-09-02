@@ -49,6 +49,7 @@ class DocumentRepository:
             "name": file.filename,
             "s3_url": await self._get_s3_url(key=key),
             "size": file.file.tell(),
+            "file_type": file_type,
         }
 
 
