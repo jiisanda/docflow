@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from fastapi import APIRouter, status, File, UploadFile, HTTPException, Depends
 
@@ -19,6 +19,7 @@ router = APIRouter(tags=["Document"])
 )
 async def upload(
     file: UploadFile = File(...),
+    folder: Optional[str] = None,
     repository: DocumentRepository = Depends(DocumentRepository),
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ) -> DocumentMetadataRead:
@@ -28,7 +29,7 @@ async def upload(
             detail="No file"
         )
 
-    response = await repository.upload(file=file)
+    response = await repository.upload(file=file, folder=folder)
     return await metadata_repository.upload(document_upload=response)
 
 
@@ -49,7 +50,5 @@ async def download(
         )
 
     get_document_metadata = dict(await metadata_repository.get(document=file_name))
-    s3_url = str(get_document_metadata["s3_url"]).split("/")[-2:]
-    key = f"{s3_url[0]}/{s3_url[1]}"
 
-    return await repository.download(key=get_document_metadata["s3_url"], name=get_document_metadata["name"])
+    return await repository.download(s3_url=get_document_metadata["s3_url"], name=get_document_metadata["name"])
