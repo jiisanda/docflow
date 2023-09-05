@@ -8,6 +8,7 @@ from ulid import ULID
 
 from api.dependencies.constants import SUPPORTED_FILE_TYPES
 from core.config import settings
+from core.exceptions import HTTP_404
 
 class DocumentRepository:
 
@@ -36,11 +37,17 @@ class DocumentRepository:
     async def upload(self, file: File, folder: str) -> Dict[str, Any]:
 
         file_type = file.content_type
-        if file_type in SUPPORTED_FILE_TYPES:
-            if folder is None:
-                key = f"username/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
-            else:
-                key = f"username/{folder}/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
+        if file_type not in SUPPORTED_FILE_TYPES:
+            raise HTTPException(
+                status_code=400,
+                detail=f"File type {file_type} not supported."
+            )
+
+        if folder is None:
+            key = f"username/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
+        else:
+            key = f"username/{folder}/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
+
         contents = file.file.read()
 
         self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
@@ -57,10 +64,15 @@ class DocumentRepository:
 
         key = self._get_key(s3_url=s3_url)
 
-        self.s3_client.meta.client.download_file(
-            Bucket=settings.s3_bucket,
-            Key=await key,
-            Filename=r"downloads\docflow_" + f"{name}"
-        )
+        try:
+            self.s3_client.meta.client.download_file(
+                Bucket=settings.s3_bucket,
+                Key=await key,
+                Filename=r"downloads\docflow_" + f"{name}"
+            )
+        except ClientError as e:
+            raise HTTP_404(
+                msg=f"File not found: {e}"
+            ) from e
 
         return {"message": f"successfully downloaded {name} in downloads folder."}

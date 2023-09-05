@@ -5,6 +5,7 @@ from fastapi import APIRouter, status, File, UploadFile, HTTPException, Depends
 from schemas.documents_metadata import DocumentMetadataRead
 
 from api.dependencies.repositories import get_repository
+from core.exceptions import HTTP_400, HTTP_404, HTTP_409
 from db.repositories.documents import DocumentRepository
 from db.repositories.documents_metadata import DocumentMetadataRepository
 
@@ -24,9 +25,8 @@ async def upload(
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ) -> DocumentMetadataRead:
     if not file:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="No file"
+        raise HTTP_400(
+            msg="No input file..."
         )
 
     response = await repository.upload(file=file, folder=folder)
@@ -44,9 +44,8 @@ async def download(
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ) -> Dict[str, str]:
     if not file_name:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="No file name"
+        raise HTTP_400(
+            msg="No file name..."
         )
 
     get_document_metadata = dict(await metadata_repository.get(document=file_name))
