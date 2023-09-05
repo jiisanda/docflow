@@ -3,10 +3,11 @@ from uuid import UUID
 
 from fastapi import status, HTTPException
 from sqlalchemy import select, join, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, class_mapper
 
-from db.errors import EntityDoesNotExist
+from core.exceptions import HTTP_409, HTTP_404
 from db.tables.documents_metadata import DocumentMetadata
 from db.tables.base_class import StatusEnum
 from schemas.documents_metadata import DocumentMetadataCreate, DocumentMetadataPatch, DocumentMetadataRead
@@ -54,22 +55,31 @@ class DocumentMetadataRepository:
             .where(DocumentMetadata._id == db_document._id)
             .values(changes)
         )
-        await self.session.execute(stmt)
+
+        try:
+            await self.session.execute(stmt)
+        except Exception as e:
+            raise HTTP_409(
+                msg=f"Error while updating document: {db_document.name}"
+            ) from e
 
 
     async def upload(self, document_upload: DocumentMetadataCreate) -> DocumentMetadataRead:
-        """
-        TODO: Add Try Except and handle error cases
-        """
 
         if not isinstance(document_upload, dict):
             db_document = DocumentMetadata(**document_upload.dict())
         else:
             db_document = DocumentMetadata(**document_upload)
 
-        self.session.add(db_document)
-        await self.session.commit()
-        await self.session.refresh(db_document)
+        try:
+            self.session.add(db_document)
+            await self.session.commit()
+            await self.session.refresh(db_document)
+        except IntegrityError as e:
+            raise HTTP_404(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Document with name: {document_upload.name} already exists.",
+            ) from e
 
         db_document_dict = db_document.__dict__
 
@@ -77,9 +87,6 @@ class DocumentMetadataRepository:
 
 
     async def doc_list(self, limit: int = 10, offset: int = 0) -> List[DocumentMetadataRead]:
-        """
-        TODO: Add try except and handle error cases
-        """
 
         stmt = (
             select(self.doc_cls)
@@ -91,37 +98,39 @@ class DocumentMetadataRepository:
             .limit(limit)
         )
 
-        result = await self.session.execute(statement=stmt)
-        result_list = result.fetchall()
-        result_dict = [row.doc_cls.__dict__ for row in result_list]
+        try:
+            result = await self.session.execute(statement=stmt)
+            result_list = result.fetchall()
+            result_dict = [row.doc_cls.__dict__ for row in result_list]
 
-        for each in result_list:
-            each.doc_cls.__dict__.pop('_sa_instance_state', None)
+            for each in result_list:
+                each.doc_cls.__dict__.pop('_sa_instance_state', None)
 
-        return [DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list]
+            return [DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list]
+        except Exception as e:
+            raise HTTP_404(
+                detail="No Documents found"
+            ) from e
 
 
-    async def get(self, document: Union[str, UUID]) -> Optional[DocumentMetadataRead]:
+    async def get(self, document: Union[str, UUID]) -> Union[DocumentMetadataRead, HTTPException]:
 
         db_document = await self._get_instance(document=document)
 
         if db_document is None:
-            return HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with {document}"
+            return HTTP_409(
+                msg=f"No Document with {document}"
             )
 
         return DocumentMetadataRead(**db_document.__dict__)
 
 
-    async def patch(self, document: Union[str, UUID], document_patch: DocumentMetadataPatch) -> Optional[DocumentMetadataRead]:
+    async def patch(self, document: Union[str, UUID], document_patch: DocumentMetadataPatch) -> Union[DocumentMetadataRead, HTTPException]:
         """
         TODO: To add user permissions for patching
         """
 
         db_document = await self._get_instance(document=document)
-
-        if db_document is None:
-            raise EntityDoesNotExist
 
         changes = await self._extract_changes(document_patch)
         if changes:
@@ -133,9 +142,6 @@ class DocumentMetadataRepository:
     async def delete(self, document: Union[str, UUID]) -> None:
 
         db_document = await self._get_instance(document=document)
-
-        if db_document is None:
-            raise EntityDoesNotExist
 
         setattr(db_document, "status", StatusEnum.deleted)
         self.session.add(db_document)

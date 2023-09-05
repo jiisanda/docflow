@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
 
 from api.dependencies.repositories import get_repository
+from core.exceptions import HTTP_409, HTTP_404
 from db.repositories.documents_metadata import DocumentMetadataRepository
 from schemas.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead, DocumentMetadataPatch
 
@@ -40,27 +41,20 @@ async def get_documents_metadata(
 
 @router.get(
     "/get-document-metadata/{document}",
-    response_model=Optional[DocumentMetadataRead],
+    response_model=None,
     status_code=status.HTTP_200_OK,
     name="get_document-metadata"
 )
 async def get_document_metadata(
     document: Union[str, UUID],
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-) -> Optional[DocumentMetadataRead]:
-    try:
-        await repository.get(document=document)
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with {document}"
-        )
-
+) -> Union[DocumentMetadataRead, HTTPException]:
     return await repository.get(document=document)
 
 
 @router.put(
     "/update-doc-metadata-details/{document}",
-    response_model=DocumentMetadataRead,
+    response_model=None,
     status_code=status.HTTP_200_OK,
     name="update_doc_metadata_details",
 )
@@ -68,12 +62,12 @@ async def update_doc_metadata_details(
     document: Union[str, UUID],
     document_patch: DocumentMetadataPatch = Body(...),
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-) -> Optional[DocumentMetadataRead]:
+) -> Union[DocumentMetadataRead, HTTPException]:
     try:
         await repository.get(document=document)
     except:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"No Document with: {document}"
+        raise HTTP_404(
+            msg=f"No Document with: {document}"
         )
 
     return await repository.patch(
@@ -94,8 +88,8 @@ async def delete_document_metadata(
     try:
         await repository.get(document=document)
     except:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"No document with the detail: {document}."
+        raise HTTP_404(
+            msg=f"No document with the detail: {document}."
         )
 
     return await repository.delete(document=document)
