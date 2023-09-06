@@ -32,7 +32,7 @@ async def upload_document_metadata(
     name="get_documents_metadata",
 )
 async def get_documents_metadata(
-    limit: int = Query(default=10, lte=100),
+    limit: int = Query(default=10, lt=100),
     offset: int = Query(default=0),
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ) -> List[Optional[DocumentMetadataRead]]:

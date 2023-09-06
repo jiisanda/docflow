@@ -65,7 +65,9 @@ class DocumentMetadataRepository:
 
 
     async def upload(self, document_upload: DocumentMetadataCreate) -> DocumentMetadataRead:
-
+        """
+        TODO: To data validation
+        """
         if not isinstance(document_upload, dict):
             db_document = DocumentMetadata(**document_upload.dict())
         else:
