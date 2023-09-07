@@ -16,7 +16,7 @@ class DocumentOrgRepository:
             result.extend(
                 doc
                 for tag in tags
-                if doc["tags"] is not None and ''.join(tag.split()) in doc["tags"]
+                if doc["tags"] and ''.join(tag.split()) in doc["tags"]
             )
 
         return result or None
@@ -30,18 +30,18 @@ class DocumentOrgRepository:
             result.extend(
                 doc
                 for category in categories
-                if doc["categories"] is not None and ''.join(category.split()) in doc["categories"]
+                if doc["categories"] and ''.join(category.split()) in doc["categories"]
             )
 
         return result or None
 
 
-    async def search_file_type(self, docs: List[Dict[str, str]], file_type: List[str]) -> List[Dict[str, str]]:
+    async def search_file_type(self, docs: List[Dict[str, str]], file_types: List[str]) -> List[Dict[str, str]]:
 
         result = []
         for doc in docs:
             doc = doc.__dict__
-            for ftype in file_type:
+            for ftype in file_types:
                 ftype = ''.join(ftype.split())
                 result.extend(
                     doc
@@ -71,25 +71,25 @@ class DocumentOrgRepository:
         docs: List[Dict[str, Any]], 
         tags: str, 
         categories:str, 
-        file_type: str, 
+        file_types: str, 
         status: str
     ) -> Union[List[Dict[str, Any]], None]:
 
         results = []
 
-        if tags is not None:
+        if tags:
             tags = tags.split(',')
             results.append(await self.search_tags(docs=docs, tags=tags))
 
-        if categories is not None:
+        if categories:
             categories = categories.split(',')
             results.append(await self.search_category(docs=docs, categories=categories))
 
-        if file_type is not None:
+        if file_types:
             file_type = file_type.split(',')
-            results.append(await self.search_file_type(docs=docs, file_type=file_type))
+            results.append(await self.search_file_type(docs=docs, file_types=file_types))
 
-        if status is not None:
+        if status:
             status = status.split(',')
             results.append(await self.search_by_status(docs=docs, status=status))
 

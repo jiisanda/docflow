@@ -20,15 +20,15 @@ async def search_document(
     offset: int = Query(default=0),
     tag: str = None,
     category: str = None,
-    file_type: str = None,
+    file_types: str = None,
     status: str = None,
     repository: DocumentOrgRepository = Depends(DocumentOrgRepository),
     repository_metadata: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ):
 
     doc_list = await repository_metadata.doc_list(limit=limit, offset=offset)
-    if tag is None and category is None and file_type is None and status is None:
+    if tag is None and category is None and file_types is None and status is None:
         return doc_list
 
     else:
-        return await repository.search_doc(docs=doc_list, tags=tag, categories=category, file_type=file_type, status=status)
+        return await repository.search_doc(docs=doc_list, tags=tag, categories=category, file_types=file_types, status=status)
