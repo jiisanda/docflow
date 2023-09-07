@@ -6,6 +6,6 @@ from api.routes.document_organization import router as document_organization_rou
 
 router = APIRouter()
 
-router.include_router(documents_metadata_router, prefix="/document-metadata")
 router.include_router(documents_router, prefix="/document")
+router.include_router(documents_metadata_router, prefix="/document-metadata")
 router.include_router(document_organization_router, prefix="/search")
