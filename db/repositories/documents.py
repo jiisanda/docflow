@@ -14,7 +14,14 @@ class DocumentRepository:
 
     def __init__(self):
         self.s3_client = boto3.resource('s3')
+        self.client = boto3.client('s3')
         self.s3_bucket = self.s3_client.Bucket(settings.s3_bucket)
+        self.client.put_bucket_versioning(
+            Bucket=settings.s3_bucket,
+            VersioningConfiguration={
+                'Status': 'Enabled'
+            }
+        )
 
 
     async def _get_s3_url(self, key: str) -> str:
@@ -34,7 +41,7 @@ class DocumentRepository:
             return match[1]
 
 
-    async def upload(self, file: File, folder: str) -> Dict[str, Any]:
+    async def upload(self, metadata_repo, file: File, folder: str) -> Dict[str, Any]:
 
         file_type = file.content_type
         if file_type not in SUPPORTED_FILE_TYPES:
@@ -43,21 +50,33 @@ class DocumentRepository:
                 detail=f"File type {file_type} not supported."
             )
 
-        if folder is None:
-            key = f"username/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
-        else:
-            key = f"username/{folder}/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
-
         contents = file.file.read()
 
-        self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
+        doc = (await metadata_repo.get(document=file.filename)).__dict__
+        if "status_code" in doc.keys():
+            if folder is None:
+                key = f"username/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
+            else:
+                key = f"username/{folder}/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
 
-        return {
-            "name": file.filename,
-            "s3_url": await self._get_s3_url(key=key),
-            "size": file.file.tell(),
-            "file_type": file_type,
-        }
+            self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
+
+            return {
+                "result": "file added",
+                "name": file.filename,
+                "s3_url": await self._get_s3_url(key=key),
+                "size": file.file.tell(),
+                "file_type": file_type,
+            }
+        else:
+            print("File already present, updating the file...")
+            key = await self._get_key(s3_url=doc["s3_url"])
+
+            self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
+
+            return {
+                "result": f"Successfully updated file... new version to {file.filename} upgraded..."
+            }
 
 
     async def download(self, s3_url: str, name: str) -> Dict[str, str]:

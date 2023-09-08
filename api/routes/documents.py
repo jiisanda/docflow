@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from fastapi import APIRouter, status, File, UploadFile, HTTPException, Depends
 
@@ -14,7 +14,7 @@ router = APIRouter(tags=["Document"])
 
 @router.post(
     "/upload",
-    response_model=DocumentMetadataRead,
+    response_model=None,
     status_code=status.HTTP_201_CREATED,
     name="upload_document"
 )
@@ -23,13 +23,16 @@ async def upload(
     folder: Optional[str] = None,
     repository: DocumentRepository = Depends(DocumentRepository),
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-) -> DocumentMetadataRead:
+) -> Union[DocumentMetadataRead, Dict[str, str]]:
     if not file:
         raise HTTP_400(
             msg="No input file..."
         )
 
-    response = await repository.upload(file=file, folder=folder)
+    response = await repository.upload(metadata_repo=metadata_repository, file=file, folder=folder)
+    if response["result"] != "file added":
+        return response
+    del response["result"]
     return await metadata_repository.upload(document_upload=response)
 
 
