@@ -24,16 +24,18 @@ async def upload(
     repository: DocumentRepository = Depends(DocumentRepository),
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ) -> Union[DocumentMetadataRead, Dict[str, str]]:
+
     if not file:
         raise HTTP_400(
             msg="No input file..."
         )
 
     response = await repository.upload(metadata_repo=metadata_repository, file=file, folder=folder)
-    if response["result"] != "file added":
-        return response
-    del response["result"]
-    return await metadata_repository.upload(document_upload=response)
+    if response["response"] == "file added":
+        return await metadata_repository.upload(document_upload=response["upload"])
+    elif response["response"] == "file updated":
+        return await metadata_repository.patch(document=response["upload"]["name"], document_patch=response["upload"])
+    return response
 
 
 @router.get(
@@ -46,6 +48,7 @@ async def download(
     repository: DocumentRepository = Depends(DocumentRepository),
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
 ) -> Dict[str, str]:
+
     if not file_name:
         raise HTTP_400(
             msg="No file name..."
