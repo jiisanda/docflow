@@ -45,7 +45,9 @@ class DocumentMetadataRepository:
 
     async def _extract_changes(self, document_patch: DocumentMetadataPatch) -> dict:
 
-        return {field: value for field, value in document_patch if value is not None}
+        if isinstance(document_patch, dict):
+            return document_patch
+        return document_patch.dict(exclude_unset=True)
 
 
     async def _execute_update(self, db_document: DocumentMetadata, changes: dict) -> None:
