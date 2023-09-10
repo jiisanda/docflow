@@ -4,6 +4,7 @@
 
 - [ ] Add logging
 - [ ] Handle Exceptions and Error in documents.py
+- [ ] Add DocStrings
 
 ## Features
 
@@ -11,7 +12,7 @@
 - ✅ Document Download
 - ✅ Document Metadata
 - ✅ Document Organization
-- 🟥 Document Versioning
+- ✅ Document Versioning
 - 🟥 Document Sharing
 - 🟥 User Authentication & Authorization
 - 🟥 Access Control List (ACL)
