@@ -24,6 +24,7 @@ class DocumentMetadata(Base):
     tags: Optional[List[str]] = Column(ARRAY(String))
     categories: Optional[List[str]] = Column(ARRAY(String))
     status: Enum = Column(Enum(StatusEnum), default=StatusEnum.private)
+    file_hash: Optional[str] = Column(String)
 
 
 def create_document():
@@ -31,6 +32,7 @@ def create_document():
         name="codeakey_logo.png",
         s3_url=f"s3://{settings.s3_bucket}/codeakey_logo.png",
         status="private",
+        file_hash="1234567890",
     )
 
     with Session(engine) as session:

@@ -16,3 +16,4 @@ class DocumentMetadataBase(BaseModel):
     tags: Optional[List[str]]
     categories: Optional[List[str]]
     status: StatusEnum
+    file_hash: Optional[str]
