@@ -10,7 +10,7 @@ class LogConfig(BaseSettings):
     LOG_LEVEL: str = "DEBUG"
 
     BASE_DIR = abspath(dirname(__file__))
-    
+
     LOG_FILE: str = join(BASE_DIR + "\logs", "docflow.log")
 
     # logging config

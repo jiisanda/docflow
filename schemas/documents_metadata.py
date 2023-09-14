@@ -21,11 +21,11 @@ class DocumentMetadataRead(DocumentMetadataBase):
 
 class DocumentMetadataPatch(DocumentMetadataBase):
     name: str = None
-    s3_url: str  = None
+    s3_url: str = None
     created_at: datetime = None
-    size: Optional[int]  = None
-    file_type: Optional[str]  = None
-    tags: Optional[List[str]]  = None
+    size: Optional[int] = None
+    file_type: Optional[str] = None
+    tags: Optional[List[str]] = None
     categories: Optional[List[str]] = None
     status: StatusEnum = None
     file_hash: Optional[str] = None

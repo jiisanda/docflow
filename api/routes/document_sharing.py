@@ -1,7 +1,7 @@
 from typing import Union
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, status
 
 from api.dependencies.repositories import get_repository
 from db.repositories.documents_metadata import DocumentMetadataRepository
@@ -26,10 +26,10 @@ async def share_document(
 
     doc = await metadata_repository.get(document=document)
     visits = share_request.visits
-    presigned_url = await repository.get_presigned_url(doc=doc.__dict__)
-    shareable_link = await repository.get_shareable_link(url=presigned_url, visits=visits)
+    pre_signed_url = await repository.get_presigned_url(doc=doc.__dict__)
+    shareable_link = await repository.get_shareable_link(url=pre_signed_url, visits=visits)
 
     return {
-        "personal_url": presigned_url,
+        "personal_url": pre_signed_url,
         "share_this": shareable_link
     }

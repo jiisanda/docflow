@@ -1,7 +1,7 @@
-from typing import List, Optional, Union
+from typing import List, Union
 from uuid import UUID
 
-from fastapi import status, HTTPException
+from fastapi import HTTPException
 from sqlalchemy import select, join, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,8 +21,7 @@ class DocumentMetadataRepository:
         self.session = session
         self.doc_cls = aliased(DocumentMetadata, name="doc_cls")
 
-
-    async def _get_instance(self, document: Union[str, UUID]) -> None:
+    async def _get_instance(self, document: Union[str, UUID]):
 
         try:
             UUID(str(document))
@@ -42,13 +41,12 @@ class DocumentMetadataRepository:
 
         return result.scalar_one_or_none()
 
-
-    async def _extract_changes(self, document_patch: DocumentMetadataPatch) -> dict:
+    @staticmethod
+    async def _extract_changes(document_patch: DocumentMetadataPatch) -> dict:
 
         if isinstance(document_patch, dict):
             return document_patch
-        return document_patch.dict(exclude_unset=True)
-
+        return document_patch.model_dump(exclude_unset=True)
 
     async def _execute_update(self, db_document: DocumentMetadata, changes: dict) -> None:
 
@@ -65,13 +63,12 @@ class DocumentMetadataRepository:
                 msg=f"Error while updating document: {db_document.name}"
             ) from e
 
-
     async def upload(self, document_upload: DocumentMetadataCreate) -> DocumentMetadataRead:
         """
         TODO: To data validation
         """
         if not isinstance(document_upload, dict):
-            db_document = DocumentMetadata(**document_upload.dict())
+            db_document = DocumentMetadata(**document_upload.model_dump())
         else:
             db_document = DocumentMetadata(**document_upload)
 
@@ -84,17 +81,15 @@ class DocumentMetadataRepository:
                 msg=f"Document with name: {document_upload.name} already exists.",
             ) from e
 
-        db_document_dict = db_document.__dict__
-
         return DocumentMetadataRead(**db_document.__dict__)
-
 
     async def doc_list(self, limit: int = 10, offset: int = 0) -> List[DocumentMetadataRead]:
 
         stmt = (
             select(self.doc_cls)
             .select_from(
-                join(DocumentMetadata, self.doc_cls, DocumentMetadata._id == self.doc_cls._id)        # Adjusting the join condition
+                join(DocumentMetadata, self.doc_cls, DocumentMetadata._id == self.doc_cls._id)        # Adjusting the
+                # join condition
             )
             .where(DocumentMetadata.status != StatusEnum.deleted)
             .offset(offset)
@@ -104,7 +99,6 @@ class DocumentMetadataRepository:
         try:
             result = await self.session.execute(statement=stmt)
             result_list = result.fetchall()
-            result_dict = [row.doc_cls.__dict__ for row in result_list]
 
             for each in result_list:
                 each.doc_cls.__dict__.pop('_sa_instance_state', None)
@@ -112,9 +106,8 @@ class DocumentMetadataRepository:
             return [DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list]
         except Exception as e:
             raise HTTP_404(
-                detail="No Documents found"
+                msg="No Documents found"
             ) from e
-
 
     async def get(self, document: Union[str, UUID]) -> Union[DocumentMetadataRead, HTTPException]:
 
@@ -127,8 +120,9 @@ class DocumentMetadataRepository:
 
         return DocumentMetadataRead(**db_document.__dict__)
 
-
-    async def patch(self, document: Union[str, UUID], document_patch: DocumentMetadataPatch) -> Union[DocumentMetadataRead, HTTPException]:
+    async def patch(
+            self, document: Union[str, UUID], document_patch: DocumentMetadataPatch
+    ) -> Union[DocumentMetadataRead, HTTPException]:
         """
         TODO: To add user permissions for patching
         """
@@ -140,7 +134,6 @@ class DocumentMetadataRepository:
             await self._execute_update(db_document, changes)
 
         return DocumentMetadataRead(**db_document.__dict__)
-
 
     async def delete(self, document: Union[str, UUID]) -> None:
 

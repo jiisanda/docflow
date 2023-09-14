@@ -20,7 +20,7 @@ class GlobalConfig(BaseSettings):
     postgres_server: str = os.environ.get("POSTGRES_SERVER")
     postgres_port: int = int(os.environ.get("POSTGRES_PORT"))
     postgres_db: str = os.environ.get("POSTGRES_DB")
-    db_echo_log: bool = True if os.environ.get("DEBUG") == True else False
+    db_echo_log: bool = True if os.environ.get("DEBUG") is True else False
     aws_access_key_id: str = os.environ.get("AWS_ACCESS_KEY_ID")
     aws_secret_key: str = os.environ.get("AWS_SECRET_ACCESS_KEY")
     aws_region: str = os.environ.get("AWS_REGION")
@@ -28,12 +28,14 @@ class GlobalConfig(BaseSettings):
     s3_test_bucket: str = os.environ.get("S3_TEST_BUCKET")
 
     @property
-    def sync_database_url(self)-> str:
-        return f"postgresql://{self.postgres_user}:{self.postgres_password}@{self.postgres_server}:{self.postgres_port}/{self.postgres_db}"
+    def sync_database_url(self) -> str:
+        return (f"postgresql://{self.postgres_user}:{self.postgres_password}@"
+                f"{self.postgres_server}:{self.postgres_port}/{self.postgres_db}")
 
     @property
-    def async_database_url(self)-> str:
-        return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@{self.postgres_server}:{self.postgres_port}/{self.postgres_db}"
+    def async_database_url(self) -> str:
+        return (f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@"
+                f"{self.postgres_server}:{self.postgres_port}/{self.postgres_db}")
 
 
 settings = GlobalConfig()

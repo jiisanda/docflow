@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
 
 from api.dependencies.repositories import get_repository
-from core.exceptions import HTTP_409, HTTP_404
+from core.exceptions import HTTP_404
 from db.repositories.documents_metadata import DocumentMetadataRepository
 from schemas.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead, DocumentMetadataPatch
 
@@ -65,10 +65,10 @@ async def update_doc_metadata_details(
 ) -> Union[DocumentMetadataRead, HTTPException]:
     try:
         await repository.get(document=document)
-    except:
+    except Exception as e:
         raise HTTP_404(
             msg=f"No Document with: {document}"
-        )
+        ) from e
 
     return await repository.patch(
         document=document,
@@ -87,9 +87,9 @@ async def delete_document_metadata(
 ) -> None:
     try:
         await repository.get(document=document)
-    except:
+    except Exception as e:
         raise HTTP_404(
             msg=f"No document with the detail: {document}."
-        )
+        ) from e
 
     return await repository.delete(document=document)

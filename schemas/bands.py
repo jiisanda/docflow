@@ -6,6 +6,7 @@ from typing import Optional, List
 
 from db.tables.base_class import StatusEnum
 
+
 class DocumentMetadataBase(BaseModel):
     _id: UUID
     name: str

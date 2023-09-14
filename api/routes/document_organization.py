@@ -1,10 +1,8 @@
-from typing import List, Optional
 from fastapi import APIRouter, Depends, status, Query
 
 from api.dependencies.repositories import get_repository
 from db.repositories.documents_metadata import DocumentMetadataRepository
 from db.repositories.document_organization import DocumentOrgRepository
-from schemas.documents_metadata import DocumentMetadataRead
 
 router = APIRouter(tags=["Document Search"])
 
@@ -31,4 +29,10 @@ async def search_document(
         return doc_list
 
     else:
-        return await repository.search_doc(docs=doc_list, tags=tag, categories=category, file_types=file_types, status=status)
+        return await repository.search_doc(
+            docs=doc_list,
+            tags=tag,
+            categories=category,
+            file_types=file_types,
+            status=status
+        )

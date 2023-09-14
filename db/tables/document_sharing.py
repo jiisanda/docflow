@@ -3,7 +3,6 @@ from sqlalchemy import Column, Integer, String
 from db.models import Base
 
 
-
 class DocumentSharing(Base):
     __tablename__ = "share_url"
 

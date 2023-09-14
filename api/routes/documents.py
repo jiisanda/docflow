@@ -1,11 +1,11 @@
 from typing import Dict, Optional, Union
 
-from fastapi import APIRouter, status, File, UploadFile, HTTPException, Depends
+from fastapi import APIRouter, status, File, UploadFile, Depends
 
 from schemas.documents_metadata import DocumentMetadataRead
 
 from api.dependencies.repositories import get_repository
-from core.exceptions import HTTP_400, HTTP_404, HTTP_409
+from core.exceptions import HTTP_400
 from db.repositories.documents import DocumentRepository
 from db.repositories.documents_metadata import DocumentMetadataRepository
 

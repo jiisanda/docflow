@@ -1,14 +1,16 @@
 from typing import Any, Dict, List, Union
 
 from api.dependencies.constants import SUPPORTED_FILE_TYPES
+from schemas.documents_metadata import DocumentMetadataRead
+
 
 class DocumentOrgRepository:
 
     def __init__(self):
         ...
 
-
-    async def search_tags(self, docs: List[Dict[str, Any]], tags: List[str]) -> List[Dict[str, str]]:
+    @staticmethod
+    async def _search_tags(docs: List[DocumentMetadataRead], tags: List[str]) -> List[Dict[str, str]]:
 
         result = []
         for doc in docs:
@@ -21,8 +23,8 @@ class DocumentOrgRepository:
 
         return result or None
 
-
-    async def search_category(self, docs: List[Dict[str, Any]], categories: List[str]) -> List[Dict[str, str]]:
+    @staticmethod
+    async def _search_category(docs: List[DocumentMetadataRead], categories: List[str]) -> List[Dict[str, str]]:
 
         result = []
         for doc in docs:
@@ -35,8 +37,8 @@ class DocumentOrgRepository:
 
         return result or None
 
-
-    async def search_file_type(self, docs: List[Dict[str, str]], file_types: List[str]) -> List[Dict[str, str]]:
+    @staticmethod
+    async def _search_file_type(docs: List[DocumentMetadataRead], file_types: List[str]) -> List[Dict[str, str]]:
 
         result = []
         for doc in docs:
@@ -51,8 +53,8 @@ class DocumentOrgRepository:
 
         return result or None
 
-
-    async def search_by_status(self, docs: List[Dict[str, str]], status: str) -> List[Dict[str, str]]:
+    @staticmethod
+    async def _search_by_status(docs: List[DocumentMetadataRead], status: List[str]) -> List[Dict[str, str]]:
 
         result = []
         for doc in docs:
@@ -65,32 +67,31 @@ class DocumentOrgRepository:
 
         return result or None
 
-
     async def search_doc(
         self, 
-        docs: List[Dict[str, Any]], 
+        docs: List[DocumentMetadataRead],
         tags: str, 
-        categories:str, 
+        categories: str,
         file_types: str, 
         status: str
-    ) -> Union[List[Dict[str, Any]], None]:
+    ) -> Union[List[List[Dict[str, Any]]], None]:
 
         results = []
 
         if tags:
             tags = tags.split(',')
-            results.append(await self.search_tags(docs=docs, tags=tags))
+            results.append(await self._search_tags(docs=docs, tags=tags))
 
         if categories:
             categories = categories.split(',')
-            results.append(await self.search_category(docs=docs, categories=categories))
+            results.append(await self._search_category(docs=docs, categories=categories))
 
         if file_types:
-            file_type = file_type.split(',')
-            results.append(await self.search_file_type(docs=docs, file_types=file_types))
+            file_type = file_types.split(',')
+            results.append(await self._search_file_type(docs=docs, file_types=file_type))
 
         if status:
-            status = status.split(',')
-            results.append(await self.search_by_status(docs=docs, status=status))
+            _status = status.split(',')
+            results.append(await self._search_by_status(docs=docs, status=_status))
 
         return results

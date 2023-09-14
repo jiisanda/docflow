@@ -7,9 +7,10 @@ from fastapi import File
 from ulid import ULID
 
 from api.dependencies.constants import SUPPORTED_FILE_TYPES
-from api.dependencies.repositories import _get_key, _get_s3_url
+from api.dependencies.repositories import get_key, get_s3_url
 from core.config import settings
-from core.exceptions import HTTP_404
+from core.exceptions import HTTP_400, HTTP_404
+
 
 class DocumentRepository:
 
@@ -24,15 +25,14 @@ class DocumentRepository:
             }
         )
 
-
-    async def _calculate_file_hash(self, file: File) -> str:
+    @staticmethod
+    async def _calculate_file_hash(file: File) -> str:
 
         file.file.seek(0)
         contents = file.file.read()
         file.file.seek(0)
 
         return hashlib.sha256(contents).hexdigest()
-
 
     async def _upload_new_file(self, file: File, folder: str, contents, file_type: str) -> Dict[str, Any]:
 
@@ -47,17 +47,18 @@ class DocumentRepository:
             "response": "file added",
             "upload": {
                 "name": file.filename,
-                "s3_url": await _get_s3_url(key=key),
+                "s3_url": await get_s3_url(key=key),
                 "size": len(contents),
                 "file_type": file_type,
                 "file_hash": await self._calculate_file_hash(file=file)
             }
         }
 
+    async def _upload_new_version(
+            self, doc: dict, file: File, contents, file_type: str, new_file_hash: str
+    ) -> Dict[str, Any]:
 
-    async def _upload_new_version(self, doc: dict, file: File, contents, file_type: str, new_file_hash: str) -> Dict[str, Any]:
-
-        key = await _get_key(s3_url=doc["s3_url"])
+        key = await get_key(s3_url=doc["s3_url"])
 
         self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
 
@@ -65,21 +66,19 @@ class DocumentRepository:
             "response": "file updated",
             "upload": {
                 "name": file.filename,
-                "s3_url": await _get_s3_url(key=key),
+                "s3_url": await get_s3_url(key=key),
                 "size": len(contents),
                 "file_type": file_type,
                 "file_hash": new_file_hash
             }
         }
 
-
     async def upload(self, metadata_repo, file: File, folder: str) -> Dict[str, Any]:
 
         file_type = file.content_type
         if file_type not in SUPPORTED_FILE_TYPES:
-            raise HTTPException(
-                status_code=400,
-                detail=f"File type {file_type} not supported."
+            raise HTTP_400(
+                msg=f"File type {file_type} not supported."
             )
 
         contents = file.file.read()
@@ -94,17 +93,17 @@ class DocumentRepository:
         new_file_hash = await self._calculate_file_hash(file=file)
         if doc["file_hash"] != new_file_hash:
             print("File has been updated, uploading new version...")
-            return await self._upload_new_version(doc=doc, file=file, contents=contents, file_type=file_type, new_file_hash=new_file_hash)
+            return await self._upload_new_version(doc=doc, file=file, contents=contents, file_type=file_type,
+                                                  new_file_hash=new_file_hash)
 
         return {
             "response": "File already present and no changes detected.",
             "upload": "Noting to update..."
         }
 
-
     async def download(self, s3_url: str, name: str) -> Dict[str, str]:
 
-        key = _get_key(s3_url=s3_url)
+        key = get_key(s3_url=s3_url)
 
         try:
             self.s3_client.meta.client.download_file(

@@ -6,12 +6,10 @@ from typing import Any, Dict, Union
 from botocore.exceptions import NoCredentialsError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import aliased
 
-from api.dependencies.repositories import _get_key
+from api.dependencies.repositories import get_key
 from core.config import settings
 from db.tables.document_sharing import DocumentSharing
-from schemas.document_sharing import DocumentSharingRead
 
 
 class DocumentSharingRepository:
@@ -21,8 +19,8 @@ class DocumentSharingRepository:
 
         self.session = session
 
-
-    async def _generate_id(self, url: str) -> str:
+    @staticmethod
+    async def _generate_id(url: str) -> str:
         hash_object = hashlib.md5()
         hash_object.update(url.encode('utf-8'))
 
@@ -30,12 +28,11 @@ class DocumentSharingRepository:
 
         return hash_object.hexdigest()[n:n+6]
 
-
     async def get_presigned_url(self, doc: Dict[str, Any]) -> Union[str, Dict[str, str]]:
         try:
             params = {
                 'Bucket': settings.s3_bucket,
-                'Key': await _get_key(s3_url=doc["s3_url"])
+                'Key': await get_key(s3_url=doc["s3_url"])
             }
             response = self.client.generate_presigned_url(
                 'get_object',
@@ -48,7 +45,6 @@ class DocumentSharingRepository:
             }
 
         return response
-
 
     async def get_shareable_link(self, url: str, visits: int):
 

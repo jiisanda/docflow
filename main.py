@@ -1,12 +1,10 @@
-from fastapi import FastAPI, status, Depends
-from fastapi.responses import  FileResponse
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
 
 from api.router import router
 from core.config import settings
-from db.models import Base, engine, session
+from db.models import Base, engine
 from db.tables.documents_metadata import create_table
-from schemas import documents_metadata
 
 Base.metadata.create_all(bind=engine)
 
@@ -27,6 +25,7 @@ favicon_path = 'favicon.ico'
 @app.get(favicon_path, include_in_schema=False, tags=["Default"])
 async def favicon():
     return FileResponse(favicon_path)
+
 
 @app.get("/", tags=["Default"])
 async def root():
