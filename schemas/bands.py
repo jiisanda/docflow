@@ -17,3 +17,9 @@ class DocumentMetadataBase(BaseModel):
     categories: Optional[List[str]]
     status: StatusEnum
     file_hash: Optional[str]
+
+
+class DocumentSharingBase(BaseModel):
+    url_id: str
+    url: str
+    visits: int
