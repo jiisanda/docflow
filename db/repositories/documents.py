@@ -1,13 +1,13 @@
 from typing import Any, Dict
 import boto3
 import hashlib
-import re
 
 from botocore.exceptions import ClientError
 from fastapi import File
 from ulid import ULID
 
 from api.dependencies.constants import SUPPORTED_FILE_TYPES
+from api.dependencies.repositories import _get_key, _get_s3_url
 from core.config import settings
 from core.exceptions import HTTP_404
 
@@ -23,23 +23,6 @@ class DocumentRepository:
                 'Status': 'Enabled'
             }
         )
-
-
-    async def _get_s3_url(self, key: str) -> str:
-        return f"https://{settings.s3_bucket}.s3.{settings.aws_region}.amazonaws.com/{key}"
-
-
-    async def _get_key(self, s3_url: str) -> str:
-
-        pattern = (
-            f"https://{settings.s3_bucket}"
-            + r"\.s3\."
-            + settings.aws_region
-            + r"\.amazonaws\.com/"
-            + r"(.+)"
-        )
-        if match:= re.search(pattern, s3_url):
-            return match[1]
 
 
     async def _calculate_file_hash(self, file: File) -> str:
@@ -64,7 +47,7 @@ class DocumentRepository:
             "response": "file added",
             "upload": {
                 "name": file.filename,
-                "s3_url": await self._get_s3_url(key=key),
+                "s3_url": await _get_s3_url(key=key),
                 "size": len(contents),
                 "file_type": file_type,
                 "file_hash": await self._calculate_file_hash(file=file)
@@ -74,7 +57,7 @@ class DocumentRepository:
 
     async def _upload_new_version(self, doc: dict, file: File, contents, file_type: str, new_file_hash: str) -> Dict[str, Any]:
 
-        key = await self._get_key(s3_url=doc["s3_url"])
+        key = await _get_key(s3_url=doc["s3_url"])
 
         self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
 
@@ -82,7 +65,7 @@ class DocumentRepository:
             "response": "file updated",
             "upload": {
                 "name": file.filename,
-                "s3_url": await self._get_s3_url(key=key),
+                "s3_url": await _get_s3_url(key=key),
                 "size": len(contents),
                 "file_type": file_type,
                 "file_hash": new_file_hash
@@ -121,7 +104,7 @@ class DocumentRepository:
 
     async def download(self, s3_url: str, name: str) -> Dict[str, str]:
 
-        key = self._get_key(s3_url=s3_url)
+        key = _get_key(s3_url=s3_url)
 
         try:
             self.s3_client.meta.client.download_file(
