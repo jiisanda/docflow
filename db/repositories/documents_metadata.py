@@ -81,8 +81,7 @@ class DocumentMetadataRepository:
             await self.session.refresh(db_document)
         except IntegrityError as e:
             raise HTTP_404(
-                status_code=status.HTTP_409_CONFLICT,
-                detail=f"Document with name: {document_upload.name} already exists.",
+                msg=f"Document with name: {document_upload.name} already exists.",
             ) from e
 
         db_document_dict = db_document.__dict__
