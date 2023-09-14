@@ -5,6 +5,7 @@
 - [ ] Add logging
 - [ ] Handle Exceptions and Error in documents.py
 - [ ] Add DocStrings
+- [ ] Rate Limiting
 
 ## Features
 
