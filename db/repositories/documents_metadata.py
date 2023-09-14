@@ -5,7 +5,7 @@ from fastapi import status, HTTPException
 from sqlalchemy import select, join, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import aliased, class_mapper
+from sqlalchemy.orm import aliased
 
 from core.exceptions import HTTP_409, HTTP_404
 from db.tables.documents_metadata import DocumentMetadata
