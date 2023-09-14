@@ -1,8 +1,11 @@
+from uuid import UUID
+
 import pytest
 
 from fastapi import status
 
 from db.repositories.documents_metadata import DocumentMetadataRepository
+
 
 @pytest.mark.asyncio
 async def test_get_documents_metadata(async_client):
@@ -85,7 +88,7 @@ async def test_update_document_metadata(async_client, upload_document_metadata):
 async def test_get_document_paginated(db_session, async_client, upload_document_client):
     repository = DocumentMetadataRepository(db_session)
     for document in upload_document_client(_qty=4):
-        await repository.create(document)
+        await (repository.upload(document))
 
     response_page_1 = await async_client.get("/api/document-metadata/documents?limit=2&offset=2")
     assert len(response_page_1.json()) == 2

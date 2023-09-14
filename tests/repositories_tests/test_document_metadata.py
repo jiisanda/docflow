@@ -1,11 +1,12 @@
 import pytest
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
-from db.errors import EntityDoesNotExist
-from db.repositories.document_metadata import DocumentMetadataRepository
-from schemas.document_metadata import DocumentMetadataPatch
+from core.exceptions import HTTP_404
+from db.repositories.documents_metadata import DocumentMetadataRepository
+
 
 @pytest.mark.asyncio
 async def test_upload_document_metadata(async_client: AsyncSession, upload_document_metadata):
@@ -27,9 +28,9 @@ async def test_upload_document_metadata(async_client: AsyncSession, upload_docum
 async def test_get_documents_metadata(async_client: AsyncSession, upload_document_metadata):
     document = upload_document_metadata()
     repository = DocumentMetadataRepository(async_client)
-    await repository.upload_document_metadata(document)
+    await repository.upload(document)
 
-    response = await repository.list()
+    response = await repository.doc_list()
 
     assert isinstance(response, list)
     assert response[0].name == document.name
@@ -41,8 +42,8 @@ async def test_get_document_metadata(async_client: AsyncSession, upload_document
     document = upload_document_metadata()
     repository = DocumentMetadataRepository(async_client)
 
-    document_uploaded = await repository.upload_document_metadata(document)
-    response = await repository.get_document_metadata(document_id=document.id)
+    document_uploaded = await repository.upload(document)
+    response = await repository.get(document=document.id)
 
     assert document_uploaded == response
 
@@ -51,8 +52,8 @@ async def test_get_document_metadata(async_client: AsyncSession, upload_document
 async def test_get_document_metadata_not_found(async_client: AsyncSession):
     repository = DocumentMetadataRepository(async_client)
 
-    with pytest.raises(expected_exception=EntityDoesNotExist):
-        await repository.get_document_metadata(document_id=uuid4())
+    with pytest.raises(expected_exception=HTTP_404()):
+        await repository.get(document=uuid4())
 
 
 @pytest.mark.asyncio
@@ -60,10 +61,10 @@ async def test_soft_delete_transaction(async_client: AsyncSession, upload_docume
     document = upload_document_metadata()
     repository = DocumentMetadataRepository(async_client)
 
-    response = await repository.upload_document_metadata(document)
+    response = await repository.upload(document)
 
-    delete_response = await repository.delete_document_metadata(document_id=response.id)
+    delete_response = await repository.delete(document=response.id)
 
     assert delete_response is None
-    with pytest.raises(expected_exception=EntityDoesNotExist):
-        await repository.get_document_metadata(document_id=response.id)
+    with pytest.raises(expected_exception=HTTP_404()):
+        await repository.get(document=response.id)
