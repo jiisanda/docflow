@@ -2,8 +2,10 @@ from typing import Union
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
+from fastapi.responses import RedirectResponse
 
 from api.dependencies.repositories import get_repository
+from core.exceptions import HTTP_404
 from db.repositories.documents_metadata import DocumentMetadataRepository
 from db.repositories.document_sharing import DocumentSharingRepository
 from schemas.document_sharing import SharingRequest
@@ -13,7 +15,7 @@ router = APIRouter(tags=["Document Sharing"])
 
 
 @router.post(
-    "/{document}",
+    "/share/{document}",
     status_code=status.HTTP_200_OK,
     name="share_document"
 )
@@ -37,3 +39,14 @@ async def share_document(
         "personal_url": pre_signed_url,
         "share_this": shareable_link
     }
+
+
+@router.get("/doc/{url_id}", tags=["Document Sharing"])
+async def redirect_to_share(
+        url_id: str,
+        repository: DocumentSharingRepository = Depends(get_repository(DocumentSharingRepository))
+):
+
+    redirect_url = await repository.get_redirect_url(url_id=url_id)
+
+    return RedirectResponse(redirect_url)

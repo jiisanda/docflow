@@ -4,11 +4,13 @@ from random import randint
 from typing import Any, Dict, Union
 
 from botocore.exceptions import NoCredentialsError
-from sqlalchemy import select
+from fastapi import HTTPException
+from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.dependencies.repositories import get_key
 from core.config import settings
+from core.exceptions import HTTP_404
 from db.tables.document_sharing import DocumentSharing
 
 
@@ -36,6 +38,19 @@ class DocumentSharingRepository:
 
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+
+    async def update_visits(self, filename: str, visits_left: int):
+        if visits_left-1 > 0:
+            await self.session.execute(
+                update(DocumentSharing)
+                .where(DocumentSharing.filename == filename)
+                .values(visits=visits_left-1)
+            )
+        elif visits_left-1 == 0:
+            await self.session.execute(
+                delete(DocumentSharing)
+                .where(DocumentSharing.filename == filename)
+            )
 
     async def get_presigned_url(self, doc: Dict[str, Any]) -> Union[str, Dict[str, str]]:
         try:
@@ -84,3 +99,22 @@ class DocumentSharingRepository:
             "shareable_link": f"http://localhost:8000/doc/{response['url_id']}",
             "visits": response["visits"]
         }
+
+    async def get_redirect_url(self, url_id: str):
+
+        stmt = (
+            select(DocumentSharing)
+            .where(DocumentSharing.url_id == url_id)
+        )
+
+        result = await self.session.execute(stmt)
+        try:
+            result = result.scalar_one_or_none().__dict__
+
+            await self.update_visits(filename=result["filename"], visits_left=result["visits"])
+
+            return result["url"]
+        except AttributeError as e:
+            raise HTTP_404(
+                msg="Shared URL link either expired or reached the limit of visits..."
+            ) from e
