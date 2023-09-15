@@ -22,5 +22,6 @@ class DocumentMetadataBase(BaseModel):
 
 class DocumentSharingBase(BaseModel):
     url_id: str
+    filename: str
     url: str
     visits: int

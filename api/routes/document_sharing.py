@@ -27,7 +27,11 @@ async def share_document(
     doc = await metadata_repository.get(document=document)
     visits = share_request.visits
     pre_signed_url = await repository.get_presigned_url(doc=doc.__dict__)
-    shareable_link = await repository.get_shareable_link(url=pre_signed_url, visits=visits)
+    shareable_link = await repository.get_shareable_link(
+        url=pre_signed_url,
+        visits=visits,
+        filename=doc.__dict__["name"]
+    )
 
     return {
         "personal_url": pre_signed_url,
