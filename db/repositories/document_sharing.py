@@ -4,7 +4,6 @@ from random import randint
 from typing import Any, Dict, Union
 
 from botocore.exceptions import NoCredentialsError
-from fastapi import HTTPException
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 

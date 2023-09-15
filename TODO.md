@@ -12,9 +12,9 @@
 - ✅ Document Upload
 - ✅ Document Download
 - ✅ Document Metadata
-- ✅ Document Organization
+- ✅ Document Organization/Searching
 - ✅ Document Versioning
-- 🟥 Document Sharing
+- ✅ Document Sharing
 - 🟥 User Authentication & Authorization
 - 🟥 Access Control List (ACL)
 - 🟥 Document Deletion and Archiving
