@@ -4,7 +4,7 @@ from random import randint
 from typing import Any, Dict, Union
 
 from botocore.exceptions import NoCredentialsError
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.dependencies.repositories import get_key
@@ -28,6 +28,15 @@ class DocumentSharingRepository:
 
         return hash_object.hexdigest()[n:n+6]
 
+    async def _get_saved_links(self, filename: str) -> Dict[str, Any]:
+        stmt = (
+            select(DocumentSharing)
+            .where(DocumentSharing.filename == filename)
+        )
+
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
+
     async def get_presigned_url(self, doc: Dict[str, Any]) -> Union[str, Dict[str, str]]:
         try:
             params = {
@@ -46,24 +55,32 @@ class DocumentSharingRepository:
 
         return response
 
-    async def get_shareable_link(self, url: str, visits: int):
+    async def get_shareable_link(self, url: str, visits: int, filename: str):
+
+        if ans := await self._get_saved_links(filename=filename):
+            ans = ans.__dict__
+            return {
+                "note": "Links already shared...",
+                "response": {
+                    "shareable_link": f"http://localhost:8000/doc/{ans['url_id']}",
+                    "visits_left": ans["visits"]
+                }
+            }
 
         url_id = await self._generate_id(url=url)
         share_entry = DocumentSharing(
             url_id=url_id,
+            filename=filename,
             url=url,
             visits=visits
         )
 
-        try:
-            self.session.add(share_entry)
-            await self.session.commit()
-            await self.session.refresh(share_entry)
-        except IntegrityError as e:
-            raise e
+        self.session.add(share_entry)
+        await self.session.commit()
+        await self.session.refresh(share_entry)
 
         response = share_entry.__dict__
         return {
-            "share_this_link": f"http://localhost:8000/doc/{response['url_id']}",
+            "shareable_link": f"http://localhost:8000/doc/{response['url_id']}",
             "visits": response["visits"]
         }
