@@ -24,4 +24,5 @@ class DocumentSharingBase(BaseModel):
     url_id: str
     filename: str
     url: str
+    expires_at: datetime
     visits: int

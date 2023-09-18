@@ -1,5 +1,6 @@
 import boto3
 import hashlib
+from datetime import datetime, timedelta, timezone
 from random import randint
 from typing import Any, Dict, Union
 
@@ -30,6 +31,7 @@ class DocumentSharingRepository:
         return hash_object.hexdigest()[n:n+6]
 
     async def _get_saved_links(self, filename: str) -> Dict[str, Any]:
+
         stmt = (
             select(DocumentSharing)
             .where(DocumentSharing.filename == filename)
@@ -51,6 +53,17 @@ class DocumentSharingRepository:
                 .where(DocumentSharing.filename == filename)
             )
 
+    async def cleanup_expired_links(self):
+
+        now = datetime.now(timezone.utc)
+
+        stmt = (
+            delete(DocumentSharing)
+            .where(DocumentSharing.expires_at <= now)
+        )
+
+        await self.session.execute(stmt)
+
     async def get_presigned_url(self, doc: Dict[str, Any]) -> Union[str, Dict[str, str]]:
         try:
             params = {
@@ -71,10 +84,13 @@ class DocumentSharingRepository:
 
     async def get_shareable_link(self, url: str, visits: int, filename: str):
 
+        # task to clean uo the database for expired links
+        await self.cleanup_expired_links()
+
         if ans := await self._get_saved_links(filename=filename):
             ans = ans.__dict__
             return {
-                "note": "Links already shared...",
+                "note": f"Links already shared... valid Till {ans['expires_at']}",
                 "response": {
                     "shareable_link": f"http://localhost:8000/doc/{ans['url_id']}",
                     "visits_left": ans["visits"]
@@ -86,6 +102,7 @@ class DocumentSharingRepository:
             url_id=url_id,
             filename=filename,
             url=url,
+            expires_at=datetime.now(timezone.utc) + timedelta(seconds=3599),
             visits=visits
         )
 
