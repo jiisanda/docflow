@@ -1,4 +1,5 @@
 import re
+import ulid
 
 from fastapi import Depends
 
@@ -36,3 +37,7 @@ async def get_key(s3_url: str) -> str:
     )
     if match := re.search(pattern, s3_url):
         return match[1]
+
+
+def get_ulid():
+    return str(ulid.ULID())
