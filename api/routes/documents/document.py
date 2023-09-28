@@ -6,8 +6,8 @@ from schemas.documents.documents_metadata import DocumentMetadataRead
 
 from api.dependencies.repositories import get_repository
 from core.exceptions import HTTP_400
-from db.repositories.documents import DocumentRepository
-from db.repositories.documents_metadata import DocumentMetadataRepository
+from db.repositories.documents.documents import DocumentRepository
+from db.repositories.documents.documents_metadata import DocumentMetadataRepository
 
 router = APIRouter(tags=["Document"])
 

@@ -4,7 +4,7 @@ import pytest
 
 from fastapi import status
 
-from db.repositories.documents_metadata import DocumentMetadataRepository
+from db.repositories.documents.documents_metadata import DocumentMetadataRepository
 
 
 @pytest.mark.asyncio

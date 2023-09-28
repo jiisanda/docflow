@@ -5,7 +5,7 @@ from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
 
 from api.dependencies.repositories import get_repository
 from core.exceptions import HTTP_404
-from db.repositories.documents_metadata import DocumentMetadataRepository
+from db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead, DocumentMetadataPatch
 
 

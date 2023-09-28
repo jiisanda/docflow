@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, status, Query
 
 from api.dependencies.repositories import get_repository
-from db.repositories.documents_metadata import DocumentMetadataRepository
-from db.repositories.document_organization import DocumentOrgRepository
+from db.repositories.documents.documents_metadata import DocumentMetadataRepository
+from db.repositories.documents.document_organization import DocumentOrgRepository
 
 router = APIRouter(tags=["Document Search"])
 
