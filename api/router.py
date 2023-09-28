@@ -8,7 +8,7 @@ from api.routes.document_sharing import router as document_sharing_router
 
 router = APIRouter()
 
-router.include_router(auth_router, prefix="/user")
+router.include_router(auth_router, prefix="/u")
 router.include_router(documents_router, prefix="/document")
 router.include_router(documents_metadata_router, prefix="/document-metadata")
 router.include_router(document_organization_router, prefix="/search")
