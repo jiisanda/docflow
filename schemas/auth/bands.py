@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Annotated
 from ulid import ULID
 
@@ -15,3 +16,8 @@ class UserAuth(BaseModel):
 
 class UserOut(BaseModel):
     id: PydanticULID
+    email: EmailStr
+    user_since: datetime
+
+    class Config:
+        orm_mode = True
