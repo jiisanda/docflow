@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from schemas.documents_metadata import DocumentMetadataCreate
+from schemas.documents.documents_metadata import DocumentMetadataCreate
 
 
 def test_document_metadata_instance_empty():

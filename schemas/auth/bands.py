@@ -20,4 +20,4 @@ class UserOut(BaseModel):
     user_since: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

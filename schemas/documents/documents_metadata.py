@@ -3,7 +3,7 @@ from typing import List, Optional
 from uuid import UUID
 
 from db.tables.base_class import StatusEnum
-from schemas.bands import DocumentMetadataBase
+from schemas.documents.bands import DocumentMetadataBase
 
 
 class DocumentMetadataCreate(DocumentMetadataBase):

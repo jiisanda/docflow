@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 
 from api.routes.auth.auth import router as auth_router
-from api.routes.documents_metadata import router as documents_metadata_router
-from api.routes.documents import router as documents_router
-from api.routes.document_organization import router as document_organization_router
-from api.routes.document_sharing import router as document_sharing_router
+from api.routes.documents.documents_metadata import router as documents_metadata_router
+from api.routes.documents.document import router as documents_router
+from api.routes.documents.document_organization import router as document_organization_router
+from api.routes.documents.document_sharing import router as document_sharing_router
 
 router = APIRouter()
 

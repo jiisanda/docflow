@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from core.config import settings
-from schemas.documents_metadata import DocumentMetadataCreate
+from schemas.documents.documents_metadata import DocumentMetadataCreate
 from db.models import metadata
 
 test_db = (

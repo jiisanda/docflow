@@ -4,7 +4,7 @@ from fastapi.responses import FileResponse
 from api.router import router
 from core.config import settings
 from db.models import Base, engine
-from db.tables.documents_metadata import create_table
+from db.tables.documents.documents_metadata import create_table
 
 Base.metadata.create_all(bind=engine)
 

@@ -8,9 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
 from core.exceptions import HTTP_409, HTTP_404
-from db.tables.documents_metadata import DocumentMetadata
+from db.tables.documents.documents_metadata import DocumentMetadata
 from db.tables.base_class import StatusEnum
-from schemas.documents_metadata import DocumentMetadataCreate, DocumentMetadataPatch, DocumentMetadataRead
+from schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataPatch, DocumentMetadataRead
 
 
 class DocumentMetadataRepository:

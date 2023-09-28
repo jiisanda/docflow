@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.dependencies.repositories import get_key
 from core.config import settings
 from core.exceptions import HTTP_404
-from db.tables.document_sharing import DocumentSharing
+from db.tables.documents.document_sharing import DocumentSharing
 
 
 class DocumentSharingRepository:

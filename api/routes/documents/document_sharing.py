@@ -7,7 +7,7 @@ from fastapi.responses import RedirectResponse
 from api.dependencies.repositories import get_repository
 from db.repositories.documents_metadata import DocumentMetadataRepository
 from db.repositories.document_sharing import DocumentSharingRepository
-from schemas.document_sharing import SharingRequest
+from schemas.documents.document_sharing import SharingRequest
 
 
 router = APIRouter(tags=["Document Sharing"])

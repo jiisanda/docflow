@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from schemas.bands import DocumentSharingBase
+from schemas.documents.bands import DocumentSharingBase
 
 
 class DocumentSharingCreate(DocumentSharingBase):

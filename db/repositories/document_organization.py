@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Union
 
 from api.dependencies.constants import SUPPORTED_FILE_TYPES
-from schemas.documents_metadata import DocumentMetadataRead
+from schemas.documents.documents_metadata import DocumentMetadataRead
 
 
 class DocumentOrgRepository:

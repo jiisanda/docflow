@@ -2,7 +2,7 @@ from typing import Dict, Optional, Union
 
 from fastapi import APIRouter, status, File, UploadFile, Depends
 
-from schemas.documents_metadata import DocumentMetadataRead
+from schemas.documents.documents_metadata import DocumentMetadataRead
 
 from api.dependencies.repositories import get_repository
 from core.exceptions import HTTP_400
