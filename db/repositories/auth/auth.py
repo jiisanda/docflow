@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.dependencies.auth_utils import get_hashed_password, verify_password, create_access_token, create_refresh_token
-from core.exceptions import HTTP_400
+from core.exceptions import HTTP_400, HTTP_403
 from db.tables.auth.auth import User
 from schemas.auth.bands import UserOut, UserAuth
 
@@ -56,11 +56,11 @@ class AuthRepository:
     async def login(self, ipdata):
         user = await self._get_user(field="username", detail=ipdata.username)
         if user is None:
-            raise HTTP_400(msg="Recheck the credentials")
+            raise HTTP_403(msg="Recheck the credentials")
         user = user.__dict__
         hashed_password = user.get("password")
         if not verify_password(password=ipdata.password, hashed_password=hashed_password):
-            raise HTTP_400("Incorrect Password")
+            raise HTTP_403("Incorrect Password")
 
         return {
             "token_type": "bearer",

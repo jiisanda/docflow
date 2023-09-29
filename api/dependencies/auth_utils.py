@@ -1,14 +1,20 @@
 from datetime import datetime, timedelta
 from typing import Any, Union
 
-from jose import jwt
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt, JWTError
 from passlib.context import CryptContext
 
 from core.config import settings
+from core.exceptions import HTTP_401
+from schemas.auth.bands import TokenData
 
 
 # Password Hashing
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# oauth2 scheme
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
 
 def get_hashed_password(password: str) -> str:
@@ -39,3 +45,27 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: timedelta = No
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encode_jwt = jwt.encode(to_encode, settings.jwt_secret_key, settings.algorithm)
     return encode_jwt
+
+
+def verify_access_token(token: str, credentials_exception):
+    try:
+        payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.algorithm])
+        username = payload.get("username")
+        if username is None:
+            raise credentials_exception
+        token_data = TokenData(username=username)
+    except JWTError:
+        raise credentials_exception
+
+    return token_data
+
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTP_401(
+        msg="Could not validate credentials",
+        headers={
+            "WWW-Authenticate": "Bearer"
+        }
+    )
+
+    return verify_access_token(token=token, credentials_exception=credentials_exception)
