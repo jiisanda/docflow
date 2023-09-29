@@ -64,6 +64,6 @@ class AuthRepository:
 
         return {
             "token_type": "bearer",
-            "access_token": create_access_token(user.get("username")),
-            "refresh_token": create_refresh_token(user.get("username"))
+            "access_token": create_access_token(subject={"id": user.get("id"), "username": user.get("username")}),
+            "refresh_token": create_refresh_token(subject={"id": user.get("id"), "username": user.get("username")})
         }
