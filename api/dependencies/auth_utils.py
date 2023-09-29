@@ -62,7 +62,6 @@ def verify_access_token(token: str, credentials_exception):
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
-    print(token)
     credentials_exception = HTTP_401(
         msg="Could not validate credentials",
         headers={
