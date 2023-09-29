@@ -14,7 +14,7 @@ from schemas.auth.bands import TokenData
 # Password Hashing
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # oauth2 scheme
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login', scheme_name="JWT")
 
 
 def get_hashed_password(password: str) -> str:
