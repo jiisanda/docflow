@@ -19,7 +19,6 @@ router = APIRouter(tags=["User Auth"])
 )
 async def signup(
     data: UserAuth,
-    db: AsyncSession = Depends(get_db),
     repository: AuthRepository = Depends(get_repository(AuthRepository))
 ):
 
@@ -32,8 +31,12 @@ async def signup(
     name="login",
     summary="Create access and refresh tokens for user"
 )
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    ...
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    repository: AuthRepository = Depends(get_repository(AuthRepository))
+):
+
+    return await repository.login(ipdata=form_data)
 
 
 @router.get(
