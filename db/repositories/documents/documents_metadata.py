@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -10,6 +10,7 @@ from sqlalchemy.orm import aliased
 from core.exceptions import HTTP_409, HTTP_404
 from db.tables.documents.documents_metadata import DocumentMetadata
 from db.tables.base_class import StatusEnum
+from schemas.auth.bands import TokenData
 from schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataPatch, DocumentMetadataRead
 
 
@@ -21,18 +22,20 @@ class DocumentMetadataRepository:
         self.session = session
         self.doc_cls = aliased(DocumentMetadata, name="doc_cls")
 
-    async def _get_instance(self, document: Union[str, UUID]):
+    async def _get_instance(self, document: Union[str, UUID], owner: TokenData):
 
         try:
             UUID(str(document))
             stmt = (
                 select(self.doc_cls)
+                .where(self.doc_cls.owner_id == owner.id)
                 .where(self.doc_cls._id == document)
                 .where(self.doc_cls.status != StatusEnum.deleted)
             )
         except ValueError:
             stmt = (
                 select(self.doc_cls)
+                .where(self.doc_cls.owner_id == owner.id)
                 .where(self.doc_cls.name == document)
                 .where(self.doc_cls.status != StatusEnum.deleted)
             )
@@ -83,14 +86,17 @@ class DocumentMetadataRepository:
 
         return DocumentMetadataRead(**db_document.__dict__)
 
-    async def doc_list(self, limit: int = 10, offset: int = 0) -> List[DocumentMetadataRead]:
+    async def doc_list(
+            self, owner: TokenData, limit: int = 10, offset: int = 0
+    ) -> Dict[str, Union[List[DocumentMetadataRead], Any]]:
 
         stmt = (
             select(self.doc_cls)
             .select_from(
-                join(DocumentMetadata, self.doc_cls, DocumentMetadata._id == self.doc_cls._id)        # Adjusting the
+                join(DocumentMetadata, self.doc_cls, DocumentMetadata._id == self.doc_cls._id)  # Adjusting the
                 # join condition
             )
+            .where(DocumentMetadata.owner_id == owner.id)
             .where(DocumentMetadata.status != StatusEnum.deleted)
             .offset(offset)
             .limit(limit)
@@ -102,16 +108,20 @@ class DocumentMetadataRepository:
 
             for each in result_list:
                 each.doc_cls.__dict__.pop('_sa_instance_state', None)
-
-            return [DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list]
+            result = [DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list]
+            response = {
+                f"documents of {owner.username}": result,
+                "no_of_docs": len(result)
+            }
+            return response
         except Exception as e:
             raise HTTP_404(
                 msg="No Documents found"
             ) from e
 
-    async def get(self, document: Union[str, UUID]) -> Union[DocumentMetadataRead, HTTPException]:
+    async def get(self, document: Union[str, UUID], owner: TokenData) -> Union[DocumentMetadataRead, HTTPException]:
 
-        db_document = await self._get_instance(document=document)
+        db_document = await self._get_instance(document=document, owner=owner)
 
         if db_document is None:
             return HTTP_409(
@@ -121,13 +131,13 @@ class DocumentMetadataRepository:
         return DocumentMetadataRead(**db_document.__dict__)
 
     async def patch(
-            self, document: Union[str, UUID], document_patch: DocumentMetadataPatch
+            self, document: Union[str, UUID], document_patch: DocumentMetadataPatch, owner: TokenData
     ) -> Union[DocumentMetadataRead, HTTPException]:
         """
         TODO: To add user permissions for patching
         """
 
-        db_document = await self._get_instance(document=document)
+        db_document = await self._get_instance(document=document, owner=owner)
 
         changes = await self._extract_changes(document_patch)
         if changes:
@@ -135,9 +145,9 @@ class DocumentMetadataRepository:
 
         return DocumentMetadataRead(**db_document.__dict__)
 
-    async def delete(self, document: Union[str, UUID]) -> None:
+    async def delete(self, document: Union[str, UUID], owner: TokenData) -> None:
 
-        db_document = await self._get_instance(document=document)
+        db_document = await self._get_instance(document=document, owner=owner)
 
         setattr(db_document, "status", StatusEnum.deleted)
         self.session.add(db_document)
