@@ -10,6 +10,7 @@ from api.dependencies.constants import SUPPORTED_FILE_TYPES
 from api.dependencies.repositories import get_key, get_s3_url
 from core.config import settings
 from core.exceptions import HTTP_400, HTTP_404
+from schemas.auth.bands import TokenData
 
 
 class DocumentRepository:
@@ -34,18 +35,21 @@ class DocumentRepository:
 
         return hashlib.sha256(contents).hexdigest()
 
-    async def _upload_new_file(self, file: File, folder: str, contents, file_type: str) -> Dict[str, Any]:
+    async def _upload_new_file(
+            self, file: File, folder: str, contents, file_type: str, user: TokenData
+    ) -> Dict[str, Any]:
 
         if folder is None:
-            key = f"username/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
+            key = f"{user.id}/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
         else:
-            key = f"username/{folder}/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
+            key = f"{user.id}/{folder}/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
 
         self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
 
         return {
             "response": "file added",
             "upload": {
+                "owner_id": user.id,
                 "name": file.filename,
                 "s3_url": await get_s3_url(key=key),
                 "size": len(contents),
@@ -73,7 +77,7 @@ class DocumentRepository:
             }
         }
 
-    async def upload(self, metadata_repo, file: File, folder: str) -> Dict[str, Any]:
+    async def upload(self, metadata_repo, file: File, folder: str, user: TokenData) -> Dict[str, Any]:
 
         file_type = file.content_type
         if file_type not in SUPPORTED_FILE_TYPES:
@@ -83,10 +87,12 @@ class DocumentRepository:
 
         contents = file.file.read()
 
-        doc = (await metadata_repo.get(document=file.filename)).__dict__
+        doc = (await metadata_repo.get(document=file.filename, owner=user)).__dict__
 
         if "status_code" in doc.keys():
-            return await self._upload_new_file(file=file, folder=folder, contents=contents, file_type=file_type)
+            return await self._upload_new_file(
+                file=file, folder=folder, contents=contents, file_type=file_type, user=user
+            )
 
         print("File already present, checking if there is an update...")
 

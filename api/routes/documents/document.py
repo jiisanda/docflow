@@ -4,10 +4,12 @@ from fastapi import APIRouter, status, File, UploadFile, Depends
 
 from schemas.documents.documents_metadata import DocumentMetadataRead
 
+from api.dependencies.auth_utils import get_current_user
 from api.dependencies.repositories import get_repository
 from core.exceptions import HTTP_400
 from db.repositories.documents.documents import DocumentRepository
 from db.repositories.documents.documents_metadata import DocumentMetadataRepository
+from schemas.auth.bands import TokenData
 
 router = APIRouter(tags=["Document"])
 
@@ -23,6 +25,7 @@ async def upload(
     folder: Optional[str] = None,
     repository: DocumentRepository = Depends(DocumentRepository),
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    user: TokenData = Depends(get_current_user)
 ) -> Union[DocumentMetadataRead, Dict[str, str]]:
 
     if not file:
@@ -30,7 +33,7 @@ async def upload(
             msg="No input file..."
         )
 
-    response = await repository.upload(metadata_repo=metadata_repository, file=file, folder=folder)
+    response = await repository.upload(metadata_repo=metadata_repository, file=file, folder=folder, user=user)
     if response["response"] == "file added":
         return await metadata_repository.upload(document_upload=response["upload"])
     elif response["response"] == "file updated":
