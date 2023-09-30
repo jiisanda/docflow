@@ -2,9 +2,9 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from typing import List, Optional
-from sqlalchemy import Column, String, Integer, ARRAY, text, DateTime, Enum
+from sqlalchemy import Column, String, Integer, ARRAY, text, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Mapped, relationship
 
 from core.config import settings
 from db.models import Base, metadata, engine
@@ -15,7 +15,8 @@ class DocumentMetadata(Base):
     __tablename__ = "document_metadata"
 
     _id: UUID = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, index=True, nullable=False)
-    name: str = Column(String, unique=True)
+    owner_id: Mapped[str] = Column(String, ForeignKey("users.id"), nullable=False)
+    name: str = Column(String)
     s3_url: str = Column(String, unique=True)
     created_at = Column(
         DateTime(timezone=True),
@@ -30,21 +31,9 @@ class DocumentMetadata(Base):
     status: Enum = Column(Enum(StatusEnum), default=StatusEnum.private)
     file_hash: Optional[str] = Column(String)
 
-
-def create_document():
-    document_metadata = DocumentMetadata(
-        name="codeakey_logo.png",
-        s3_url=f"s3://{settings.s3_bucket}/codeakey_logo.png",
-        status="private",
-        file_hash="1234567890",
-    )
-
-    with Session(engine) as session:
-        session.add(document_metadata)
-        session.commit()
+    owner = relationship("User", back_populates="owner_of")
 
 
 def create_table():
     metadata.drop_all(engine)
     metadata.create_all(engine)
-    create_document()

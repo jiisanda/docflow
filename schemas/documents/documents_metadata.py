@@ -7,6 +7,7 @@ from schemas.documents.bands import DocumentMetadataBase
 
 
 class DocumentMetadataCreate(DocumentMetadataBase):
+    owner_id: Optional[str] = None
     name: str
     s3_url: str
 
