@@ -45,7 +45,6 @@ async def upload(
 
 @router.get(
     "/download",
-    # response_model=Union[Dict[str, str], Exception],
     status_code=status.HTTP_200_OK,
     name="download_document"
 )
@@ -54,7 +53,7 @@ async def download(
     repository: DocumentRepository = Depends(DocumentRepository),
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
     user: TokenData = Depends(get_current_user),
-):
+) -> object:
 
     if not file_name:
         raise HTTP_400(
