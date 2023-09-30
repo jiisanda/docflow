@@ -6,7 +6,7 @@ from schemas.documents.documents_metadata import DocumentMetadataRead
 
 from api.dependencies.auth_utils import get_current_user
 from api.dependencies.repositories import get_repository
-from core.exceptions import HTTP_400
+from core.exceptions import HTTP_400, HTTP_404
 from db.repositories.documents.documents import DocumentRepository
 from db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from schemas.auth.bands import TokenData
@@ -37,12 +37,15 @@ async def upload(
     if response["response"] == "file added":
         return await metadata_repository.upload(document_upload=response["upload"])
     elif response["response"] == "file updated":
-        return await metadata_repository.patch(document=response["upload"]["name"], document_patch=response["upload"])
+        return await metadata_repository.patch(
+            document=response["upload"]["name"], document_patch=response["upload"], owner=user
+        )
     return response
 
 
 @router.get(
     "/download",
+    # response_model=Union[Dict[str, str], Exception],
     status_code=status.HTTP_200_OK,
     name="download_document"
 )
@@ -50,13 +53,18 @@ async def download(
     file_name: str,
     repository: DocumentRepository = Depends(DocumentRepository),
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-) -> Dict[str, str]:
+    user: TokenData = Depends(get_current_user),
+):
 
     if not file_name:
         raise HTTP_400(
             msg="No file name..."
         )
+    try:
+        get_document_metadata = dict(await metadata_repository.get(document=file_name, owner=user))
 
-    get_document_metadata = dict(await metadata_repository.get(document=file_name))
-
-    return await repository.download(s3_url=get_document_metadata["s3_url"], name=get_document_metadata["name"])
+        return await repository.download(s3_url=get_document_metadata["s3_url"], name=get_document_metadata["name"])
+    except Exception as e:
+        raise HTTP_404(
+            msg=f"No file with {file_name}"
+        )
