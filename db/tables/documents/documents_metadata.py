@@ -14,7 +14,7 @@ from db.tables.base_class import StatusEnum
 class DocumentMetadata(Base):
     __tablename__ = "document_metadata"
 
-    _id: UUID = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, index=True, nullable=False)
+    id: UUID = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, index=True, nullable=False)
     owner_id: Mapped[str] = Column(String, ForeignKey("users.id"), nullable=False)
     name: str = Column(String)
     s3_url: str = Column(String, unique=True)

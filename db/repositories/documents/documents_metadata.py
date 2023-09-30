@@ -29,7 +29,7 @@ class DocumentMetadataRepository:
             stmt = (
                 select(self.doc_cls)
                 .where(self.doc_cls.owner_id == owner.id)
-                .where(self.doc_cls._id == document)
+                .where(self.doc_cls.id == document)
                 .where(self.doc_cls.status != StatusEnum.deleted)
             )
         except ValueError:
@@ -55,7 +55,7 @@ class DocumentMetadataRepository:
 
         stmt = (
             update(DocumentMetadata)
-            .where(DocumentMetadata._id == db_document._id)
+            .where(DocumentMetadata.id == db_document.id)
             .values(changes)
         )
 
@@ -93,7 +93,7 @@ class DocumentMetadataRepository:
         stmt = (
             select(self.doc_cls)
             .select_from(
-                join(DocumentMetadata, self.doc_cls, DocumentMetadata._id == self.doc_cls._id)  # Adjusting the
+                join(DocumentMetadata, self.doc_cls, DocumentMetadata.id == self.doc_cls.id)  # Adjusting the
                 # join condition
             )
             .where(DocumentMetadata.owner_id == owner.id)
