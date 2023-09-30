@@ -9,6 +9,7 @@ from db.tables.base_class import StatusEnum
 
 class DocumentMetadataBase(BaseModel):
     _id: UUID
+    owner_id: str
     name: str
     s3_url: str
     created_at: datetime

@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Text, TIMESTAMP
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 
 from api.dependencies.repositories import get_ulid
@@ -14,3 +15,5 @@ class User(Base):
     password = Column(Text, nullable=False)
     user_since = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
+
+    owner_of = relationship("DocumentMetadata", back_populates="owner")
