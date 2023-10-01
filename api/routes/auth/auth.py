@@ -1,9 +1,9 @@
 from fastapi import APIRouter, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
+from api.dependencies.auth_utils import get_current_user
 from api.dependencies.repositories import get_repository
-from schemas.auth.bands import UserOut, UserAuth
-from schemas.auth.auth import SystemUser
+from schemas.auth.bands import UserOut, UserAuth, TokenData
 from db.repositories.auth.auth import AuthRepository
 
 router = APIRouter(tags=["User Auth"])
@@ -41,9 +41,14 @@ async def login(
 @router.get(
     "/me",
     status_code=status.HTTP_200_OK,
-    response_model=UserOut,
+    response_model=TokenData,
     name="get_user_data",
     summary="Get details of currently logged in user"
 )
-async def get_me(user: SystemUser = Depends()):
-    ...
+async def get_me(user: TokenData = Depends(get_current_user)):
+    """
+    ~TODO: Add an extra db for user profile then return details
+        For now returning {Userid and Username}
+    """
+
+    return user
