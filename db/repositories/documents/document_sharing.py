@@ -112,7 +112,7 @@ class DocumentSharingRepository:
 
         response = share_entry.__dict__
         return {
-            "shareable_link": f"http://localhost:8000/doc/{response['url_id']}",
+            "shareable_link": f"http://localhost:8000/api/doc/{response['url_id']}",
             "visits": response["visits"]
         }
 
