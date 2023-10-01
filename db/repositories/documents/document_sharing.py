@@ -92,7 +92,7 @@ class DocumentSharingRepository:
             return {
                 "note": f"Links already shared... valid Till {ans['expires_at']}",
                 "response": {
-                    "shareable_link": f"http://localhost:8000/doc/{ans['url_id']}",
+                    "shareable_link": f"{settings.host_url}/{settings.api_prefix}/doc/{ans['url_id']}",
                     "visits_left": ans["visits"]
                 }
             }
@@ -112,7 +112,7 @@ class DocumentSharingRepository:
 
         response = share_entry.__dict__
         return {
-            "shareable_link": f"http://localhost:8000/api/doc/{response['url_id']}",
+            "shareable_link": f"{settings.host_url}/{settings.api_prefix}/doc/{response['url_id']}",
             "visits": response["visits"]
         }
 
