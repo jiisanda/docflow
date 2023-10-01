@@ -10,11 +10,7 @@
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 ![Github Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)
-
-
-API Docs: [Here](https://documenter.getpostman.com/view/26734208/2s9Y5cuLzE)
 
 DocFlow is a powerful Document Management API designed to streamline document handling, including seamless uploading, downloading, organization, versioning, sharing, and more.
 
@@ -32,23 +28,26 @@ DocFlow is a powerful Document Management API designed to streamline document ha
 - 💡 Full Text Search
 - 💡 Text Analysis and OCR
 
+## 📖 API Documentation
+Explore the [API Documentation](https://documenter.getpostman.com/view/26734208/2s9Y5cuLzE) for detailed information on how to use DocFlow's features.
+
 ## 🧩 Implementation Detail
 
 
-| Features                         | Implementation Detail |
-|----------------------------------|-----------------------|
-| Upload                           | [Detail]()            |
-| Download                         |                       |
-| Organization/Searching a Doc     |                       |
-| Versioning                       |                       |
-| Sharing                          | [Detail]()            |
-| Authorization and Authentication |                       |
-| Access Control List              |                       |
-| Deletion and Archiving           |                       |
-| Send File via Email              |                       |
-| Conversion to PDF                |                       |
-| Full Text Search                 |                       |
-| Text Analysis and OCR            |                       |
+| Features                         | Implementation Detail                                           |
+|----------------------------------|-----------------------------------------------------------------|
+| Upload                           | [Detail](https://github.com/jiisanda/docflow#-document-upload)  |
+| Download                         |                                                                 |
+| Organization/Searching a Doc     |                                                                 |
+| Versioning                       |                                                                 |
+| Sharing                          | [Detail](https://github.com/jiisanda/docflow#-document-sharing) |
+| Authorization and Authentication |                                                                 |
+| Access Control List              |                                                                 |
+| Deletion and Archiving           |                                                                 |
+| Send File via Email              |                                                                 |
+| Conversion to PDF                |                                                                 |
+| Full Text Search                 |                                                                 |
+| Text Analysis and OCR            |                                                                 |
 
 
 ### 📤 Document Upload
