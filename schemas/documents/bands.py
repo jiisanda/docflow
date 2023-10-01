@@ -27,3 +27,9 @@ class DocumentSharingBase(BaseModel):
     url: str
     expires_at: datetime
     visits: int
+
+
+class DocumentMetadataPatch(BaseModel):
+    name: str = None
+    tags: Optional[List[str]] = None
+    categories: Optional[List[str]] = None

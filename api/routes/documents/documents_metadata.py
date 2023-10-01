@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 from uuid import UUID
 
 from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
@@ -8,7 +8,8 @@ from api.dependencies.auth_utils import get_current_user
 from core.exceptions import HTTP_404
 from db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from schemas.auth.bands import TokenData
-from schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead, DocumentMetadataPatch
+from schemas.documents.bands import DocumentMetadataPatch
+from schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead
 
 
 router = APIRouter(tags=["Document MetaData"])
@@ -79,7 +80,8 @@ async def update_doc_metadata_details(
 
     return await repository.patch(
         document=document,
-        document_patch=document_patch
+        document_patch=document_patch,
+        owner=user
     )
 
 

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -11,7 +11,8 @@ from core.exceptions import HTTP_409, HTTP_404
 from db.tables.documents.documents_metadata import DocumentMetadata
 from db.tables.base_class import StatusEnum
 from schemas.auth.bands import TokenData
-from schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataPatch, DocumentMetadataRead
+from schemas.documents.bands import DocumentMetadataPatch
+from schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead
 
 
 class DocumentMetadataRepository:
