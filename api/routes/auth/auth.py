@@ -1,8 +1,7 @@
 from fastapi import APIRouter, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.dependencies.repositories import get_db, get_repository
+from api.dependencies.repositories import get_repository
 from schemas.auth.bands import UserOut, UserAuth
 from schemas.auth.auth import SystemUser
 from db.repositories.auth.auth import AuthRepository

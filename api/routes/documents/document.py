@@ -66,4 +66,4 @@ async def download(
     except Exception as e:
         raise HTTP_404(
             msg=f"No file with {file_name}"
-        )
+        ) from e

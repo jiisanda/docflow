@@ -11,7 +11,7 @@ class LogConfig(BaseSettings):
 
     BASE_DIR = abspath(dirname(__file__))
 
-    LOG_FILE: str = join(BASE_DIR + "\logs", "docflow.log")
+    LOG_FILE: str = join(BASE_DIR + '\logs', "docflow.log")
 
     # logging config
     version = 1

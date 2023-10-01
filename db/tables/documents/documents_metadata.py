@@ -4,9 +4,8 @@ from uuid import uuid4
 from typing import List, Optional
 from sqlalchemy import Column, String, Integer, ARRAY, text, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Session, Mapped, relationship
+from sqlalchemy.orm import Mapped, relationship
 
-from core.config import settings
 from db.models import Base, metadata, engine
 from db.tables.base_class import StatusEnum
 
