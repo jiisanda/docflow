@@ -16,7 +16,7 @@
 - ✅ Document Versioning
 - ✅ Document Sharing
 - ✅ User Authorization
-- 🟥 User Authentication
+- ✅ User Authentication
 - 🟥 Access Control List (ACL)
 - 🟥 Document Deletion and Archiving
 - 🟥 Document Preview
