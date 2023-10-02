@@ -21,15 +21,16 @@ class DocumentMetadataBase(BaseModel):
     file_hash: Optional[str]
 
 
+class DocumentMetadataPatch(BaseModel):
+    name: str = None
+    tags: Optional[List[str]] = None
+    categories: Optional[List[str]] = None
+
+
 class DocumentSharingBase(BaseModel):
     url_id: str
     filename: str
     url: str
     expires_at: datetime
     visits: int
-
-
-class DocumentMetadataPatch(BaseModel):
-    name: str = None
-    tags: Optional[List[str]] = None
-    categories: Optional[List[str]] = None
+    share_to: Optional[List[str]] = None

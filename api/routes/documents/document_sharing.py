@@ -29,24 +29,27 @@ async def share_document(
     user: TokenData = Depends(get_current_user)
 ):
 
-    doc = await metadata_repository.get(document=document, owner=user)
-    if doc:
+    try:
+        doc = await metadata_repository.get(document=document, owner=user)
+
         visits = share_request.visits
+        share_to = share_request.share_to
         pre_signed_url = await repository.get_presigned_url(doc=doc.__dict__)
         shareable_link = await repository.get_shareable_link(
             url=pre_signed_url,
             visits=visits,
-            filename=doc.__dict__["name"]
+            filename=doc.__dict__["name"],
+            share_to=share_to,
         )
 
         return {
             "personal_url": pre_signed_url,
             "share_this": shareable_link
         }
-    else:
+    except Exception as e:
         raise HTTP_404(
             msg=f"No doc: {document}"
-        )
+        ) from e
 
 
 @router.get("/doc/{url_id}", tags=["Document Sharing"])

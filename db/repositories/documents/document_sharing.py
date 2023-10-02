@@ -2,7 +2,7 @@ import boto3
 import hashlib
 from datetime import datetime, timedelta, timezone
 from random import randint
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union
 
 from botocore.exceptions import NoCredentialsError
 from sqlalchemy import select, update, delete
@@ -82,7 +82,7 @@ class DocumentSharingRepository:
 
         return response
 
-    async def get_shareable_link(self, url: str, visits: int, filename: str):
+    async def get_shareable_link(self, url: str, visits: int, filename: str, share_to: List[str]):
 
         # task to clean uo the database for expired links
         await self.cleanup_expired_links()
@@ -103,7 +103,8 @@ class DocumentSharingRepository:
             filename=filename,
             url=url,
             expires_at=datetime.now(timezone.utc) + timedelta(seconds=3599),
-            visits=visits
+            visits=visits,
+            share_to=share_to
         )
 
         self.session.add(share_entry)

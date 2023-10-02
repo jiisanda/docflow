@@ -1,5 +1,7 @@
+from typing import List, Optional
+
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ARRAY
 
 from db.models import Base
 
@@ -15,3 +17,4 @@ class DocumentSharing(Base):
         default=datetime.now(timezone.utc),
     )
     visits: int = Column(Integer)
+    share_to: Optional[List[str]] = Column(ARRAY(String))
