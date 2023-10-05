@@ -9,12 +9,15 @@ certifi==2023.7.22
 cffi==1.15.1
 click==8.1.6
 colorama==0.4.6
+contourpy==1.1.0
 cryptography==41.0.4
+cycler==0.11.0
 dill==0.3.7
 dnspython==2.4.2
 ecdsa==0.18.0
 email-validator==2.0.0.post2
 fastapi==0.100.0
+fonttools==4.42.1
 greenlet==2.0.2
 h11==0.14.0
 httpcore==0.17.3
@@ -24,10 +27,14 @@ idna==3.4
 iniconfig==2.0.0
 isort==5.12.0
 jmespath==1.0.1
+kiwisolver==1.4.5
 lazy-object-proxy==1.9.0
+matplotlib==3.7.2
 mccabe==0.7.0
+numpy==1.25.2
 packaging==23.1
 passlib==1.7.4
+Pillow==10.0.0
 platformdirs==3.10.0
 pluggy==1.2.0
 psycopg2==2.9.6
@@ -37,6 +44,7 @@ pydantic==2.1.1
 pydantic-settings==2.0.2
 pydantic_core==2.4.0
 pylint==2.17.5
+pyparsing==3.0.9
 pytest==7.4.0
 pytest-asyncio==0.21.1
 python-dateutil==2.8.2
@@ -44,6 +52,7 @@ python-dotenv==1.0.0
 python-jose==3.3.0
 python-multipart==0.0.6
 python-ulid==1.1.0
+pywin32==306
 PyYAML==6.0.1
 rsa==4.9
 s3transfer==0.6.2

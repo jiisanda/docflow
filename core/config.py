@@ -33,6 +33,11 @@ class GlobalConfig(BaseSettings):
     algorithm: str = os.environ.get("ALGORITHM")
     jwt_secret_key: str = os.environ.get("JWT_SECRET_KEY")
     jwt_refresh_secret_key: str = os.environ.get("JWT_REFRESH_SECRET_KEY")
+    # Email Service
+    smtp_server: str = os.environ.get("SMTP_SERVER")
+    smtp_port: int = os.environ.get("SMTP_PORT")
+    email: str = os.environ.get("EMAIL")
+    pw: str = os.environ.get("PASSWORD")
 
     @property
     def sync_database_url(self) -> str:
