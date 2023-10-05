@@ -123,12 +123,11 @@ class DocumentMetadataRepository:
     async def get(self, document: Union[str, UUID], owner: TokenData) -> Union[DocumentMetadataRead, HTTPException]:
 
         db_document = await self._get_instance(document=document, owner=owner)
-        print("Ara Ara")
         if db_document is None:
             return HTTP_409(
                 msg=f"No Document with {document}"
             )
-        print("Here Here", DocumentMetadataRead(**db_document.__dict__))
+
         return DocumentMetadataRead(**db_document.__dict__)
 
     async def patch(
