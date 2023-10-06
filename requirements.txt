@@ -34,7 +34,7 @@ mccabe==0.7.0
 numpy==1.25.2
 packaging==23.1
 passlib==1.7.4
-Pillow==10.0.0
+Pillow>=10.0.0
 platformdirs==3.10.0
 pluggy==1.2.0
 psycopg2==2.9.6
@@ -63,7 +63,7 @@ sqlalchemy2-stubs==0.0.2a35
 starlette==0.27.0
 tomlkit==0.12.1
 typing_extensions==4.7.1
-urllib3==1.26.16
+urllib3>=1.26.17
 uvicorn==0.23.1
 watchfiles==0.19.0
 websockets==11.0.3
