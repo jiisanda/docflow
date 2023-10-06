@@ -37,7 +37,7 @@ class GlobalConfig(BaseSettings):
     smtp_server: str = os.environ.get("SMTP_SERVER")
     smtp_port: int = os.environ.get("SMTP_PORT")
     email: str = os.environ.get("EMAIL")
-    pw: str = os.environ.get("PASSWORD")
+    app_pw: str = os.environ.get("APP_PASSWORD")
 
     @property
     def sync_database_url(self) -> str:
