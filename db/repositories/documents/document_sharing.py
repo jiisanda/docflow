@@ -8,10 +8,13 @@ from botocore.exceptions import NoCredentialsError
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.dependencies.mail_service import mail_service
 from api.dependencies.repositories import get_key
 from core.config import settings
 from core.exceptions import HTTP_404
+from db.tables.auth.auth import User
 from db.tables.documents.document_sharing import DocumentSharing
+from schemas.auth.bands import TokenData
 
 
 class DocumentSharingRepository:
@@ -20,6 +23,17 @@ class DocumentSharingRepository:
         self.client = boto3.client('s3')
 
         self.session = session
+
+    async def get_user_mail(self, user: TokenData):
+
+        stmt = (
+            select(User)
+            .where(User.id == user.id)
+        )
+
+        execute = await self.session.execute(stmt)
+
+        return execute.scalar_one_or_none().__dict__["email"]
 
     @staticmethod
     async def _generate_id(url: str) -> str:
@@ -92,7 +106,7 @@ class DocumentSharingRepository:
             return {
                 "note": f"Links already shared... valid Till {ans['expires_at']}",
                 "response": {
-                    "shareable_link": f"{settings.host_url}/{settings.api_prefix}/doc/{ans['url_id']}",
+                    "shareable_link": f"{settings.host_url}{settings.api_prefix}/doc/{ans['url_id']}",
                     "visits_left": ans["visits"]
                 }
             }
@@ -113,7 +127,7 @@ class DocumentSharingRepository:
 
         response = share_entry.__dict__
         return {
-            "shareable_link": f"{settings.host_url}/{settings.api_prefix}/doc/{response['url_id']}",
+            "shareable_link": f"{settings.host_url}{settings.api_prefix}/doc/{response['url_id']}",
             "visits": response["visits"]
         }
 
@@ -135,3 +149,16 @@ class DocumentSharingRepository:
             raise HTTP_404(
                 msg="Shared URL link either expired or reached the limit of visits..."
             ) from e
+
+    async def send_mail(self, user: TokenData, mail_to: Union[List[str], None], link: str) -> None:
+
+        if mail_to:
+
+            user_mail = await self.get_user_mail(user)
+            subj = f"DocFlow: {user.username} share a document"
+            content = f"""
+                    Visit the link: {link}, to access the document shared by {user.username} | {user_mail}.
+                    """
+
+            for mails in mail_to:
+                mail_service(mail_to=mails, subject=subj, content=content)

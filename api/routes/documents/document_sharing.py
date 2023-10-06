@@ -42,6 +42,9 @@ async def share_document(
             share_to=share_to,
         )
 
+        # Send email to the receiver
+        await repository.send_mail(user=user, mail_to=share_to, link=shareable_link)
+
         return {
             "personal_url": pre_signed_url,
             "share_this": shareable_link
