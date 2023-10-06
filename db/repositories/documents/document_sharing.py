@@ -55,13 +55,13 @@ class DocumentSharingRepository:
         return result.scalar_one_or_none()
 
     async def update_visits(self, filename: str, visits_left: int):
-        if visits_left-1 > 0:
+        if visits_left > 1:
             await self.session.execute(
                 update(DocumentSharing)
                 .where(DocumentSharing.filename == filename)
                 .values(visits=visits_left-1)
             )
-        elif visits_left-1 == 0:
+        elif visits_left == 1:
             await self.session.execute(
                 delete(DocumentSharing)
                 .where(DocumentSharing.filename == filename)
@@ -96,7 +96,7 @@ class DocumentSharingRepository:
 
         return response
 
-    async def get_shareable_link(self, url: str, visits: int, filename: str, share_to: List[str]):
+    async def get_shareable_link(self, owner_id: str, url: str, visits: int, filename: str, share_to: List[str]):
 
         # task to clean uo the database for expired links
         await self.cleanup_expired_links()
@@ -114,6 +114,7 @@ class DocumentSharingRepository:
         url_id = await self._generate_id(url=url)
         share_entry = DocumentSharing(
             url_id=url_id,
+            owner_id=owner_id,
             filename=filename,
             url=url,
             expires_at=datetime.now(timezone.utc) + timedelta(seconds=3599),
@@ -162,3 +163,25 @@ class DocumentSharingRepository:
 
             for mails in mail_to:
                 mail_service(mail_to=mails, subject=subj, content=content)
+
+    async def confirm_access(self, user: TokenData, url_id: str | None) -> bool:
+        # check if login user is owner or to whom it is shared
+        stmt = (
+            select(DocumentSharing)
+            .where(DocumentSharing.url_id == url_id)
+        )
+
+        result = await self.session.execute(stmt)
+        try:
+            result = result.scalar_one_or_none().__dict__
+            user_mail = await self.get_user_mail(user)
+
+            return (
+                result.get("owner_id") == user.id
+                or user_mail in result.get("share_to")
+                or user.username in result.get("share_to")
+            )
+        except Exception as e:
+            raise HTTP_404(
+                msg="The link has expired..."
+            ) from e
