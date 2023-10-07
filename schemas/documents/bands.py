@@ -19,6 +19,7 @@ class DocumentMetadataBase(BaseModel):
     categories: Optional[List[str]]
     status: StatusEnum
     file_hash: Optional[str]
+    access_to: Optional[List[str]]
 
 
 class DocumentMetadataPatch(BaseModel):
@@ -35,3 +36,17 @@ class DocumentSharingBase(BaseModel):
     expires_at: datetime
     visits: int
     share_to: Optional[List[str]] = None
+
+
+class DocUserAccess(BaseModel):
+    id: str
+    doc_id: UUID
+    user_id: str
+
+    class Config:
+        from_attribute = True
+
+
+class DocUserAccessCreate(BaseModel):
+    doc_id: str
+    user_id: str
