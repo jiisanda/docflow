@@ -10,6 +10,14 @@ from db.models import Base, metadata, engine
 from db.tables.base_class import StatusEnum
 
 
+class DocUserAccess(Base):
+    __tablename__ = "doc_user_access"
+
+    id = Column(Integer, primary_key=True)
+    doc_id: UUID = Column(UUID(as_uuid=True), ForeignKey('document_metadata.id'))
+    user_id: str = Column(String(26), ForeignKey('users.id'))
+
+
 class DocumentMetadata(Base):
     __tablename__ = "document_metadata"
 
@@ -29,7 +37,9 @@ class DocumentMetadata(Base):
     categories: Optional[List[str]] = Column(ARRAY(String))
     status: Enum = Column(Enum(StatusEnum), default=StatusEnum.private)
     file_hash: Optional[str] = Column(String)
+    access_to: Optional[List[str]] = Column(ARRAY(String))
 
+    update_access = relationship("User", secondary=DocUserAccess)
     owner = relationship("User", back_populates="owner_of")
 
 
