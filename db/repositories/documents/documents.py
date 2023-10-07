@@ -90,6 +90,10 @@ class DocumentRepository:
         doc = (await metadata_repo.get(document=file.filename, owner=user)).__dict__
 
         if "status_code" in doc.keys():
+            # getting document irrespective of user
+            get_doc = metadata_repo.get_docs(filename=file.filename)
+            # Check if logged-in user has update access
+
             return await self._upload_new_file(
                 file=file, folder=folder, contents=contents, file_type=file_type, user=user
             )

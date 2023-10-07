@@ -16,9 +16,7 @@ from schemas.documents.documents_metadata import DocumentMetadataCreate, Documen
 
 
 class DocumentMetadataRepository:
-    """
-    TODO: Add the user field for CRUD
-    """
+
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
         self.doc_cls = aliased(DocumentMetadata, name="doc_cls")
@@ -66,6 +64,21 @@ class DocumentMetadataRepository:
             raise HTTP_409(
                 msg=f"Error while updating document: {db_document.name}"
             ) from e
+
+    async def get_docs(self, filename: str) -> Dict[str, Any]:
+        """
+        Get document by filename irrespective of logged-in user
+        @param filename:
+        @return: Dict[str, Any]
+        """
+
+        stmt = (
+            select(DocumentMetadata)
+            .where(DocumentMetadata.name == filename)
+        )
+        result = await self.session.execute(stmt)
+
+        return result.scalar_one_or_none().__dict__
 
     async def upload(self, document_upload: DocumentMetadataCreate) -> DocumentMetadataRead:
         """
