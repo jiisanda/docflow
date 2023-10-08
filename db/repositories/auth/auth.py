@@ -21,7 +21,7 @@ class AuthRepository:
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def _get_user(self, field: str, detail: str):
+    async def get_user(self, field: str, detail: str):
         stmt = ''
         if field == "username":
             stmt = (
@@ -54,7 +54,7 @@ class AuthRepository:
         return new_user
 
     async def login(self, ipdata):
-        user = await self._get_user(field="username", detail=ipdata.username)
+        user = await self.get_user(field="username", detail=ipdata.username)
         if user is None:
             raise HTTP_403(msg="Recheck the credentials")
         user = user.__dict__
