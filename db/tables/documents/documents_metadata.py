@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from typing import List, Optional
-from sqlalchemy import Column, String, Integer, ARRAY, text, DateTime, Enum, ForeignKey
+from sqlalchemy import Column, String, Integer, ARRAY, text, DateTime, Enum, ForeignKey, Table, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, relationship
 
@@ -10,12 +10,13 @@ from db.models import Base, metadata, engine
 from db.tables.base_class import StatusEnum
 
 
-class DocUserAccess(Base):
-    __tablename__ = "doc_user_access"
-
-    id = Column(Integer, primary_key=True)
-    doc_id: UUID = Column(UUID(as_uuid=True), ForeignKey('document_metadata.id'))
-    user_id: str = Column(String(26), ForeignKey('users.id'))
+doc_user_access = Table(
+    'doc_user_access',
+    Base.metadata,
+    Column('doc_id', UUID(as_uuid=True), ForeignKey('document_metadata.id')),
+    Column('user_id', String(26), ForeignKey('users.id')),
+    UniqueConstraint('doc_id', 'user_id', name="uq_doc_user_access_doc_user")
+)
 
 
 class DocumentMetadata(Base):
@@ -39,7 +40,7 @@ class DocumentMetadata(Base):
     file_hash: Optional[str] = Column(String)
     access_to: Optional[List[str]] = Column(ARRAY(String))
 
-    update_access = relationship("User", secondary=DocUserAccess)
+    update_access = relationship("User", secondary=doc_user_access)
     owner = relationship("User", back_populates="owner_of")
 
 

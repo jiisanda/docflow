@@ -12,7 +12,7 @@ class DocumentMetadataCreate(DocumentMetadataBase):
 
 
 class DocumentMetadataRead(DocumentMetadataBase):
-    _id: UUID
+    id: UUID
     name: str
 
     class Config:

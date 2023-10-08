@@ -26,6 +26,7 @@ class DocumentMetadataPatch(BaseModel):
     name: str = None
     tags: Optional[List[str]] = None
     categories: Optional[List[str]] = None
+    access_to: Optional[List[str]] = None
 
 
 class DocumentSharingBase(BaseModel):
