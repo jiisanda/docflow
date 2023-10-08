@@ -2,13 +2,14 @@ from typing import Any, Dict, List, Union
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy import select, join, update
+from sqlalchemy import select, join, update, insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
 from core.exceptions import HTTP_409, HTTP_404
-from db.tables.documents.documents_metadata import DocumentMetadata
+from db.repositories.auth.auth import AuthRepository
+from db.tables.documents.documents_metadata import DocumentMetadata, doc_user_access
 from db.tables.base_class import StatusEnum
 from schemas.auth.bands import TokenData
 from schemas.documents.bands import DocumentMetadataPatch
@@ -81,9 +82,7 @@ class DocumentMetadataRepository:
         return result.scalar_one_or_none().__dict__
 
     async def upload(self, document_upload: DocumentMetadataCreate) -> DocumentMetadataRead:
-        """
-        TODO: To data validation
-        """
+
         if not isinstance(document_upload, dict):
             db_document = DocumentMetadata(**document_upload.model_dump())
         else:
@@ -144,16 +143,34 @@ class DocumentMetadataRepository:
         return DocumentMetadataRead(**db_document.__dict__)
 
     async def patch(
-            self, document: Union[str, UUID], document_patch: DocumentMetadataPatch, owner: TokenData
+            self,
+            document: Union[str, UUID], document_patch: DocumentMetadataPatch, owner: TokenData,
+            user_repo: AuthRepository
     ) -> Union[DocumentMetadataRead, HTTPException]:
-        """
-        TODO: To add user permissions for patching
-        """
 
         db_document = await self._get_instance(document=document, owner=owner)
 
         changes = await self._extract_changes(document_patch)
         if changes:
+            if access_given_to := changes.get("access_to"):
+                # if access_to has email ids, update doc_user_access table with doc_id and user_id
+                for users in access_given_to:
+                    try:
+                        user_id = (await user_repo.get_user(field="email", detail=users)).__dict__["id"]
+                        # update doc_user_access table with doc_id and user_id
+                        stmt = insert(doc_user_access).values(doc_id=db_document.__dict__["id"], user_id=user_id)
+                        try:
+                            await self.session.execute(stmt)
+                            await self.session.commit()
+                        except IntegrityError as e:
+                            raise HTTP_409(
+                                msg=f"User '{users}' already has access..."
+                            ) from e
+                    except AttributeError as e:
+                        raise HTTP_404(
+                            msg=f"The user with '{users}' does not exists, make sure user has account in DocFlow."
+                        ) from e
+
             await self._execute_update(db_document, changes)
 
         return DocumentMetadataRead(**db_document.__dict__)

@@ -6,6 +6,7 @@ from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
 from api.dependencies.repositories import get_repository
 from api.dependencies.auth_utils import get_current_user
 from core.exceptions import HTTP_404
+from db.repositories.auth.auth import AuthRepository
 from db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from schemas.auth.bands import TokenData
 from schemas.documents.bands import DocumentMetadataPatch
@@ -69,6 +70,7 @@ async def update_doc_metadata_details(
     document: Union[str, UUID],
     document_patch: DocumentMetadataPatch = Body(...),
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    user_repository: AuthRepository = Depends(get_repository(AuthRepository)),
     user: TokenData = Depends(get_current_user),
 ) -> Union[DocumentMetadataRead, HTTPException]:
     try:
@@ -81,7 +83,8 @@ async def update_doc_metadata_details(
     return await repository.patch(
         document=document,
         document_patch=document_patch,
-        owner=user
+        owner=user,
+        user_repo=user_repository
     )
 
 
