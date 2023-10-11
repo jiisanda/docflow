@@ -27,4 +27,4 @@ def mail_service(mail_to: str, subject: str, content: str) -> None:
     except Exception as e:
         raise HTTP_500(
             msg="There was some error sending email..."
-        )
+        ) from e

@@ -32,8 +32,8 @@ def create_access_token(subject: Dict[str, Any], expires_delta: timedelta = None
         expires_delta = datetime.utcnow() + timedelta(minutes=settings.access_token_expire_min)
 
     to_encode = {"exp": expires_delta, "id": subject.get("id"), "username": subject.get("username")}
-    encode_jwt = jwt.encode(to_encode, settings.jwt_secret_key, settings.algorithm)
-    return encode_jwt
+
+    return jwt.encode(to_encode, settings.jwt_secret_key, settings.algorithm)
 
 
 def create_refresh_token(subject: Dict[str, Any], expires_delta: timedelta = None) -> str:
@@ -43,8 +43,8 @@ def create_refresh_token(subject: Dict[str, Any], expires_delta: timedelta = Non
         expires_delta = datetime.utcnow() + timedelta(minutes=settings.refresh_token_expire_min)
 
     to_encode = {"exp": expires_delta, "id": subject.get("id"), "username": subject.get("username")}
-    encode_jwt = jwt.encode(to_encode, settings.jwt_secret_key, settings.algorithm)
-    return encode_jwt
+
+    return jwt.encode(to_encode, settings.jwt_secret_key, settings.algorithm)
 
 
 def verify_access_token(token: str, credentials_exception):
@@ -55,8 +55,8 @@ def verify_access_token(token: str, credentials_exception):
         if username is None:
             raise credentials_exception
         token_data = TokenData(id=uid, username=username)
-    except JWTError:
-        raise credentials_exception
+    except JWTError as e:
+        raise credentials_exception from e
 
     return token_data
 

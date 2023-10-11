@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Union
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy import select, join, update, insert
+from sqlalchemy import select, update, insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
@@ -137,10 +137,7 @@ class DocumentMetadataRepository:
 
         stmt = (
             select(self.doc_cls)
-            .select_from(
-                join(DocumentMetadata, self.doc_cls, DocumentMetadata.id == self.doc_cls.id)  # Adjusting the
-                # join condition
-            )
+            .join(DocumentMetadata, DocumentMetadata.id == self.doc_cls.id)
             .where(DocumentMetadata.owner_id == owner.id)
             .where(DocumentMetadata.status != StatusEnum.deleted)
             .offset(offset)
@@ -148,20 +145,19 @@ class DocumentMetadataRepository:
         )
 
         try:
-            result = await self.session.execute(statement=stmt)
+            result = await self.session.execute(stmt)
             result_list = result.fetchall()
 
-            for each in result_list:
-                each.doc_cls.__dict__.pop('_sa_instance_state', None)
+            for row in result_list:
+                row.doc_cls.__dict__.pop('_sa_instance_state', None)
+
             result = [DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list]
             return {
                 f"documents of {owner.username}": result,
                 "no_of_docs": len(result)
             }
         except Exception as e:
-            raise HTTP_404(
-                msg="No Documents found"
-            ) from e
+            raise HTTP_404(msg="No Documents found") from e
 
     async def get(self, document: Union[str, UUID], owner: TokenData) -> Union[DocumentMetadataRead, HTTPException]:
 
