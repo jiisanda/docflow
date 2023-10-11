@@ -84,7 +84,8 @@ async def update_doc_metadata_details(
         document=document,
         document_patch=document_patch,
         owner=user,
-        user_repo=user_repository
+        user_repo=user_repository,
+        is_owner=True
     )
 
 

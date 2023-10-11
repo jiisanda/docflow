@@ -51,22 +51,54 @@ class DocumentMetadataRepository:
             return document_patch
         return document_patch.model_dump(exclude_unset=True)
 
-    async def _execute_update(self, db_document: DocumentMetadata, changes: dict) -> None:
+    async def _execute_update(self, db_document: DocumentMetadata | Dict[str, Any], changes: dict) -> None:
 
-        stmt = (
-            update(DocumentMetadata)
-            .where(DocumentMetadata.id == db_document.id)
-            .values(changes)
-        )
+        if isinstance(db_document, dict):
+            stmt = (
+                update(DocumentMetadata)
+                .where(DocumentMetadata.id == db_document.get('id'))
+                .values(changes)
+            )
+            doc_name = db_document.get('name')
+        else:
+            stmt = (
+                update(DocumentMetadata)
+                .where(DocumentMetadata.id == db_document.id)
+                .values(changes)
+            )
+            doc_name = db_document.name
 
         try:
             await self.session.execute(stmt)
         except Exception as e:
             raise HTTP_409(
-                msg=f"Error while updating document: {db_document.name}"
+                msg=f"Error while updating document: {doc_name}"
             ) from e
 
-    async def get_docs(self, filename: str) -> Dict[str, Any]:
+    async def _update_access_and_permission(self, db_document, changes, user_repo):
+        access_given_to = changes.get("access_to", [])
+        # if access_to has email ids, update doc_user_access table with doc_id and user_id
+        for user_email in access_given_to:
+            try:
+                user_id = (await user_repo.get_user(field="email", detail=user_email)).__dict__["id"]
+                # update doc_user_access table with doc_id and user_id
+                await self._update_doc_user_access(db_document, user_id)
+
+            except IntegrityError as e:
+                raise HTTP_409(
+                    msg=f"User '{user_email}' already has access..."
+                ) from e
+            except AttributeError as e:
+                raise HTTP_404(
+                    msg=f"The user with '{user_email}' does not exists, make sure user has account in DocFlow."
+                ) from e
+
+    async def _update_doc_user_access(self, db_document, user_id):
+        stmt = insert(doc_user_access).values(doc_id=db_document.__dict__["id"], user_id=user_id)
+        await self.session.execute(stmt)
+        await self.session.commit()
+
+    async def get_doc(self, filename: str) -> Dict[str, Any]:
         """
         Get document by filename irrespective of logged-in user
         @param filename:
@@ -79,7 +111,7 @@ class DocumentMetadataRepository:
         )
         result = await self.session.execute(stmt)
 
-        return result.scalar_one_or_none().__dict__
+        return result.scalar_one_or_none()
 
     async def upload(self, document_upload: DocumentMetadataCreate) -> DocumentMetadataRead:
 
@@ -122,11 +154,10 @@ class DocumentMetadataRepository:
             for each in result_list:
                 each.doc_cls.__dict__.pop('_sa_instance_state', None)
             result = [DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list]
-            response = {
+            return {
                 f"documents of {owner.username}": result,
                 "no_of_docs": len(result)
             }
-            return response
         except Exception as e:
             raise HTTP_404(
                 msg="No Documents found"
@@ -145,33 +176,25 @@ class DocumentMetadataRepository:
     async def patch(
             self,
             document: Union[str, UUID], document_patch: DocumentMetadataPatch, owner: TokenData,
-            user_repo: AuthRepository
+            user_repo: AuthRepository, is_owner: bool
     ) -> Union[DocumentMetadataRead, HTTPException]:
 
-        db_document = await self._get_instance(document=document, owner=owner)
+        if is_owner:
+            db_document = await self._get_instance(document=document, owner=owner)
+            changes = await self._extract_changes(document_patch)
 
-        changes = await self._extract_changes(document_patch)
-        if changes:
-            if access_given_to := changes.get("access_to"):
-                # if access_to has email ids, update doc_user_access table with doc_id and user_id
-                for users in access_given_to:
-                    try:
-                        user_id = (await user_repo.get_user(field="email", detail=users)).__dict__["id"]
-                        # update doc_user_access table with doc_id and user_id
-                        stmt = insert(doc_user_access).values(doc_id=db_document.__dict__["id"], user_id=user_id)
-                        try:
-                            await self.session.execute(stmt)
-                            await self.session.commit()
-                        except IntegrityError as e:
-                            raise HTTP_409(
-                                msg=f"User '{users}' already has access..."
-                            ) from e
-                    except AttributeError as e:
-                        raise HTTP_404(
-                            msg=f"The user with '{users}' does not exists, make sure user has account in DocFlow."
-                        ) from e
+            await self._update_access_and_permission(db_document, changes, user_repo)
 
             await self._execute_update(db_document, changes)
+
+        else:
+            # This condition will be activated when, the new version of file is added by a privileged member
+            # here privileged member is one who have access to update the document.
+            db_document = await self.get_doc(filename=document)
+            changes = await self._extract_changes(document_patch)
+
+            if changes:
+                await self._execute_update(db_document, changes)
 
         return DocumentMetadataRead(**db_document.__dict__)
 

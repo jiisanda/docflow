@@ -35,7 +35,13 @@ async def upload(
             msg="No input file..."
         )
 
-    response = await repository.upload(metadata_repo=metadata_repository, file=file, folder=folder, user=user)
+    response = await repository.upload(
+        metadata_repo=metadata_repository,
+        user_repo=user_repository,
+        file=file,
+        folder=folder,
+        user=user
+    )
     if response["response"] == "file added":
         return await metadata_repository.upload(document_upload=response["upload"])
     elif response["response"] == "file updated":
@@ -43,7 +49,8 @@ async def upload(
             document=response["upload"]["name"],
             document_patch=response["upload"],
             owner=user,
-            user_repo=user_repository
+            user_repo=user_repository,
+            is_owner=response["is_owner"]
         )
     return response
 
@@ -72,6 +79,3 @@ async def download(
         raise HTTP_404(
             msg=f"No file with {file_name}"
         ) from e
-
-
-#  TASK: User is able to add updated version of a document owned by some other user...

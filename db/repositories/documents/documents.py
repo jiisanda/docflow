@@ -59,7 +59,7 @@ class DocumentRepository:
         }
 
     async def _upload_new_version(
-            self, doc: dict, file: File, contents, file_type: str, new_file_hash: str
+            self, doc: dict, file: File, contents, file_type: str, new_file_hash: str, is_owner: bool
     ) -> Dict[str, Any]:
 
         key = await get_key(s3_url=doc["s3_url"])
@@ -68,6 +68,7 @@ class DocumentRepository:
 
         return {
             "response": "file updated",
+            "is_owner": is_owner,
             "upload": {
                 "name": file.filename,
                 "s3_url": await get_s3_url(key=key),
@@ -77,7 +78,7 @@ class DocumentRepository:
             }
         }
 
-    async def upload(self, metadata_repo, file: File, folder: str, user: TokenData) -> Dict[str, Any]:
+    async def upload(self, metadata_repo, user_repo, file: File, folder: str, user: TokenData) -> Dict[str, Any]:
 
         file_type = file.content_type
         if file_type not in SUPPORTED_FILE_TYPES:
@@ -88,23 +89,37 @@ class DocumentRepository:
         contents = file.file.read()
 
         doc = (await metadata_repo.get(document=file.filename, owner=user)).__dict__
-
+        # check if change in file
+        new_file_hash = await self._calculate_file_hash(file=file)
         if "status_code" in doc.keys():
             # getting document irrespective of user
-            get_doc = metadata_repo.get_docs(filename=file.filename)
-            # Check if logged-in user has update access
-
+            if get_doc := (await metadata_repo.get_doc(filename=file.filename)):
+                get_doc = get_doc.__dict__
+                # Check if logged-in user has update access
+                logged_in_user = (await user_repo.get_user(field="username", detail=user.username)).__dict__
+                if (get_doc["access_to"] is not None) and logged_in_user["email"] in get_doc["access_to"]:
+                    if get_doc['file_hash'] != new_file_hash:
+                        # can upload a version to a file...
+                        print(f"Have update access, to a file... owner: {get_doc['owner_id']}")
+                        return await self._upload_new_version(
+                            doc=get_doc, file=file, contents=contents, file_type=file_type,
+                            new_file_hash=await self._calculate_file_hash(file=file),
+                            is_owner=False
+                        )
+                else:
+                    return await self._upload_new_file(
+                        file=file, folder=folder, contents=contents, file_type=file_type, user=user
+                    )
             return await self._upload_new_file(
                 file=file, folder=folder, contents=contents, file_type=file_type, user=user
             )
 
         print("File already present, checking if there is an update...")
 
-        new_file_hash = await self._calculate_file_hash(file=file)
         if doc["file_hash"] != new_file_hash:
             print("File has been updated, uploading new version...")
             return await self._upload_new_version(doc=doc, file=file, contents=contents, file_type=file_type,
-                                                  new_file_hash=new_file_hash)
+                                                  new_file_hash=new_file_hash, is_owner=True)
 
         return {
             "response": "File already present and no changes detected.",
