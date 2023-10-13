@@ -6,3 +6,4 @@ class StatusEnum(enum.Enum):
     private = "private"
     shared = "shared"
     deleted = "deleted"
+    archived = "archived"

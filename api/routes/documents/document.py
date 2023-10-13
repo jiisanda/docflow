@@ -79,3 +79,32 @@ async def download(
         raise HTTP_404(
             msg=f"No file with {file_name}"
         ) from e
+
+
+@router.delete(
+    "/add-to-bin",
+    status_code=status.HTTP_204_NO_CONTENT,
+    name="add_to_bin"
+)
+async def add_to_bin(
+        file_name: str,
+        repository: DocumentRepository = Depends(DocumentRepository),
+        metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user),
+) -> None:
+    ...
+
+
+@router.delete(
+    "/perm-delete",
+    status_code=status.HTTP_204_NO_CONTENT,
+    name="permanently_delete_doc"
+)
+async def perm_delete(
+        file_name: str,
+        delete_all: bool = False,
+        repository: DocumentRepository = Depends(DocumentRepository),
+        metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user),
+) -> None:
+    ...

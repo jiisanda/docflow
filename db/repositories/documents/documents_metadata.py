@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Union
 from uuid import UUID
 
@@ -199,6 +200,17 @@ class DocumentMetadataRepository:
         db_document = await self._get_instance(document=document, owner=owner)
 
         setattr(db_document, "status", StatusEnum.deleted)
+        setattr(db_document, "size", None)
+        setattr(db_document, "tags", None)
+        setattr(db_document, "access_to", None)
+        setattr(db_document, "file_type", None)
+        setattr(db_document, "categories", None)
+        # changing created_at to deleted_at to delete it after 30 days
+        setattr(db_document, "created_at", datetime.now(timezone.utc))
+
         self.session.add(db_document)
 
         await self.session.commit()
+
+    async def perm_delete(self, document: Union[str, UUID], owner: TokenData, delete_all: bool) -> None:
+        ...

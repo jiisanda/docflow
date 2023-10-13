@@ -99,6 +99,22 @@ async def delete_document_metadata(
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
     user: TokenData = Depends(get_current_user),
 ) -> None:
+    """
+    Deletes the metadata of a document and moves it to the bin.
+
+    Args:
+        document (Union[str, UUID]): The identifier of the document to delete.
+        repository (DocumentMetadataRepository): The repository for accessing document metadata.
+            Defaults to the result of the `get_repository` function with `DocumentMetadataRepository` as the argument.
+        user (TokenData): The token data of the current user. Defaults to the result of the `get_current_user` function.
+
+    Returns:
+        None (204_NO_CONTENT)
+
+    Raises:
+        HTTP_404: If no document with the specified identifier is found.
+    """
+
     try:
         await repository.get(document=document, owner=user)
     except Exception as e:
@@ -107,3 +123,17 @@ async def delete_document_metadata(
         ) from e
 
     return await repository.delete(document=document, owner=user)
+
+
+@router.delete(
+    "/perm-delete",
+    status_code=status.HTTP_204_NO_CONTENT,
+    name="permanently_delete_doc",
+)
+async def perm_delete(
+        document: Union[str, UUID] = None,
+        delete_all: bool = False,
+        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user),
+) -> None:
+    ...
