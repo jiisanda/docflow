@@ -13,7 +13,7 @@ from db.tables.base_class import StatusEnum
 doc_user_access = Table(
     'doc_user_access',
     Base.metadata,
-    Column('doc_id', UUID(as_uuid=True), ForeignKey('document_metadata.id')),
+    Column('doc_id', UUID(as_uuid=True), ForeignKey('document_metadata.id', ondelete='CASCADE')),
     Column('user_id', String(26), ForeignKey('users.id')),
     UniqueConstraint('doc_id', 'user_id', name="uq_doc_user_access_doc_user")
 )
@@ -40,7 +40,7 @@ class DocumentMetadata(Base):
     file_hash: Optional[str] = Column(String)
     access_to: Optional[List[str]] = Column(ARRAY(String))
 
-    update_access = relationship("User", secondary=doc_user_access)
+    update_access = relationship("User", secondary=doc_user_access, passive_deletes=True)
     owner = relationship("User", back_populates="owner_of")
 
 
