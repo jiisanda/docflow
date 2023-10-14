@@ -79,6 +79,22 @@ class DocumentRepository:
         }
 
     async def upload(self, metadata_repo, user_repo, file: File, folder: str, user: TokenData) -> Dict[str, Any]:
+        """
+        Uploads a file to the specified folder in the document repository.
+
+        Args:
+            @param metadata_repo: The repository for accessing metadata.
+            @param user_repo: The repository for accessing user information.
+            @param file: The file to be uploaded.
+            @param folder: The folder in which the file should be uploaded.
+            @param user: The token data of the user.
+
+        Returns:
+            @return: A dictionary containing the response and upload information.
+
+        Raises:
+            HTTP_400: If the file type is not supported.
+        """
 
         file_type = file.content_type
         if file_type not in SUPPORTED_FILE_TYPES:
