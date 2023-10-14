@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Union
 from uuid import UUID
 
 from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
+from sqlalchemy.engine import Row
 
 from api.dependencies.repositories import get_repository
 from api.dependencies.auth_utils import get_current_user
@@ -123,6 +124,20 @@ async def delete_document_metadata(
         ) from e
 
     return await repository.delete(document=document, owner=user)
+
+
+@router.get(
+    "/bin",
+    status_code=status.HTTP_200_OK,
+    response_model=None,
+    name="list_of_bin"
+)
+async def list_bin(
+        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        owner: TokenData = Depends(get_current_user)
+) -> Dict[str, List[Row | Row] | int]:
+
+    return await repository.bin_list(owner=owner)
 
 
 @router.delete(

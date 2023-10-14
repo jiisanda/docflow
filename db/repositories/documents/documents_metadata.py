@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Any, Dict, List, Union
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy import select, update, insert
+from sqlalchemy import select, update, insert, delete
+from sqlalchemy.engine import Row
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
@@ -77,6 +78,7 @@ class DocumentMetadataRepository:
             ) from e
 
     async def _update_access_and_permission(self, db_document, changes, user_repo):
+
         access_given_to = changes.get("access_to", [])
         # if access_to has email ids, update doc_user_access table with doc_id and user_id
         for user_email in access_given_to:
@@ -95,20 +97,40 @@ class DocumentMetadataRepository:
                 ) from e
 
     async def _update_doc_user_access(self, db_document, user_id):
+
         stmt = insert(doc_user_access).values(doc_id=db_document.__dict__["id"], user_id=user_id)
         await self.session.execute(stmt)
         await self.session.commit()
 
+    async def _delete_access(self, document) -> None:
+        await self.session.execute(doc_user_access.delete().where(doc_user_access.c.doc_id == document.id))
+
+    async def _auto_delete(self, bin_items: List[Row | Row]) -> None:
+
+        for item in bin_items:
+            if item.DocumentMetadata.created_at <= datetime.now(timezone.utc):
+                stmt = (
+                    delete(DocumentMetadata)
+                    .where(DocumentMetadata.id == item.DocumentMetadata.id)
+                )
+                await self.session.execute(stmt)
+
     async def get_doc(self, filename: str) -> Dict[str, Any]:
         """
-        Get document by filename irrespective of logged-in user
-        @param filename:
-        @return: Dict[str, Any]
+        Get document by filename irrespective of logged-in user.
+
+        Args:
+            self: The instance of the class.
+            filename (str): The name of the document.
+
+        Returns:
+            Dict[str, Any]: The document metadata.
         """
 
         stmt = (
             select(DocumentMetadata)
             .where(DocumentMetadata.name == filename)
+            .where(self.doc_cls.status != StatusEnum.deleted)
         )
         result = await self.session.execute(stmt)
 
@@ -205,12 +227,35 @@ class DocumentMetadataRepository:
         setattr(db_document, "access_to", None)
         setattr(db_document, "file_type", None)
         setattr(db_document, "categories", None)
-        # changing created_at to deleted_at to delete it after 30 days
-        setattr(db_document, "created_at", datetime.now(timezone.utc))
+        # considering created_at as delete_at to delete it after 30 days
+        setattr(db_document, "created_at", datetime.now(timezone.utc) + timedelta(days=30))
+
+        # delete entry from doc_user_access table
+        await self._delete_access(document=db_document)
 
         self.session.add(db_document)
 
         await self.session.commit()
 
+    async def bin_list(self, owner: TokenData) -> Dict[str, List[Row | Row] | int]:
+
+        stmt = (
+            select(DocumentMetadata)
+            .where(DocumentMetadata.owner_id == owner.id)
+            .where(DocumentMetadata.status == StatusEnum.deleted)
+        )
+
+        result = (await self.session.execute(stmt)).fetchall()
+
+        # delete documents that lived 30 days in bin
+        await self._auto_delete(result)
+        result = (await self.session.execute(stmt)).fetchall()
+
+        return {
+            "response": result,
+            "no_of_deleted_files": len(result)
+        }
+
     async def perm_delete(self, document: Union[str, UUID], owner: TokenData, delete_all: bool) -> None:
+
         ...
