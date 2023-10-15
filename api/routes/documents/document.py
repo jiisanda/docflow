@@ -101,10 +101,25 @@ async def add_to_bin(
     name="permanently_delete_doc"
 )
 async def perm_delete(
-        file_name: str,
+        file_name: str = None,
         delete_all: bool = False,
         repository: DocumentRepository = Depends(DocumentRepository),
         metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
 ) -> None:
-    ...
+
+    try:
+        get_documents_metadata = dict(await metadata_repository.bin_list(owner=user))
+        if len(get_documents_metadata["response"]) > 0:
+            return await repository.perm_delete(
+                file=file_name,
+                bin_list=get_documents_metadata["response"],
+                delete_all=delete_all,
+                meta_repo=metadata_repository,
+                user=user
+            )
+
+    except Exception as e:
+        raise HTTP_404(
+            msg=f"No file with {file_name}"
+        ) from e

@@ -105,7 +105,7 @@ class DocumentMetadataRepository:
     async def _delete_access(self, document) -> None:
         await self.session.execute(doc_user_access.delete().where(doc_user_access.c.doc_id == document.id))
 
-    async def _auto_delete(self, bin_items: List[Row | Row]) -> None:
+    async def _auto_delete(self, bin_items: List[Row | Row]) -> bool | None:
 
         for item in bin_items:
             if item.DocumentMetadata.created_at <= datetime.now(timezone.utc):
@@ -114,6 +114,7 @@ class DocumentMetadataRepository:
                     .where(DocumentMetadata.id == item.DocumentMetadata.id)
                 )
                 await self.session.execute(stmt)
+                return True
 
     async def get_doc(self, filename: str) -> Dict[str, Any]:
         """
@@ -253,15 +254,15 @@ class DocumentMetadataRepository:
         result = (await self.session.execute(stmt)).fetchall()
 
         # delete documents that lived 30 days in bin
-        await self._auto_delete(result)
-        result = (await self.session.execute(stmt)).fetchall()
+        if await self._auto_delete(result):
+            result = (await self.session.execute(stmt)).fetchall()
 
         return {
             "response": result,
             "no_of_deleted_files": len(result)
         }
 
-    async def perm_delete(self, document: UUID, owner: TokenData, delete_all: bool) -> None:
+    async def perm_delete(self, document: UUID | None, owner: TokenData, delete_all: bool) -> None:
 
         if delete_all:
             stmt = (

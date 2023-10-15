@@ -1,15 +1,17 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 import boto3
 import hashlib
 
 from botocore.exceptions import ClientError
 from fastapi import File
+from sqlalchemy.engine import Row
 from ulid import ULID
 
 from api.dependencies.constants import SUPPORTED_FILE_TYPES
 from api.dependencies.repositories import get_key, get_s3_url
 from core.config import settings
 from core.exceptions import HTTP_400, HTTP_404
+from db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from schemas.auth.bands import TokenData
 
 
@@ -34,6 +36,13 @@ class DocumentRepository:
         file.file.seek(0)
 
         return hashlib.sha256(contents).hexdigest()
+
+    async def _delete_object(self, key: str) -> None:
+
+        try:
+            self.client.delete_object(Bucket=settings.s3_bucket, Key=key)
+        except Exception as e:
+            raise e
 
     async def _upload_new_file(
             self, file: File, folder: str, contents, file_type: str, user: TokenData
@@ -158,3 +167,25 @@ class DocumentRepository:
             ) from e
 
         return {"message": f"successfully downloaded {name} in downloads folder."}
+
+    async def perm_delete(
+            self, file: str, bin_list: List[Row | Row],
+            delete_all: bool, meta_repo: DocumentMetadataRepository, user: TokenData
+    ) -> None:
+
+        if delete_all:
+            for files in bin_list:
+                s3_url = files.DocumentMetadata.s3_url
+
+                key = await get_key(s3_url=s3_url)
+                await self._delete_object(key=key)
+                await meta_repo.perm_delete(document=None, owner=user, delete_all=delete_all)
+        else:
+            for files in bin_list:
+                if files.DocumentMetadata.name == file:
+                    s3_url = files.DocumentMetadata.s3_url
+
+                    key = await get_key(s3_url=s3_url)
+                    await self._delete_object(key=key)
+                    await meta_repo.perm_delete(document=files.DocumentMetadata.id, owner=user, delete_all=False)
+                    break
