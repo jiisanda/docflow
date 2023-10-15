@@ -146,9 +146,10 @@ async def list_bin(
     name="permanently_delete_doc",
 )
 async def perm_delete(
-        document: Union[str, UUID] = None,
+        document_id: UUID = None,
         delete_all: bool = False,
         repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
 ) -> None:
-    ...
+
+    return await repository.perm_delete(document=document_id, owner=user, delete_all=delete_all)

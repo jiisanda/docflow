@@ -256,6 +256,16 @@ class DocumentMetadataRepository:
             "no_of_deleted_files": len(result)
         }
 
-    async def perm_delete(self, document: Union[str, UUID], owner: TokenData, delete_all: bool) -> None:
+    async def perm_delete(self, document: UUID, owner: TokenData, delete_all: bool) -> None:
 
-        ...
+        if delete_all:
+            stmt = (
+                delete(DocumentMetadata)
+                .where(DocumentMetadata.owner_id == owner.id)
+            )
+        else:
+            stmt = (
+                delete(DocumentMetadata)
+                .where(DocumentMetadata.id == document)
+            )
+        await self.session.execute(stmt)
