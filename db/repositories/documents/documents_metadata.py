@@ -219,23 +219,28 @@ class DocumentMetadataRepository:
 
     async def delete(self, document: Union[str, UUID], owner: TokenData) -> None:
 
-        db_document = await self._get_instance(document=document, owner=owner)
+        try:
+            db_document = await self._get_instance(document=document, owner=owner)
 
-        setattr(db_document, "status", StatusEnum.deleted)
-        setattr(db_document, "size", None)
-        setattr(db_document, "tags", None)
-        setattr(db_document, "access_to", None)
-        setattr(db_document, "file_type", None)
-        setattr(db_document, "categories", None)
-        # considering created_at as delete_at to delete it after 30 days
-        setattr(db_document, "created_at", datetime.now(timezone.utc) + timedelta(days=30))
+            setattr(db_document, "status", StatusEnum.deleted)
+            setattr(db_document, "size", None)
+            setattr(db_document, "tags", None)
+            setattr(db_document, "access_to", None)
+            setattr(db_document, "file_type", None)
+            setattr(db_document, "categories", None)
+            # considering created_at as delete_at to delete it after 30 days
+            setattr(db_document, "created_at", datetime.now(timezone.utc) + timedelta(days=30))
 
-        # delete entry from doc_user_access table
-        await self._delete_access(document=db_document)
+            # delete entry from doc_user_access table
+            await self._delete_access(document=db_document)
 
-        self.session.add(db_document)
+            self.session.add(db_document)
 
-        await self.session.commit()
+            await self.session.commit()
+        except Exception as e:
+            raise HTTP_404(
+                msg=f"No file with {document}"
+            )
 
     async def bin_list(self, owner: TokenData) -> Dict[str, List[Row | Row] | int]:
 

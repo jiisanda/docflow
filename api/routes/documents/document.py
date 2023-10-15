@@ -88,11 +88,11 @@ async def download(
 )
 async def add_to_bin(
         file_name: str,
-        repository: DocumentRepository = Depends(DocumentRepository),
         metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
 ) -> None:
-    ...
+
+    return await metadata_repository.delete(document=file_name, owner=user)
 
 
 @router.delete(
