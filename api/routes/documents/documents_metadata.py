@@ -153,3 +153,44 @@ async def perm_delete(
 ) -> None:
 
     return await repository.perm_delete(document=document_id, owner=user, delete_all=delete_all)
+
+
+@router.post(
+    "/archive",
+    response_model=DocumentMetadataRead,
+    status_code=status.HTTP_200_OK,
+    name="archive_a_document"
+)
+async def archive(
+        file_name: str,
+        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user),
+):
+    ...
+
+
+@router.get(
+    "/archive/list",
+    response_model=List[DocumentMetadataRead],
+    status_code=status.HTTP_200_OK,
+    name="archived_doc_list"
+)
+async def archive_list(
+        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user),
+):
+    ...
+
+
+@router.post(
+    "/un-archive",
+    response_model=DocumentMetadataRead,
+    status_code=status.HTTP_200_OK,
+    name="remove_doc_from_archive"
+)
+async def un_archive(
+        file: str,
+        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user),
+):
+    ...

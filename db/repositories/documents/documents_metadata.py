@@ -275,3 +275,12 @@ class DocumentMetadataRepository:
                 .where(DocumentMetadata.id == document)
             )
         await self.session.execute(stmt)
+
+    async def archive(self, file: str, user: TokenData) -> DocumentMetadataRead:
+        ...
+
+    async def archive_list(self, user: TokenData) -> List[DocumentMetadataRead]:
+        ...
+
+    async def un_archive(self, file: str,  user: TokenData) -> DocumentMetadataRead:
+        ...
