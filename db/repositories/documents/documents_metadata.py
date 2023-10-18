@@ -224,7 +224,6 @@ class DocumentMetadataRepository:
             db_document = await self._get_instance(document=document, owner=owner)
 
             setattr(db_document, "status", StatusEnum.deleted)
-            setattr(db_document, "size", None)
             setattr(db_document, "tags", None)
             setattr(db_document, "access_to", None)
             setattr(db_document, "file_type", None)
@@ -259,8 +258,27 @@ class DocumentMetadataRepository:
 
         return {
             "response": result,
-            "no_of_deleted_files": len(result)
+            "no_of_docs": len(result)
         }
+
+    async def restore(self, file: str, owner: TokenData) -> DocumentMetadataRead:
+
+        doc_list = await self.bin_list(owner=owner)
+
+        if doc_list["no_of_docs"] > 0:
+            for doc in doc_list["response"]:
+                if doc.DocumentMetadata.name == file:
+                    change = {'status': StatusEnum.private}
+                    await self._execute_update(db_document=doc.DocumentMetadata, changes=change)
+                    return DocumentMetadataRead(**doc.DocumentMetadata.__dict__)
+            else:
+                raise HTTP_409(
+                    msg="Doc is not deleted"
+                )
+        else:
+            raise HTTP_404(
+                msg="Doc does not exists"
+            )
 
     async def perm_delete(self, document: UUID | None, owner: TokenData, delete_all: bool) -> None:
 

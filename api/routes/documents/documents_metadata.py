@@ -140,6 +140,21 @@ async def list_bin(
     return await repository.bin_list(owner=owner)
 
 
+@router.post(
+    "/restore",
+    status_code=status.HTTP_200_OK,
+    response_model=DocumentMetadataRead,
+    name="restore_from_bin"
+)
+async def restore_bin(
+        file: str,
+        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user)
+) -> DocumentMetadataRead:
+
+    return await repository.restore(file=file, owner=user)
+
+
 @router.delete(
     "/perm-delete",
     status_code=status.HTTP_204_NO_CONTENT,
