@@ -172,6 +172,7 @@ async def archive(
 
 @router.get(
     "/archive/list",
+    response_model=None,
     status_code=status.HTTP_200_OK,
     name="archived_doc_list"
 )
@@ -193,5 +194,6 @@ async def un_archive(
         file: str,
         repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
-):
-    ...
+) -> DocumentMetadataRead:
+
+    return await repository.un_archive(file=file, user=user)

@@ -289,7 +289,7 @@ class DocumentMetadataRepository:
             raise HTTP_409(msg="Doc is already archived")
 
         else:
-            raise HTTP_404(msg="Doc does not exist...")
+            raise HTTP_404(msg="Doc does not exist")
 
     async def archive_list(self, user: TokenData) -> Dict[str, List[str] | int]:
 
@@ -306,4 +306,18 @@ class DocumentMetadataRepository:
         }
 
     async def un_archive(self, file: str,  user: TokenData) -> DocumentMetadataRead:
-        ...
+
+        doc = await self._get_instance(document=file, owner=user)
+
+        if doc and doc.status == StatusEnum.archived:
+            change = {'status': 'private'}
+            await self._execute_update(db_document=doc, changes=change)
+            return DocumentMetadataRead(**doc.__dict__)
+        elif doc and doc.status != StatusEnum.archived:
+            raise HTTP_409(
+                msg="Doc is not archived"
+            )
+        else:
+            raise HTTP_404(
+                msg="Doc does not exits"
+            )
