@@ -3,7 +3,7 @@
 ## Tasks
 
 - [ ] Add logging
-- [ ] Handle Exceptions and Error in documents.py
+- [x] Handle Exceptions and Error in documents.py
 - [ ] Add DocStrings
 - [ ] Rate Limiting
 
@@ -17,8 +17,8 @@
 - ✅ Document Sharing
 - ✅ User Authorization
 - ✅ User Authentication
-- 🟥 Access Control List (ACL)
-- 🟥 Document Deletion and Archiving
+- ✅ Access Control List (ACL)
+- ✅ Document Deletion and Archiving
 - 🟥 Document Preview
 - 🟥 Send File via Email
 - 🟥 Text Analysis
