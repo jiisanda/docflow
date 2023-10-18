@@ -276,11 +276,34 @@ class DocumentMetadataRepository:
             )
         await self.session.execute(stmt)
 
-    async def archive(self, file: str, user: TokenData) -> DocumentMetadataRead:
-        ...
+    async def archive(self, file: str, user: TokenData):
 
-    async def archive_list(self, user: TokenData) -> List[DocumentMetadataRead]:
-        ...
+        doc = await self._get_instance(document=file, owner=user)
+
+        if doc and doc.status != StatusEnum.archived:
+            change = {'status': StatusEnum.archived}
+            await self._execute_update(db_document=doc, changes=change)
+            return DocumentMetadataRead(**doc.__dict__)
+
+        elif doc and doc.status == StatusEnum.archived:
+            raise HTTP_409(msg="Doc is already archived")
+
+        else:
+            raise HTTP_404(msg="Doc does not exist...")
+
+    async def archive_list(self, user: TokenData) -> Dict[str, List[str] | int]:
+
+        stmt = (
+            select(DocumentMetadata)
+            .where(DocumentMetadata.owner_id == user.id)
+            .where(DocumentMetadata.status == StatusEnum.archived)
+        )
+
+        result = (await self.session.execute(stmt)).fetchall()
+        return {
+            "response": result,
+            "no_of_docs": len(result)
+        }
 
     async def un_archive(self, file: str,  user: TokenData) -> DocumentMetadataRead:
         ...

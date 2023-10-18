@@ -165,21 +165,22 @@ async def archive(
         file_name: str,
         repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
-):
-    ...
+) -> DocumentMetadataRead:
+
+    return await repository.archive(file=file_name, user=user)
 
 
 @router.get(
     "/archive/list",
-    response_model=List[DocumentMetadataRead],
     status_code=status.HTTP_200_OK,
     name="archived_doc_list"
 )
 async def archive_list(
         repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
-):
-    ...
+) -> Dict[str, List[str] | int]:
+
+    return await repository.archive_list(user=user)
 
 
 @router.post(
