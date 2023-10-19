@@ -30,6 +30,26 @@ async def upload(
     user: TokenData = Depends(get_current_user)
 ) -> Union[DocumentMetadataRead, Dict[str, str]]:
 
+    """
+    Uploads a document to the specified folder.
+
+    Args:
+        file (UploadFile): The file to be uploaded.
+        folder (Optional[str]): The folder where the document will be stored. Defaults to None.
+        repository (DocumentRepository): The repository for managing documents.
+        metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
+        user_repository (AuthRepository): The repository for managing user authentication.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        Union[DocumentMetadataRead, Dict[str, str]]: If the file is added, returns the uploaded document metadata.
+            If the file is updated, returns the patched document metadata.
+            Otherwise, returns a response dictionary.
+
+    Raises:
+        HTTP_400: If no input file is provided.
+    """
+
     if not file:
         raise HTTP_400(
             msg="No input file..."
@@ -67,6 +87,23 @@ async def download(
     user: TokenData = Depends(get_current_user),
 ) -> object:
 
+    """
+    Downloads a document with the specified file name.
+
+    Args:
+        file_name (str): The name of the file to be downloaded.
+        repository (DocumentRepository): The repository for managing documents.
+        metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        object: The downloaded document.
+
+    Raises:
+        HTTP_400: If no file name is provided.
+        HTTP_404: If no file with the specified name is found.
+    """
+
     if not file_name:
         raise HTTP_400(
             msg="No file name..."
@@ -92,6 +129,18 @@ async def add_to_bin(
         user: TokenData = Depends(get_current_user),
 ) -> None:
 
+    """
+    Adds a document to the bin for deletion.
+
+    Args:
+        file_name (str): The name of the file to be added to the bin.
+        metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        None: If the file is added to the bin.
+    """
+
     return await metadata_repository.delete(document=file_name, owner=user)
 
 
@@ -107,6 +156,23 @@ async def perm_delete(
         metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
 ) -> None:
+
+    """
+    Permanently deletes a document.
+
+    Args:
+        file_name (str, optional): The name of the file to be permanently deleted. Defaults to None.
+        delete_all (bool): Flag indicating whether to delete all documents in the bin. Defaults to False.
+        repository (DocumentRepository): The repository for managing documents.
+        metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        None: If the file is permanently deleted.
+
+    Raises:
+        HTTP_404: If no file with the specified name is found.
+    """
 
     try:
         get_documents_metadata = dict(await metadata_repository.bin_list(owner=user))
