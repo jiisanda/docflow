@@ -126,7 +126,8 @@ async def update_doc_metadata_details(
         user (TokenData): The token data of the authenticated user.
 
     Returns:
-        Union[DocumentMetadataRead, HTTPException]: The updated document metadata if successful, otherwise an HTTPException.
+        Union[DocumentMetadataRead, HTTPException]: The updated document metadata if successful,
+        otherwise an HTTPException.
 
     Raises:
         HTTP_404: If no document with the specified ID or name is found.
