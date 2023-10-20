@@ -28,6 +28,19 @@ async def upload_document_metadata(
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
     user: TokenData = Depends(get_current_user),
 ) -> DocumentMetadataRead:
+
+    """
+    Uploads document metadata.
+
+    Args:
+        document_upload (DocumentMetadataCreate): The document metadata to be uploaded.
+        repository (DocumentMetadataRepository): The repository for managing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        DocumentMetadataRead: The uploaded document metadata.
+    """
+
     document_upload.owner_id = user.id
     return await repository.upload(document_upload=document_upload)
 
@@ -44,6 +57,20 @@ async def get_documents_metadata(
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
     user: TokenData = Depends(get_current_user),
 ) -> Dict[str, Union[List[DocumentMetadataRead], Any]]:
+
+    """
+    Retrieves a list of document metadata.
+
+    Args:
+        limit (int): The maximum number of documents to retrieve. Defaults to 10.
+        offset (int): The number of documents to skip. Defaults to 0.
+        repository (DocumentMetadataRepository): The repository for managing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        Dict[str, Union[List[DocumentMetadataRead], Any]]: A dictionary containing the list of document metadata.
+    """
+
     return await repository.doc_list(limit=limit, offset=offset, owner=user)
 
 
@@ -58,6 +85,19 @@ async def get_document_metadata(
     repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
     user: TokenData = Depends(get_current_user),
 ) -> Union[DocumentMetadataRead, HTTPException]:
+
+    """
+    Retrieves the metadata of a specific document.
+
+    Args:
+        document (Union[str, UUID]): The ID or name of the document.
+        repository (DocumentMetadataRepository): The repository for managing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        Union[DocumentMetadataRead, HTTPException]: The document metadata if found, otherwise an HTTPException.
+    """
+
     return await repository.get(document=document, owner=user)
 
 
@@ -74,6 +114,24 @@ async def update_doc_metadata_details(
     user_repository: AuthRepository = Depends(get_repository(AuthRepository)),
     user: TokenData = Depends(get_current_user),
 ) -> Union[DocumentMetadataRead, HTTPException]:
+
+    """
+    Updates the details of a document's metadata.
+
+    Args:
+        document (Union[str, UUID]): The ID or name of the document.
+        document_patch (DocumentMetadataPatch): The document metadata patch containing the updated details.
+        repository (DocumentMetadataRepository): The repository for managing document metadata.
+        user_repository (AuthRepository): The repository for managing user authentication.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        Union[DocumentMetadataRead, HTTPException]: The updated document metadata if successful, otherwise an HTTPException.
+
+    Raises:
+        HTTP_404: If no document with the specified ID or name is found.
+    """
+
     try:
         await repository.get(document=document, owner=user)
     except Exception as e:
@@ -137,6 +195,18 @@ async def list_bin(
         owner: TokenData = Depends(get_current_user)
 ) -> Dict[str, List[Row | Row] | int]:
 
+    """
+    List bin.
+
+    Args:
+        repository: The document metadata repository.
+        owner: The token data of the owner.
+
+    Returns:
+        Dict[str, List[Row | Row] | int]: The list of bin.
+
+    """
+
     return await repository.bin_list(owner=owner)
 
 
@@ -151,6 +221,19 @@ async def restore_bin(
         repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user)
 ) -> DocumentMetadataRead:
+
+    """
+    Restore bin.
+
+    Args:
+        file: The file to restore.
+        repository: The document metadata repository.
+        user: The token data of the user.
+
+    Returns:
+        DocumentMetadataRead: The restored document metadata.
+
+    """
 
     return await repository.restore(file=file, owner=user)
 
@@ -167,6 +250,20 @@ async def perm_delete(
         user: TokenData = Depends(get_current_user),
 ) -> None:
 
+    """
+    Permanently delete document.
+
+    Args:
+        document_id: The ID of the document to delete.
+        delete_all: Flag indicating whether to delete all documents.
+        repository: The document metadata repository.
+        user: The token data of the user.
+
+    Returns:
+        None
+
+    """
+
     return await repository.perm_delete(document=document_id, owner=user, delete_all=delete_all)
 
 
@@ -182,6 +279,19 @@ async def archive(
         user: TokenData = Depends(get_current_user),
 ) -> DocumentMetadataRead:
 
+    """
+    Archive a document.
+
+    Args:
+        file_name (str): The name of the file to be archived.
+        repository (DocumentMetadataRepository): The repository for document metadata.
+        user (TokenData): The user token data.
+
+    Returns:
+        DocumentMetadataRead: The archived document metadata.
+
+    """
+
     return await repository.archive(file=file_name, user=user)
 
 
@@ -195,6 +305,18 @@ async def archive_list(
         repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
 ) -> Dict[str, List[str] | int]:
+
+    """
+    Get the list of archived documents.
+
+    Args:
+        repository (DocumentMetadataRepository): The repository for document metadata.
+        user (TokenData): The user token data.
+
+    Returns:
+        Dict[str, List[str] | int]: A dictionary containing the list of archived documents.
+
+    """
 
     return await repository.archive_list(user=user)
 
@@ -210,5 +332,18 @@ async def un_archive(
         repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
 ) -> DocumentMetadataRead:
+
+    """
+    Un-archive a document.
+
+    Args:
+        file (str): The name of the file to be un-archived.
+        repository (DocumentMetadataRepository): The repository for document metadata.
+        user (TokenData): The user token data.
+
+    Returns:
+        DocumentMetadataRead: The un-archived document metadata.
+
+    """
 
     return await repository.un_archive(file=file, user=user)

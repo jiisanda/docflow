@@ -240,7 +240,7 @@ class DocumentMetadataRepository:
         except Exception as e:
             raise HTTP_404(
                 msg=f"No file with {document}"
-            )
+            ) from e
 
     async def bin_list(self, owner: TokenData) -> Dict[str, List[Row | Row] | int]:
 

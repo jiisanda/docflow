@@ -27,6 +27,24 @@ async def search_document(
     user: TokenData = Depends(get_current_user),
 ):
 
+    """
+    Searches for documents based on specified criteria.
+
+    Args:
+        limit (int): The maximum number of documents to retrieve. Defaults to 10.
+        offset (int): The number of documents to skip. Defaults to 0.
+        tag (str, optional): The tag to filter documents by. Defaults to None.
+        category (str, optional): The category to filter documents by. Defaults to None.
+        file_types (str, optional): The file types to filter documents by. Defaults to None.
+        doc_status (str, optional): The status of documents to filter by. Defaults to None.
+        repository (DocumentOrgRepository): The repository for managing document organization.
+        repository_metadata (DocumentMetadataRepository): The repository for managing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        List[DocumentMetadataRead] or List[Dict[str, Any]]: The list of matching documents.
+    """
+
     doc_list = await repository_metadata.doc_list(limit=limit, offset=offset, owner=user)
     doc_list = doc_list[f"documents of {user.username}"]
     if tag is None and category is None and file_types is None and doc_status is None:

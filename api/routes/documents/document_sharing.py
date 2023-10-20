@@ -28,6 +28,22 @@ async def share_document(
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
     user: TokenData = Depends(get_current_user)
 ):
+    """
+    Shares a document with another user.
+
+    Args:
+        document (Union[str, UUID]): The ID or name of the document to be shared.
+        share_request (SharingRequest): The sharing request containing the details of the sharing operation.
+        repository (DocumentSharingRepository): The repository for managing document sharing.
+        metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        Dict[str, str]: A dictionary containing the personal URL and shareable link.
+
+    Raises:
+        HTTP_404: If no document with the specified ID or name is found.
+    """
 
     try:
         doc = await metadata_repository.get(document=document, owner=user)
@@ -62,6 +78,18 @@ async def redirect_to_share(
         repository: DocumentSharingRepository = Depends(get_repository(DocumentSharingRepository)),
         user: TokenData = Depends(get_current_user)
 ):
+
+    """
+    Redirects to a shared document URL.
+
+    Args:
+        url_id (str): The ID of the shared document URL.
+        repository (DocumentSharingRepository): The repository for managing document sharing.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        RedirectResponse: A redirect response to the shared document URL.
+    """
 
     if await repository.confirm_access(user=user, url_id=url_id):
         redirect_url = await repository.get_redirect_url(url_id=url_id)
