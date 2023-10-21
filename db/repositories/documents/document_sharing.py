@@ -185,3 +185,6 @@ class DocumentSharingRepository:
             raise HTTP_404(
                 msg="The link has expired..."
             ) from e
+
+    async def notify(self, user: TokenData, receiver: List[str]):
+        ...
