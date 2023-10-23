@@ -21,7 +21,7 @@ router = APIRouter(tags=["Document MetaData"])
     "/upload-document-metadata",
     response_model=DocumentMetadataRead,
     status_code=status.HTTP_201_CREATED,
-    name="upload_documents_metadata"
+    name="upload_documents_metadata",
 )
 async def upload_document_metadata(
     document_upload: DocumentMetadataCreate = Body(...),
@@ -46,7 +46,7 @@ async def upload_document_metadata(
 
 
 @router.get(
-    "/documents-metadata",
+    "",
     response_model=Dict[str, Union[List[DocumentMetadataRead], Any]],
     status_code=status.HTTP_200_OK,
     name="get_documents_metadata",
@@ -75,10 +75,10 @@ async def get_documents_metadata(
 
 
 @router.get(
-    "/get-document-metadata/{document}",
+    "/{document}",
     response_model=None,
     status_code=status.HTTP_200_OK,
-    name="get_document-metadata"
+    name="get_document-metadata",
 )
 async def get_document_metadata(
     document: Union[str, UUID],
@@ -102,7 +102,7 @@ async def get_document_metadata(
 
 
 @router.put(
-    "/update-doc-metadata-details/{document}",
+    "/{document}",
     response_model=None,
     status_code=status.HTTP_200_OK,
     name="update_doc_metadata_details",
@@ -150,7 +150,7 @@ async def update_doc_metadata_details(
 
 
 @router.delete(
-    "/delete-doc-metadata/{document}",
+    "/{document}",
     status_code=status.HTTP_204_NO_CONTENT,
     name="delete_document_metadata",
 )
@@ -189,7 +189,7 @@ async def delete_document_metadata(
     "/bin",
     status_code=status.HTTP_200_OK,
     response_model=None,
-    name="list_of_bin"
+    name="list_of_bin",
 )
 async def list_bin(
         repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
@@ -215,7 +215,7 @@ async def list_bin(
     "/restore",
     status_code=status.HTTP_200_OK,
     response_model=DocumentMetadataRead,
-    name="restore_from_bin"
+    name="restore_from_bin",
 )
 async def restore_bin(
         file: str,
@@ -272,7 +272,7 @@ async def perm_delete(
     "/archive",
     response_model=DocumentMetadataRead,
     status_code=status.HTTP_200_OK,
-    name="archive_a_document"
+    name="archive_a_document",
 )
 async def archive(
         file_name: str,
@@ -300,7 +300,7 @@ async def archive(
     "/archive/list",
     response_model=None,
     status_code=status.HTTP_200_OK,
-    name="archived_doc_list"
+    name="archived_doc_list",
 )
 async def archive_list(
         repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
@@ -326,7 +326,7 @@ async def archive_list(
     "/un-archive",
     response_model=DocumentMetadataRead,
     status_code=status.HTTP_200_OK,
-    name="remove_doc_from_archive"
+    name="remove_doc_from_archive",
 )
 async def un_archive(
         file: str,
