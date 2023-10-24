@@ -21,4 +21,3 @@ class Notify(Base):
         nullable=False,
         server_default=text("NOW()")
     )
-
