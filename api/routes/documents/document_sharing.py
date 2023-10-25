@@ -62,17 +62,21 @@ async def share_document(
             share_to=share_to,
         )
 
-        # Send email to the receiver
-        await repository.send_mail(user=user, mail_to=share_to, link=shareable_link)
+        if len(share_to) > 0:
+            # Send email to the receiver
+            await repository.send_mail(user=user, mail_to=share_to, link=shareable_link)
 
-        # send a notification to the receiver
-        await repository.notify(user=user, receivers=share_to, filename=doc.__dict__["name"], auth_repo=auth_repository)
+            # send a notification to the receiver
+            await repository.notify(
+                user=user, receivers=share_to, filename=doc.__dict__["name"], auth_repo=auth_repository
+            )
 
         return {
             "personal_url": pre_signed_url,
             "share_this": shareable_link
         }
-    except Exception as e:
+
+    except KeyError as e:
         raise HTTP_404(
             msg=f"No doc: {document}"
         ) from e
