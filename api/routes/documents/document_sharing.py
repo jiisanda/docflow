@@ -10,6 +10,7 @@ from core.exceptions import HTTP_404
 from db.repositories.auth.auth import AuthRepository
 from db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from db.repositories.documents.document_sharing import DocumentSharingRepository
+from db.repositories.documents.notify import NotifyRepo
 from schemas.auth.bands import TokenData
 from schemas.documents.document_sharing import SharingRequest
 
@@ -28,6 +29,7 @@ async def share_document(
     repository: DocumentSharingRepository = Depends(get_repository(DocumentSharingRepository)),
     auth_repository: AuthRepository = Depends(get_repository(AuthRepository)),
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    notify_repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
     user: TokenData = Depends(get_current_user)
 ):
     """
@@ -39,6 +41,7 @@ async def share_document(
         repository (DocumentSharingRepository): The repository for managing document sharing.
         auth_repository (AuthRepository): The repository for managing User related queries.
         metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
+        notify_repository (NotifyRepo): The repository for managing notification
         user (TokenData): The token data of the authenticated user.
 
     Returns:
@@ -67,7 +70,7 @@ async def share_document(
             await repository.send_mail(user=user, mail_to=share_to, link=shareable_link)
 
             # send a notification to the receiver
-            await repository.notify(
+            await notify_repository.notify(
                 user=user, receivers=share_to, filename=doc.__dict__["name"], auth_repo=auth_repository
             )
 
