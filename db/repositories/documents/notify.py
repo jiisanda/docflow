@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exceptions import HTTP_500, HTTP_409, HTTP_404
@@ -91,5 +91,13 @@ class NotifyRepo:
         except Exception as e:
             raise e
 
-    async def clear_notification(self, user: TokenData):
-        ...
+    async def clear_notification(self, user: TokenData) -> None:
+        stmt = (
+            delete(Notify)
+            .where(Notify.receiver_id == user.id)
+        )
+
+        try:
+            await self.session.execute(stmt)
+        except Exception as e:
+            raise e

@@ -22,6 +22,7 @@ async def get_notifications(
         repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
         user: TokenData = Depends(get_current_user)
 ) -> List[Notification]:
+
     return await repository.get_notifications(user=user)
 
 
@@ -36,7 +37,8 @@ async def patch_status(
         notification_id: UUID = None,
         repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
         user: TokenData = Depends(get_current_user)
-):
+) -> Union[List[Notification], Notification]:
+
     if mark_as_all_read:
         return await repository.mark_all_read(user=user)
     elif notification_id:
@@ -56,5 +58,6 @@ async def patch_status(
 async def clear_all_notifications(
         repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
         user: TokenData = Depends(get_current_user)
-):
-    return repository.clear_notification(user=user)
+) -> None:
+
+    return await repository.clear_notification(user=user)
