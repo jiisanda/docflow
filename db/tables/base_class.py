@@ -12,3 +12,7 @@ class StatusEnum(enum.Enum):
 class NotifyEnum(enum.Enum):
     read = "read"
     unread = "unread"
+
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._value2member_map_
