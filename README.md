@@ -72,6 +72,6 @@ For detailed instructions, visit the [Document Sharing Documentation]().
 
 ## 📧 Contact Us
 
-For any questions or support, please [contact](harshjaiswal2307@gmail.com).
+For any questions or support, please [contact](mailto:harshjaiswal2307@gmail.com).
 
 Enjoy using DocFlow to manage your documents seamlessly!
