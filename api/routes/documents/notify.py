@@ -23,6 +23,17 @@ async def get_notifications(
         user: TokenData = Depends(get_current_user)
 ) -> List[Notification]:
 
+    """
+    Get notifications for a user.
+
+    Args:
+        repository (NotifyRepo): The repository for accessing notification data.
+        user (TokenData): The authenticated user.
+
+    Returns:
+        List[Notification]: A list of notifications for the user.
+    """
+
     return await repository.get_notifications(user=user)
 
 
@@ -32,12 +43,30 @@ async def get_notifications(
     name="patch_status",
 )
 async def patch_status(
-        updated_status: NotifyPatchStatus,
+        updated_status: NotifyPatchStatus = None,
         mark_as_all_read: bool = False,
         notification_id: UUID = None,
         repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
         user: TokenData = Depends(get_current_user)
 ) -> Union[List[Notification], Notification]:
+    """
+    Patch the status of a notification or mark all notifications as read.
+
+    Args:
+        updated_status (NotifyPatchStatus, optional): The updated status for the notification. Defaults to None.
+        mark_as_all_read (bool, optional): Flag indicating whether to mark all notifications as read. Defaults to False.
+        notification_id (UUID, optional): The ID of the notification to update. Defaults to None.
+        repository (NotifyRepo): The repository for accessing notification data.
+        user (TokenData): The authenticated user.
+
+    Returns:
+        Union[List[Notification], Notification]: If `mark_as_all_read` is True, returns a list of all notifications
+            marked as read. If `notification_id` is provided, returns the updated notification.
+            Otherwise, raises an HTTP_404 exception.
+
+    Raises:
+        HTTP_404: If neither `mark_as_all_read` nor `notification_id` is provided.
+    """
 
     if mark_as_all_read:
         return await repository.mark_all_read(user=user)
@@ -59,5 +88,15 @@ async def clear_all_notifications(
         repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
         user: TokenData = Depends(get_current_user)
 ) -> None:
+    """
+    Clear all notifications for a user.
+
+    Args:
+        repository (NotifyRepo): The repository for accessing notification data.
+        user (TokenData): The authenticated user.
+
+    Returns:
+        None
+    """
 
     return await repository.clear_notification(user=user)
