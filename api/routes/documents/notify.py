@@ -6,7 +6,7 @@ from api.dependencies.auth_utils import get_current_user
 from api.dependencies.repositories import get_repository
 from db.repositories.documents.notify import NotifyRepo
 from schemas.auth.bands import TokenData
-from schemas.documents.bands import NotifyPatchStatus
+from schemas.documents.bands import Notification, NotifyPatchStatus
 
 router = APIRouter(tags=["Notification"])
 
@@ -36,7 +36,7 @@ async def patch_status(
         user: TokenData = Depends(get_current_user)
 ):
     if mark_as_all_read:
-        return repository.mark_all_read(user=user)
+        return await repository.mark_all_read(user=user)
     elif notification_id:
         return repository.update_status(n_id=notification_id, updated_status=updated_status, user=user)
 

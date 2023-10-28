@@ -1,15 +1,15 @@
 from typing import List
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.exceptions import HTTP_500
+from core.exceptions import HTTP_500, HTTP_409
 from db.repositories.auth.auth import AuthRepository
 from db.tables.base_class import NotifyEnum
 from db.tables.documents.notify import Notify
 from schemas.auth.bands import TokenData
-from schemas.documents.bands import NotifyPatchStatus
+from schemas.documents.bands import Notification, NotifyPatchStatus
 
 
 class NotifyRepo:
@@ -36,18 +36,33 @@ class NotifyRepo:
             except Exception as e:
                 raise HTTP_500() from e
 
-    async def get_notifications(self, user: TokenData):
+    async def get_notifications(self, user: TokenData) -> List[Notification]:
         stmt = (
             select(Notify)
             .where(Notify.receiver_id == user.id)
         )
 
-        notifications = await self.session.execute(stmt)
+        notifications = (await self.session.execute(stmt)).fetchall()
 
-        return notifications.fetchall()
+        response = []
+        for notification in notifications:
+            response.append(Notification(**notification.Notify.__dict__))
+        return response
 
-    async def mark_all_read(self, user: TokenData):
-        ...
+    async def mark_all_read(self, user: TokenData) -> List[Notification]:
+        stmt = (
+            update(Notify)
+            .where(Notify.receiver_id == user.id and Notify.status != NotifyEnum.read)
+            .values({Notify.status: NotifyEnum.read})
+        )
+
+        try:
+            await self.session.execute(stmt)
+            return await self.get_notifications(user=user)
+        except Exception as e:
+            raise HTTP_409(
+                msg="Error updating marking notification read..."
+            ) from e
 
     async def update_status(self, n_id: UUID, updated_status: NotifyPatchStatus, user: TokenData):
         ...
