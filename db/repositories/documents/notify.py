@@ -42,4 +42,4 @@ class NotifyRepo:
 
         notifications = await self.session.execute(stmt)
 
-        return notifications
+        return notifications.fetchall()
