@@ -5,8 +5,10 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 from db.tables.base_class import StatusEnum
+from db.tables.base_class import NotifyEnum
 
 
+# Document Metadata
 class DocumentMetadataBase(BaseModel):
     _id: UUID
     owner_id: str
@@ -29,6 +31,7 @@ class DocumentMetadataPatch(BaseModel):
     access_to: Optional[List[str]] = None
 
 
+# Document Sharing
 class DocumentSharingBase(BaseModel):
     url_id: str
     owner_id: str
@@ -51,3 +54,7 @@ class DocUserAccess(BaseModel):
 class DocUserAccessCreate(BaseModel):
     doc_id: str
     user_id: str
+
+
+class NotifyPatchStatus(BaseModel):
+    status: NotifyEnum = NotifyEnum.unread
