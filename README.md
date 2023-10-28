@@ -29,7 +29,7 @@ DocFlow is a powerful Document Management API designed to streamline document ha
 - 💡 Text Analysis and OCR
 
 ## 📖 API Documentation
-Explore the [API Documentation](https://documenter.getpostman.com/view/20984268/2s9YJbzMqX) for detailed information on how to use DocFlow's features.
+Explore the [API Documentation](https://documenter.getpostman.com/view/20984268/2s9YRGxUcp) for detailed information on how to use DocFlow's features.
 
 ## 🧩 Implementation Detail
 
