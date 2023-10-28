@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,6 +9,7 @@ from db.repositories.auth.auth import AuthRepository
 from db.tables.base_class import NotifyEnum
 from db.tables.documents.notify import Notify
 from schemas.auth.bands import TokenData
+from schemas.documents.bands import NotifyPatchStatus
 
 
 class NotifyRepo:
@@ -43,3 +45,12 @@ class NotifyRepo:
         notifications = await self.session.execute(stmt)
 
         return notifications.fetchall()
+
+    async def mark_all_read(self, user: TokenData):
+        ...
+
+    async def update_status(self, n_id: UUID, updated_status: NotifyPatchStatus, user: TokenData):
+        ...
+
+    async def clear_notification(self, user: TokenData):
+        ...
