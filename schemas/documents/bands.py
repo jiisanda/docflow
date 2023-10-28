@@ -56,5 +56,14 @@ class DocUserAccessCreate(BaseModel):
     user_id: str
 
 
+# Notifications
+class Notification(BaseModel):
+    id: UUID
+    receiver_id: str
+    message: str
+    status: NotifyEnum
+    notified_at: datetime
+
+
 class NotifyPatchStatus(BaseModel):
     status: NotifyEnum = NotifyEnum.unread
