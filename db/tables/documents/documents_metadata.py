@@ -6,7 +6,7 @@ from sqlalchemy import Column, String, Integer, ARRAY, text, DateTime, Enum, For
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, relationship
 
-from db.models import Base, metadata, engine
+from db.models import Base, metadata, async_engine
 from db.tables.base_class import StatusEnum
 
 
@@ -45,5 +45,5 @@ class DocumentMetadata(Base):
 
 
 def create_table():
-    metadata.drop_all(engine)
-    metadata.create_all(engine)
+    metadata.drop_all(async_engine)
+    metadata.create_all(async_engine)
