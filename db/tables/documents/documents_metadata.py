@@ -42,8 +42,3 @@ class DocumentMetadata(Base):
 
     update_access = relationship("User", secondary=doc_user_access, passive_deletes=True)
     owner = relationship("User", back_populates="owner_of")
-
-
-def create_table():
-    metadata.drop_all(async_engine)
-    metadata.create_all(async_engine)

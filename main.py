@@ -3,7 +3,6 @@ from fastapi.responses import FileResponse
 
 from api.router import router
 from core.config import settings
-from db.tables.documents.documents_metadata import create_table
 
 
 app = FastAPI(
@@ -28,9 +27,3 @@ async def favicon():
 @app.get("/", tags=["Default"])
 async def root():
     return {"API": "Document Management API"}
-
-
-@app.get("/init-tables", tags=["Default"])
-async def init_tables():
-
-    create_table()
