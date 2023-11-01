@@ -1,0 +1,28 @@
+# Alembic Issues
+
+Issue101:
+
+Title: Alembic Migration Error Duplicate PostgresSQL ENUM Type
+
+Description:
+While running migrations, encountered an error related to presence of duplicate ENUM type.
+
+Details:
+Error msg: sqlalchemy.exc.ProgrammingError: (psycopg2.errors.DuplicateObject) type "<enum-name>" already exists
+
+Resolution:
+Resolved the issue with manually deleting the existing '<enum-name' ENUM Type from the Postgres database, using the
+following SQL command: ```DROP TYPE IF EXISTS <enum-name>;```
+Alternative approach: would be to update the migrations file created after
+```alembic revision --autogenerate -m "<msg"``` and add
+```
+op.create_type(
+    '<enum-name>',
+    sa.Enum('<option1>', '<option2>', name='<enum-name>'),
+    schema='public',
+    checkfirst=True
+)
+```
+
+Prevention:
+...
