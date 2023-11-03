@@ -36,20 +36,26 @@ class NotifyRepo:
 
         for receiver in receivers:
 
-            receiver_details = (await auth_repo.get_user(field="email", detail=receiver)).__dict__
-
-            notify_entry = Notify(
-                receiver_id=receiver_details["id"],
-                message=f"{user.username} shared {filename} with you! Access the shared file via mail...",
-                status=NotifyEnum.unread
-            )
-
+            receiver_details = await auth_repo.get_user(field="email", detail=receiver)
             try:
-                self.session.add(notify_entry)
-                await self.session.commit()
-                await self.session.refresh(notify_entry)
+                notify_entry = Notify(
+                    receiver_id=receiver_details.__dict__["id"],
+                    message=f"{user.username} shared {filename} with you! Access the shared file via mail...",
+                    status=NotifyEnum.unread
+                )
+
+                try:
+                    self.session.add(notify_entry)
+                    await self.session.commit()
+                    await self.session.refresh(notify_entry)
+                except Exception as e:
+                    raise HTTP_500(
+                        msg="Error notifying the user, but the mail has been sent successfully."
+                    ) from e
             except Exception as e:
-                raise HTTP_500() from e
+                raise HTTP_404(
+                    msg="The user does not exists, make sure the user has an account on docflow..."
+                )
 
     async def get_notification_by_id(self, n_id: UUID, user: TokenData) -> Notification:
         """
