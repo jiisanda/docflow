@@ -58,6 +58,14 @@ Here's how documents are uploaded in DocFlow:
 
 For a detailed explanation, visit the [Document Upload Documentation]().
 
+### 📥 Document Download
+
+Here's how a user can download a file in DocFlow.
+
+![download-document](docs/imgs/document/docflow_download.png)
+
+For detailed explanation, visit the [Document Download Documentation](). 
+
 ### 📨 Document Sharing
 
 Learn how to share documents in DocFlow:
