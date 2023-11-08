@@ -34,20 +34,20 @@ Explore the [API Documentation](https://documenter.getpostman.com/view/20984268/
 ## 🧩 Implementation Detail
 
 
-| Features                         | Implementation Detail                                           |
-|----------------------------------|-----------------------------------------------------------------|
-| Upload                           | [Detail](https://github.com/jiisanda/docflow#-document-upload)  |
-| Download                         |                                                                 |
-| Organization/Searching a Doc     |                                                                 |
-| Versioning                       |                                                                 |
-| Sharing                          | [Detail](https://github.com/jiisanda/docflow#-document-sharing) |
-| Authorization and Authentication |                                                                 |
-| Access Control List              |                                                                 |
-| Deletion and Archiving           |                                                                 |
-| Send File via Email              |                                                                 |
-| Conversion to PDF                |                                                                 |
-| Full Text Search                 |                                                                 |
-| Text Analysis and OCR            |                                                                 |
+| Features                         | Implementation Detail                                            |
+|----------------------------------|------------------------------------------------------------------|
+| Upload                           | [Detail](https://github.com/jiisanda/docflow#-document-upload)   |
+| Download                         | [Detail](https://github.com/jiisanda/docflow#-document-download) |
+| Organization/Searching a Doc     |                                                                  |
+| Versioning                       |                                                                  |
+| Sharing                          | [Detail](https://github.com/jiisanda/docflow#-document-sharing)  |
+| Authorization and Authentication |                                                                  |
+| Access Control List              |                                                                  |
+| Deletion and Archiving           |                                                                  |
+| Send File via Email              |                                                                  |
+| Conversion to PDF                |                                                                  |
+| Full Text Search                 |                                                                  |
+| Text Analysis and OCR            |                                                                  |
 
 
 ### 📤 Document Upload
