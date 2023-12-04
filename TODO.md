@@ -2,10 +2,9 @@
 
 ## Tasks
 
-- [ ] Add logging
+- [x] Add logging
 - [x] Handle Exceptions and Error in documents.py
-- [ ] Add DocStrings
-- [ ] Rate Limiting
+- [x] Add DocStrings
 
 ## Features
 
