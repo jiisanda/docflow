@@ -28,8 +28,15 @@ DocFlow is a powerful Document Management API designed to streamline document ha
 - 💡 Full Text Search
 - 💡 Text Analysis and OCR
 
-## 📖 API Documentation
+## 📖 API Documentation and Image
 Explore the [API Documentation](https://documenter.getpostman.com/view/20984268/2s9YRGxUcp) for detailed information on how to use DocFlow's features.
+
+Download docker image from [docker-hub](https://hub.docker.com/r/jiisanda/docflow).
+
+Or just run
+```commandline
+docker pull jiisanda/docflow
+```
 
 ## 🧩 Implementation Detail
 
