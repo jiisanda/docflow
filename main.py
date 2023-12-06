@@ -26,4 +26,4 @@ async def favicon():
 
 @app.get("/", tags=["Default"])
 async def root():
-    return {"API": "Document Management API"}
+    return {"API": "Document Management API... Docker's up!!! is it? or not... Yes it is!!!"}
