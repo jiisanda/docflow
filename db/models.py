@@ -1,10 +1,15 @@
+import logging
+
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from core.config import settings
+from core.exceptions import HTTP_500
 
+logger = logging.getLogger("sqlalchemy")
 
 engine = create_engine(
     url=settings.sync_database_url,
@@ -33,3 +38,15 @@ async_session = sessionmaker(
 
 Base = declarative_base()
 metadata = Base.metadata
+
+
+async def check_tables():
+    try:
+        with Session(engine) as _session:
+            # Create tables
+            metadata.create_all(engine)
+            _session.commit()
+            logger.info("Tables created if they didn't already exist.")
+    except OperationalError as e:
+        logger.error(f"Error Creating table: {e}")
+        raise HTTP_500(msg="An error occurred while creating tables.")

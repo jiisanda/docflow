@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 
 from api.router import router
 from core.config import settings
+from db.models import check_tables
 
 
 app = FastAPI(
@@ -27,3 +28,8 @@ async def favicon():
 @app.get("/", tags=["Default"])
 async def root():
     return {"API": "Document Management API... Docker's up!!! is it? or not... Yes it is!!!"}
+
+
+@app.on_event("startup")
+async def app_startup() -> None:
+    return await check_tables()
