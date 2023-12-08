@@ -159,7 +159,7 @@ class DocumentRepository:
             self.s3_client.meta.client.download_file(
                 Bucket=settings.s3_bucket,
                 Key=await key,
-                Filename=r"downloads\docflow_" + f"{name}"
+                Filename=r"/app/downloads/docflow_" + f"{name}"
             )
         except ClientError as e:
             raise HTTP_404(
