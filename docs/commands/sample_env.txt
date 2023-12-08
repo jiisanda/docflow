@@ -15,7 +15,7 @@ S3_TEST_BUCKET=<s3_test_bucket>
 # User Env
 ACCESS_TOKEN_EXPIRE_MIN=30
 REFRESH_TOKEN_EXPIRE_MIN=30
-ALGORITHM=HS256
+ALGORITHM=<algorithm>
 JWT_SECRET_KEY=<jwt_secret_key>
 JWT_REFRESH_SECRET_KEY=<jwt_refresh_secret_key>
 
