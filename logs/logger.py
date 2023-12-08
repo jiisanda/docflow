@@ -31,7 +31,7 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "standard",
             "level": "DEBUG",
-            "filename": LOG_FILE,
+            "filename": 'docflow.log',
             "mode": 'a',
             "encoding": "utf-8",
             "maxBytes": 500000,
