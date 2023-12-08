@@ -1,6 +1,6 @@
+DATABASE_HOSTNAME=<hostname>
 POSTGRES_USER=<postgres_username>
 POSTGRES_PASSWORD=<postgres_password>
-POSTGRES_SERVER=<postgres_server>
 POSTGRES_PORT=<postgres_port>
 POSTGRES_DB=<postgres_db_name>
 POSTGRES_DB_TESTS=<postgres_test_db_name>
