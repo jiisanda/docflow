@@ -6,7 +6,7 @@ from sqlalchemy import Column, String, Integer, ARRAY, text, DateTime, Enum, For
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, relationship
 
-from db.models import Base, metadata, async_engine
+from db.models import Base
 from db.tables.base_class import StatusEnum
 
 
