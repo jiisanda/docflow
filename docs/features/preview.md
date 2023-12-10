@@ -25,3 +25,7 @@ file object.
 by default. This is important to set it `True`, as if not done then it could fill up the server's storage.
 
 The following figure describes how Preview in DocFlow works. 
+
+![preview-document](../imgs/document/document_preview.png)
+
+DocFlow allows, preview of only two media types, `image/` and `application/pdf`.
