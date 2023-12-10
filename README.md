@@ -23,6 +23,7 @@ DocFlow is a powerful Document Management API designed to streamline document ha
 - 💡 Authentication and Authorization
 - 💡 Access Control List
 - 💡 Deletion and Archiving
+- 💡 Document Preview
 - 💡 Send file via Email
 - 💡 Conversion to PDF
 - 💡 Full Text Search
