@@ -18,7 +18,7 @@
 - ✅ User Authentication
 - ✅ Access Control List (ACL)
 - ✅ Document Deletion and Archiving
-- 🟥 Document Preview
+- ✅ Document Preview
 - 🟥 Send File via Email
 - 🟥 Text Analysis
 - 🟥 Conversion to PDF

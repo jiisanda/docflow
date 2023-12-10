@@ -51,6 +51,7 @@ docker pull jiisanda/docflow
 | Authorization and Authentication |                                                                  |
 | Access Control List              |                                                                  |
 | Deletion and Archiving           |                                                                  |
+| Document Preview                 | [Detail](https://github.com/jiisanda/docflow#-document-preview)  |
 | Send File via Email              |                                                                  |
 | Conversion to PDF                |                                                                  |
 | Full Text Search                 |                                                                  |
@@ -80,6 +81,14 @@ Learn how to share documents in DocFlow:
 ![share-document](docs/imgs/sharing/document_sharing.png)
 
 For detailed instructions, visit the [Document Sharing Documentation]().
+
+### 👀 Document Preview
+
+Here's how preview of docs works in DocFlow.
+
+![preview-document](docs/imgs/document/document_preview.png)
+
+For detailed instructions, visit the [Document Preview Documentation](https://github.com/jiisanda/docflow/blob/master/docs/features/preview.md)
 
 ## 📜 License
 
