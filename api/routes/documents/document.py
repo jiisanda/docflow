@@ -204,6 +204,24 @@ async def get_document_preview(
         metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
 ) -> FileResponse:
+
+    """
+    Get the preview of a document.
+
+    Args:
+        document (Union[str, UUID]): The ID or name of the document.
+        repository (DocumentRepository): The repository for accessing document data.
+        metadata_repository (DocumentMetadataRepository): The repository for accessing document metadata.
+        user (TokenData): The user token data.
+
+    Returns:
+        FileResponse: The file response containing the document preview.
+
+    Raises:
+        HTTP_404: If the document ID or name is not provided or if the document does not exist.
+        HTTP_400: If the file type is not supported for preview.
+    """
+
     if not document:
         raise HTTP_404(
             msg="Enter document id or name."
@@ -218,4 +236,4 @@ async def get_document_preview(
     except ValueError as e:
         raise HTTP_400(
             msg="File type is not supported for preview"
-        )
+        ) from e
