@@ -1,8 +1,8 @@
 from typing import Dict, Optional, Union
+from uuid import UUID
 
 from fastapi import APIRouter, status, File, UploadFile, Depends
-
-from schemas.documents.documents_metadata import DocumentMetadataRead
+from fastapi.responses import FileResponse
 
 from api.dependencies.auth_utils import get_current_user
 from api.dependencies.repositories import get_repository
@@ -11,6 +11,8 @@ from db.repositories.auth.auth import AuthRepository
 from db.repositories.documents.documents import DocumentRepository
 from db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from schemas.auth.bands import TokenData
+from schemas.documents.documents_metadata import DocumentMetadataRead
+
 
 router = APIRouter(tags=["Document"])
 
@@ -188,4 +190,28 @@ async def perm_delete(
     except Exception as e:
         raise HTTP_404(
             msg=f"No file with {file_name}"
+        ) from e
+
+
+@router.get(
+    "/preview/{document}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    name="preview_document"
+)
+async def get_document_preview(
+        document: Union[str, UUID],
+        repository: DocumentRepository = Depends(DocumentRepository),
+        metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user),
+) -> FileResponse:
+    if not document:
+        raise HTTP_404(
+            msg="Enter document id or name."
+        )
+    try:
+        get_document_metadata = dict(await metadata_repository.get(document=document, owner=user))
+        return await repository.preview(document=get_document_metadata)
+    except Exception as e:
+        raise HTTP_404(
+            msg="Document does not exists."
         ) from e

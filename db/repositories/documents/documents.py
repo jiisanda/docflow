@@ -1,9 +1,11 @@
+import tempfile
 from typing import Any, Dict, List
 import boto3
 import hashlib
 
 from botocore.exceptions import ClientError
 from fastapi import File
+from fastapi.responses import FileResponse
 from sqlalchemy.engine import Row
 from ulid import ULID
 
@@ -189,3 +191,16 @@ class DocumentRepository:
                     await self._delete_object(key=key)
                     await meta_repo.perm_delete(document=files.DocumentMetadata.id, owner=user, delete_all=False)
                     break
+
+    async def preview(self, document: Dict[str, Any]) -> FileResponse:
+
+        key = await get_key(s3_url=document["s3_url"])
+
+        s3_object = self.client.get_object(Bucket=settings.s3_bucket, Key=key)
+        file = s3_object['Body'].read()
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp:
+            temp.write(file)
+            temp_path = temp.name
+
+        return FileResponse(temp_path, media_type='application/pdf')
