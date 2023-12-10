@@ -211,7 +211,11 @@ async def get_document_preview(
     try:
         get_document_metadata = dict(await metadata_repository.get(document=document, owner=user))
         return await repository.preview(document=get_document_metadata)
-    except Exception as e:
+    except TypeError as e:
         raise HTTP_404(
             msg="Document does not exists."
         ) from e
+    except ValueError as e:
+        raise HTTP_400(
+            msg="File type is not supported for preview"
+        )

@@ -1,3 +1,4 @@
+import os.path
 import tempfile
 from typing import Any, Dict, List
 import boto3
@@ -199,8 +200,18 @@ class DocumentRepository:
         s3_object = self.client.get_object(Bucket=settings.s3_bucket, Key=key)
         file = s3_object['Body'].read()
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp:
+        # Determining the file extension from the key and media type for File Response
+        _, extension = os.path.splitext(key)
+        if extension.lower() in ['.jpg', '.jpeg', '.png', '.gif']:
+            media_type = 'image/' + extension.lower().lstrip('.')
+        elif extension.lower() == '.pdf':
+            media_type = 'application/pdf'
+        else:
+            raise ValueError("Unsupported file type.")
+
+        # Creating a temp file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=extension) as temp:
             temp.write(file)
             temp_path = temp.name
 
-        return FileResponse(temp_path, media_type='application/pdf')
+        return FileResponse(temp_path, media_type=media_type)
