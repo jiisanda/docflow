@@ -210,7 +210,7 @@ class DocumentRepository:
             raise ValueError("Unsupported file type.")
 
         # Creating a temp file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=extension) as temp:
+        with tempfile.NamedTemporaryFile(delete=True, suffix=extension) as temp:
             temp.write(file)
             temp_path = temp.name
 
