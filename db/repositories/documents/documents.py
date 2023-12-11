@@ -11,7 +11,7 @@ from sqlalchemy.engine import Row
 from ulid import ULID
 
 from api.dependencies.constants import SUPPORTED_FILE_TYPES
-from api.dependencies.repositories import get_key, get_s3_url
+from api.dependencies.repositories import TempFileResponse, get_key, get_s3_url
 from core.config import settings
 from core.exceptions import HTTP_400, HTTP_404
 from db.repositories.documents.documents_metadata import DocumentMetadataRepository
@@ -210,8 +210,8 @@ class DocumentRepository:
             raise ValueError("Unsupported file type.")
 
         # Creating a temp file
-        with tempfile.NamedTemporaryFile(delete=True, suffix=extension) as temp:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=extension) as temp:
             temp.write(file)
             temp_path = temp.name
 
-        return FileResponse(temp_path, media_type=media_type)
+        return TempFileResponse(temp_path, media_type=media_type)

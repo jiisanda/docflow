@@ -1,12 +1,24 @@
+import os.path
 import re
 import ulid
 
 from fastapi import Depends
+from fastapi.responses import FileResponse
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from db.models import async_session
+
+
+class TempFileResponse(FileResponse):
+    def __init__(self, path, *args, **kwargs):
+        super().__init__(path, *args, **kwargs)
+        self.file_path = path
+
+    def __del__(self):
+        if os.path.exists(self.file_path):
+            os.remove(self.file_path)
 
 
 async def get_db() -> AsyncSession:

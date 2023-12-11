@@ -202,7 +202,7 @@ async def get_document_preview(
         document: Union[str, UUID],
         repository: DocumentRepository = Depends(DocumentRepository),
         metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user),
+        user: TokenData = Depends(get_current_user)
 ) -> FileResponse:
 
     """
