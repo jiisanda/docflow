@@ -17,6 +17,8 @@ from core.config import settings
 from core.exceptions import HTTP_404, HTTP_500
 from db.tables.auth.auth import User
 from db.tables.documents.document_sharing import DocumentSharing
+from db.repositories.auth.auth import AuthRepository
+from db.repositories.documents.notify import NotifyRepo
 from schemas.auth.bands import TokenData
 from schemas.documents.document_sharing import SharingRequest
 
@@ -195,8 +197,15 @@ class DocumentSharingRepository:
             ) from e
 
     async def share_document(
-            self, document_key: str, file: Any, share_request: SharingRequest, notify: bool, owner: TokenData
-    ) -> Dict[str, str]:
+            self, filename: str,
+            document_key: str,
+            file: Any,
+            share_request: SharingRequest,
+            notify: bool,
+            owner: TokenData,
+            notify_repo: NotifyRepo,
+            auth_repo: AuthRepository,
+    ) -> None:
 
         user_mail = await self.get_user_mail(owner)
         share_to = share_request.share_to
@@ -223,6 +232,5 @@ class DocumentSharingRepository:
                 print(f"mail to {mails}")
                 mail_service(mail_to=mails, subject=subject, content=content, file_path=temp_path)
 
-        return {
-            "response": "Mails were sent successfully."
-        }
+        if notify:
+            return await notify_repo.notify(user=owner, receivers=share_to, filename=filename, auth_repo=auth_repo)

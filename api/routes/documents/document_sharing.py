@@ -124,8 +124,10 @@ async def share_document(
         repository: DocumentSharingRepository = Depends(get_repository(DocumentSharingRepository)),
         document_repo: DocumentRepository = Depends(DocumentRepository),
         metadata_repo: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        notify_repo: NotifyRepo = Depends(get_repository(NotifyRepo)),
+        auth_repo: AuthRepository = Depends(get_repository(AuthRepository)),
         user: TokenData = Depends(get_current_user),
-) -> Dict[str, str]:
+) -> None:
 
     if not document:
         raise HTTP_404(
@@ -139,7 +141,14 @@ async def share_document(
         print("Here here")
 
         return await repository.share_document(
-            document_key=key, file=file, share_request=share_request, notify=notify, owner=user
+            filename=get_document_metadata["name"],
+            document_key=key,
+            file=file,
+            share_request=share_request,
+            notify=notify,
+            owner=user,
+            notify_repo=notify_repo,
+            auth_repo=auth_repo
         )
     except Exception as e:
         raise HTTP_404() from e

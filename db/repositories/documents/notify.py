@@ -55,7 +55,7 @@ class NotifyRepo:
             except Exception as e:
                 raise HTTP_404(
                     msg="The user does not exists, make sure the user has an account on docflow..."
-                )
+                ) from e
 
     async def get_notification_by_id(self, n_id: UUID, user: TokenData) -> Notification:
         """
