@@ -24,6 +24,14 @@ file object.
 - The temporary file is deleted as soon as it is closed. This is controlled by the `delete` parameter, which is `True` 
 by default. This is important to set it `True`, as if not done then it could fill up the server's storage.
 
+
+In our case, we have set `delete=False`, and we have override the `FileResponse` to add a `__del__` method, which
+will be deleting the file once the response is sent (see: `api/dependencies/repositories`). 
+Issue we were experiencing is due to the fact that the temporary file was getting deleted as soon as it's closed, which 
+happens when `with` block is exited. We were getting the following error `RuntimeError: File at path /tmp/tmpuc5ru1oh.png 
+does not exist.` And this is expected behaviour when `delete=True` is set in `tempfile.NamedTemporaryFile`.
+
+
 The following figure describes how Preview in DocFlow works. 
 
 ![preview-document](../imgs/document/document_preview.png)
