@@ -40,6 +40,12 @@ class DocumentRepository:
 
         return hashlib.sha256(contents).hexdigest()
 
+    async def get_s3_file_object_body(self, key: str):
+        s3_object = self.client.get_object(Bucket=settings.s3_bucket, Key=key)
+        file = s3_object['Body'].read()
+
+        return file
+
     async def _delete_object(self, key: str) -> None:
 
         try:
@@ -197,8 +203,7 @@ class DocumentRepository:
 
         key = await get_key(s3_url=document["s3_url"])
 
-        s3_object = self.client.get_object(Bucket=settings.s3_bucket, Key=key)
-        file = s3_object['Body'].read()
+        file = await self.get_s3_file_object_body(key)
 
         # Determining the file extension from the key and media type for File Response
         _, extension = os.path.splitext(key)

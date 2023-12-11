@@ -1,5 +1,8 @@
+import os.path
+
 import boto3
 import hashlib
+import tempfile
 from datetime import datetime, timedelta, timezone
 from random import randint
 from typing import Any, Dict, List, Union
@@ -15,6 +18,7 @@ from core.exceptions import HTTP_404, HTTP_500
 from db.tables.auth.auth import User
 from db.tables.documents.document_sharing import DocumentSharing
 from schemas.auth.bands import TokenData
+from schemas.documents.document_sharing import SharingRequest
 
 
 class DocumentSharingRepository:
@@ -166,7 +170,7 @@ class DocumentSharingRepository:
                     """
 
             for mails in mail_to:
-                mail_service(mail_to=mails, subject=subj, content=content)
+                mail_service(mail_to=mails, subject=subj, content=content, file_path=None)
 
     async def confirm_access(self, user: TokenData, url_id: str | None) -> bool:
         # check if login user is owner or to whom it is shared
@@ -189,3 +193,36 @@ class DocumentSharingRepository:
             raise HTTP_404(
                 msg="The link has expired..."
             ) from e
+
+    async def share_document(
+            self, document_key: str, file: Any, share_request: SharingRequest, notify: bool, owner: TokenData
+    ) -> Dict[str, str]:
+
+        user_mail = await self.get_user_mail(owner)
+        share_to = share_request.share_to
+
+        # Determining extension
+        _, extension = os.path.splitext(document_key)
+
+        # Creating temp file to share
+        with tempfile.NamedTemporaryFile(delete=True, suffix=extension) as temp:
+            temp.write(file)
+            temp_path = temp.name
+
+            subject = f"{owner.username} shared a file with you using DocFlow"
+            print(temp_path)
+            for mails in share_to:
+                content = f"""
+                Hello {mails}! 
+                
+                Hope you are well? {owner.username} | {user_mail} shared a file with you as an attachment. 
+                
+                Regards,
+                DocFlow
+                """
+                print(f"mail to {mails}")
+                mail_service(mail_to=mails, subject=subject, content=content, file_path=temp_path)
+
+        return {
+            "response": "Mails were sent successfully."
+        }
