@@ -129,6 +129,27 @@ async def share_document(
         user: TokenData = Depends(get_current_user),
 ) -> None:
 
+    """
+    Share a document with other users, and notifies if notify is set to True (default).
+
+    Args:
+        document (Union[str, UUID]): The ID or UUID of the document to be shared.
+        share_request (SharingRequest): The sharing request containing the recipients and permissions.
+        notify (bool, optional): Whether to send notifications to the recipients. Defaults to True.
+        repository (DocumentSharingRepository, optional): The repository for document sharing operations.
+        document_repo (DocumentRepository, optional): The repository for document operations.
+        metadata_repo (DocumentMetadataRepository, optional): The repository for document metadata operations.
+        notify_repo (NotifyRepo, optional): The repository for notification operations.
+        auth_repo (AuthRepository, optional): The repository for authentication operations.
+        user (TokenData, optional): The authenticated user.
+
+    Raises:
+        HTTP_404: If the document is not found.
+
+    Returns:
+        None
+    """
+
     if not document:
         raise HTTP_404(
             msg="Enter document id or UUID."
