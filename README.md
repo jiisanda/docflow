@@ -25,9 +25,7 @@ DocFlow is a powerful Document Management API designed to streamline document ha
 - 💡 Deletion and Archiving
 - 💡 Document Preview
 - 💡 Send file via Email
-- 💡 Conversion to PDF
-- 💡 Full Text Search
-- 💡 Text Analysis and OCR
+
 
 ## 📖 API Documentation and Image
 Explore the [API Documentation](https://documenter.getpostman.com/view/20984268/2s9YRGxUcp) for detailed information on how to use DocFlow's features.
@@ -46,17 +44,8 @@ docker pull jiisanda/docflow
 |----------------------------------|------------------------------------------------------------------|
 | Upload                           | [Detail](https://github.com/jiisanda/docflow#-document-upload)   |
 | Download                         | [Detail](https://github.com/jiisanda/docflow#-document-download) |
-| Organization/Searching a Doc     |                                                                  |
-| Versioning                       |                                                                  |
 | Sharing                          | [Detail](https://github.com/jiisanda/docflow#-document-sharing)  |
-| Authorization and Authentication |                                                                  |
-| Access Control List              |                                                                  |
-| Deletion and Archiving           |                                                                  |
 | Document Preview                 | [Detail](https://github.com/jiisanda/docflow#-document-preview)  |
-| Send File via Email              |                                                                  |
-| Conversion to PDF                |                                                                  |
-| Full Text Search                 |                                                                  |
-| Text Analysis and OCR            |                                                                  |
 
 
 ### 📤 Document Upload
