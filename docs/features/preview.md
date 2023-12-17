@@ -9,6 +9,12 @@ Let's see how preview feature of DocFlow works. 🚀
 - 🔐 Authorization:
 `Bearer <token>`
 
+➰ cURL:
+```commandline
+curl --location 'localhost:8000/api/document/preview/:document' \
+--header 'Authorization: Bearer <token>'
+```
+
 Here in Preview we use two important models, `fastapi.response`'s `FileResponse` amd `tempfile`'s `NamedTemporaryFile`.
 
 `FileResponse` is used to return files.
