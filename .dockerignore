@@ -1,0 +1,10 @@
+.git
+.idea/
+downloads
+migrations
+README.md
+docker-compose.yml
+.env
+*.log
+*.pyc
+__pychache__
