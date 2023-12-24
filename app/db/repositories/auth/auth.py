@@ -4,9 +4,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.auth_utils import get_hashed_password, verify_password, create_access_token, create_refresh_token
-from core.exceptions import HTTP_400, HTTP_403
-from db.tables.auth.auth import User
-from schemas.auth.bands import UserOut, UserAuth
+from app.core.exceptions import HTTP_400, HTTP_403
+from app.db.tables.auth.auth import User
+from app.schemas.auth.bands import UserOut, UserAuth
 
 
 class AuthRepository:

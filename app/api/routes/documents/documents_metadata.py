@@ -6,12 +6,12 @@ from sqlalchemy.engine import Row
 
 from app.api.dependencies.repositories import get_repository
 from app.api.dependencies.auth_utils import get_current_user
-from core.exceptions import HTTP_404
-from db.repositories.auth.auth import AuthRepository
-from db.repositories.documents.documents_metadata import DocumentMetadataRepository
-from schemas.auth.bands import TokenData
-from schemas.documents.bands import DocumentMetadataPatch
-from schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead
+from app.core.exceptions import HTTP_404
+from app.db.repositories.auth.auth import AuthRepository
+from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
+from app.schemas.auth.bands import TokenData
+from app.schemas.documents.bands import DocumentMetadataPatch
+from app.schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead
 
 
 router = APIRouter(tags=["Document MetaData"])

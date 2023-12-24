@@ -8,7 +8,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from app.core.config import settings
-from core.exceptions import HTTP_500
+from app.core.exceptions import HTTP_500
 
 
 def mail_service(mail_to: str, subject: str, content: str, file_path: str = None) -> None:

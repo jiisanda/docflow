@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from db.models import async_session
+from app.db.models import async_session
 
 
 class TempFileResponse(FileResponse):

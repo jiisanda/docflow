@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
 from app.core.config import settings
-from core.exceptions import HTTP_500
+from app.core.exceptions import HTTP_500
 
 logger = logging.getLogger("sqlalchemy")
 

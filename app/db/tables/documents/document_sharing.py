@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, DateTime, ARRAY, ForeignKey
 from sqlalchemy.orm import Mapped
 
-from db.models import Base
+from app.db.models import Base
 
 
 class DocumentSharing(Base):

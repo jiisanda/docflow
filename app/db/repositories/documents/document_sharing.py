@@ -14,13 +14,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.dependencies.mail_service import mail_service
 from app.api.dependencies.repositories import get_key
 from app.core.config import settings
-from core.exceptions import HTTP_404, HTTP_500
-from db.tables.auth.auth import User
-from db.tables.documents.document_sharing import DocumentSharing
-from db.repositories.auth.auth import AuthRepository
-from db.repositories.documents.notify import NotifyRepo
-from schemas.auth.bands import TokenData
-from schemas.documents.document_sharing import SharingRequest
+from app.core.exceptions import HTTP_404, HTTP_500
+from app.db.tables.auth.auth import User
+from app.db.tables.documents.document_sharing import DocumentSharing
+from app.db.repositories.auth.auth import AuthRepository
+from app.db.repositories.documents.notify import NotifyRepo
+from app.schemas.auth.bands import TokenData
+from app.schemas.documents.document_sharing import SharingRequest
 
 
 class DocumentSharingRepository:

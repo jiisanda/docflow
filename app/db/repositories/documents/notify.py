@@ -4,12 +4,12 @@ from uuid import UUID
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.exceptions import HTTP_500, HTTP_409, HTTP_404
-from db.repositories.auth.auth import AuthRepository
-from db.tables.base_class import NotifyEnum
-from db.tables.documents.notify import Notify
-from schemas.auth.bands import TokenData
-from schemas.documents.bands import Notification, NotifyPatchStatus
+from app.core.exceptions import HTTP_500, HTTP_409, HTTP_404
+from app.db.repositories.auth.auth import AuthRepository
+from app.db.tables.base_class import NotifyEnum
+from app.db.tables.documents.notify import Notify
+from app.schemas.auth.bands import TokenData
+from app.schemas.documents.bands import Notification, NotifyPatchStatus
 
 
 class NotifyRepo:

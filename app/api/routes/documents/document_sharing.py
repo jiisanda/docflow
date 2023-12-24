@@ -6,14 +6,14 @@ from fastapi.responses import RedirectResponse
 
 from app.api.dependencies.auth_utils import get_current_user
 from app.api.dependencies.repositories import get_repository, get_key
-from core.exceptions import HTTP_404
-from db.repositories.auth.auth import AuthRepository
-from db.repositories.documents.documents import DocumentRepository
-from db.repositories.documents.documents_metadata import DocumentMetadataRepository
-from db.repositories.documents.document_sharing import DocumentSharingRepository
-from db.repositories.documents.notify import NotifyRepo
-from schemas.auth.bands import TokenData
-from schemas.documents.document_sharing import SharingRequest
+from app.core.exceptions import HTTP_404
+from app.db.repositories.auth.auth import AuthRepository
+from app.db.repositories.documents.documents import DocumentRepository
+from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
+from app.db.repositories.documents.document_sharing import DocumentSharingRepository
+from app.db.repositories.documents.notify import NotifyRepo
+from app.schemas.auth.bands import TokenData
+from app.schemas.documents.document_sharing import SharingRequest
 
 
 router = APIRouter(tags=["Document Sharing"])

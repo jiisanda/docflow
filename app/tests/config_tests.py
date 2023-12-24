@@ -11,8 +11,8 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
-from schemas.documents.documents_metadata import DocumentMetadataCreate
-from db.models import metadata
+from app.schemas.documents.documents_metadata import DocumentMetadataCreate
+from app.db.models import metadata
 
 test_db = (
     f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}"

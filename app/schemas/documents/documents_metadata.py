@@ -1,7 +1,7 @@
 from typing import Optional, List
 from uuid import UUID
 
-from schemas.documents.bands import DocumentMetadataBase
+from app.schemas.documents.bands import DocumentMetadataBase
 
 
 class DocumentMetadataCreate(DocumentMetadataBase):

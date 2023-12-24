@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from api.router import router
-from core.config import settings
-from db.models import check_tables
+from app.api.router import router
+from app.core.config import settings
+from app.db.models import check_tables
 
 
 app = FastAPI(

@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 
 from app.api.dependencies.repositories import get_ulid
-from db.models import Base
+from app.db.models import Base
 
 
 class User(Base):

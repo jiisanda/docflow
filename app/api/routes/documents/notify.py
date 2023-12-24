@@ -5,10 +5,10 @@ from fastapi import APIRouter, status, Depends
 
 from app.api.dependencies.auth_utils import get_current_user
 from app.api.dependencies.repositories import get_repository
-from core.exceptions import HTTP_404
-from db.repositories.documents.notify import NotifyRepo
-from schemas.auth.bands import TokenData
-from schemas.documents.bands import Notification, NotifyPatchStatus
+from app.core.exceptions import HTTP_404
+from app.db.repositories.documents.notify import NotifyRepo
+from app.schemas.auth.bands import TokenData
+from app.schemas.documents.bands import Notification, NotifyPatchStatus
 
 router = APIRouter(tags=["Notification"])
 

@@ -4,8 +4,8 @@ from uuid import uuid4
 from sqlalchemy import Column, String, Text, Enum, DateTime, text
 from sqlalchemy.dialects.postgresql import UUID
 
-from db.tables.base_class import NotifyEnum
-from db.models import Base
+from app.db.tables.base_class import NotifyEnum
+from app.db.models import Base
 
 
 class Notify(Base):

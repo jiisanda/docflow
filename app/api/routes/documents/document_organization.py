@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, status, Query
 
 from app.api.dependencies.repositories import get_repository
 from app.api.dependencies.auth_utils import get_current_user
-from db.repositories.documents.documents_metadata import DocumentMetadataRepository
-from db.repositories.documents.document_organization import DocumentOrgRepository
-from schemas.auth.bands import TokenData
+from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
+from app.db.repositories.documents.document_organization import DocumentOrgRepository
+from app.schemas.auth.bands import TokenData
 
 router = APIRouter(tags=["Document Search"])
 

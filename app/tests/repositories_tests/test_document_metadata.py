@@ -4,8 +4,8 @@ from uuid import UUID, uuid4
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from core.exceptions import HTTP_404
-from db.repositories.documents.documents_metadata import DocumentMetadataRepository
+from app.core.exceptions import HTTP_404
+from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
 
 
 @pytest.mark.asyncio

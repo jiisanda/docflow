@@ -7,8 +7,8 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 
 from app.core.config import settings
-from core.exceptions import HTTP_401
-from schemas.auth.bands import TokenData
+from app.core.exceptions import HTTP_401
+from app.schemas.auth.bands import TokenData
 
 
 # Password Hashing

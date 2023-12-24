@@ -9,13 +9,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
-from core.exceptions import HTTP_409, HTTP_404
-from db.repositories.auth.auth import AuthRepository
-from db.tables.documents.documents_metadata import DocumentMetadata, doc_user_access
-from db.tables.base_class import StatusEnum
-from schemas.auth.bands import TokenData
-from schemas.documents.bands import DocumentMetadataPatch
-from schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead
+from app.core.exceptions import HTTP_409, HTTP_404
+from app.db.repositories.auth.auth import AuthRepository
+from app.db.tables.documents.documents_metadata import DocumentMetadata, doc_user_access
+from app.db.tables.base_class import StatusEnum
+from app.schemas.auth.bands import TokenData
+from app.schemas.documents.bands import DocumentMetadataPatch
+from app.schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead
 
 
 class DocumentMetadataRepository:

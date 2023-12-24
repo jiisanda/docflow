@@ -13,9 +13,9 @@ from ulid import ULID
 from app.api.dependencies.constants import SUPPORTED_FILE_TYPES
 from app.api.dependencies.repositories import TempFileResponse, get_key, get_s3_url
 from app.core.config import settings
-from core.exceptions import HTTP_400, HTTP_404
-from db.repositories.documents.documents_metadata import DocumentMetadataRepository
-from schemas.auth.bands import TokenData
+from app.core.exceptions import HTTP_400, HTTP_404
+from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
+from app.schemas.auth.bands import TokenData
 
 
 class DocumentRepository:

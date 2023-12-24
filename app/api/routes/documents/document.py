@@ -6,12 +6,12 @@ from fastapi.responses import FileResponse
 
 from app.api.dependencies.auth_utils import get_current_user
 from app.api.dependencies.repositories import get_repository
-from core.exceptions import HTTP_400, HTTP_404
-from db.repositories.auth.auth import AuthRepository
-from db.repositories.documents.documents import DocumentRepository
-from db.repositories.documents.documents_metadata import DocumentMetadataRepository
-from schemas.auth.bands import TokenData
-from schemas.documents.documents_metadata import DocumentMetadataRead
+from app.core.exceptions import HTTP_400, HTTP_404
+from app.db.repositories.auth.auth import AuthRepository
+from app.db.repositories.documents.documents import DocumentRepository
+from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
+from app.schemas.auth.bands import TokenData
+from app.schemas.documents.documents_metadata import DocumentMetadataRead
 
 
 router = APIRouter(tags=["Document"])
