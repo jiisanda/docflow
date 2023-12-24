@@ -134,6 +134,7 @@ class DocumentMetadataRepository:
             .where(self.doc_cls.status != StatusEnum.deleted)
         )
         result = await self.session.execute(stmt)
+        result.fetchall()
 
         return result.scalar_one_or_none()
 

@@ -123,42 +123,45 @@ class DocumentRepository:
         contents = file.file.read()
 
         doc = (await metadata_repo.get(document=file.filename, owner=user)).__dict__
-        # check if change in file
-        new_file_hash = await self._calculate_file_hash(file=file)
-        if "status_code" in doc.keys():
-            # getting document irrespective of user
-            if get_doc := (await metadata_repo.get_doc(filename=file.filename)):
-                get_doc = get_doc.__dict__
-                # Check if logged-in user has update access
-                logged_in_user = (await user_repo.get_user(field="username", detail=user.username)).__dict__
-                if (get_doc["access_to"] is not None) and logged_in_user["email"] in get_doc["access_to"]:
-                    if get_doc['file_hash'] != new_file_hash:
-                        # can upload a version to a file...
-                        print(f"Have update access, to a file... owner: {get_doc['owner_id']}")
-                        return await self._upload_new_version(
-                            doc=get_doc, file=file, contents=contents, file_type=file_type,
-                            new_file_hash=await self._calculate_file_hash(file=file),
-                            is_owner=False
+        # hash of the file uploaded to check if change in file
+        new_file_hash: str = await self._calculate_file_hash(file=file)
+        try:
+            if "status_code" in doc.keys():
+                # getting document irrespective of user
+                if get_doc := (await metadata_repo.get_doc(filename=file.filename)):
+                    get_doc = get_doc.__dict__
+                    # Check if logged-in user has update access
+                    logged_in_user = (await user_repo.get_user(field="username", detail=user.username)).__dict__
+                    if (get_doc["access_to"] is not None) and logged_in_user["email"] in get_doc["access_to"]:
+                        if get_doc['file_hash'] != new_file_hash:
+                            # can upload a version to a file...
+                            print(f"Have update access, to a file... owner: {get_doc['owner_id']}")
+                            return await self._upload_new_version(
+                                doc=get_doc, file=file, contents=contents, file_type=file_type,
+                                new_file_hash=await self._calculate_file_hash(file=file),
+                                is_owner=False
+                            )
+                    else:
+                        return await self._upload_new_file(
+                            file=file, folder=folder, contents=contents, file_type=file_type, user=user
                         )
-                else:
-                    return await self._upload_new_file(
-                        file=file, folder=folder, contents=contents, file_type=file_type, user=user
-                    )
-            return await self._upload_new_file(
-                file=file, folder=folder, contents=contents, file_type=file_type, user=user
-            )
+                return await self._upload_new_file(
+                    file=file, folder=folder, contents=contents, file_type=file_type, user=user
+                )
 
-        print("File already present, checking if there is an update...")
+            print("File already present, checking if there is an update...")
 
-        if doc["file_hash"] != new_file_hash:
-            print("File has been updated, uploading new version...")
-            return await self._upload_new_version(doc=doc, file=file, contents=contents, file_type=file_type,
-                                                  new_file_hash=new_file_hash, is_owner=True)
+            if doc["file_hash"] != new_file_hash:
+                print("File has been updated, uploading new version...")
+                return await self._upload_new_version(doc=doc, file=file, contents=contents, file_type=file_type,
+                                                      new_file_hash=new_file_hash, is_owner=True)
 
-        return {
-            "response": "File already present and no changes detected.",
-            "upload": "Noting to update..."
-        }
+            return {
+                "response": "File already present and no changes detected.",
+                "upload": "Noting to update..."
+            }
+        except Exception as e:
+            raise HTTP_404(msg="Error uploading the file...") from e
 
     async def download(self, s3_url: str, name: str) -> Dict[str, str]:
 
