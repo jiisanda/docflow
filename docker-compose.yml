@@ -1,19 +1,15 @@
 version: "3"
 services:
   api:
-    build: .
     depends_on:
       - postgres
     ports:
       - "8000:8000"
-    volumes:
-      - ./:/usr/src/app:ro
-      - ./downloads:/app/downloads
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     env_file: ./.env
   postgres:
     image: postgres
-#    env_file: ./.env
+    env_file: ./.env
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
