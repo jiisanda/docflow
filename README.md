@@ -52,7 +52,7 @@ docker pull jiisanda/docflow
 
 Here's how documents are uploaded in DocFlow:
 
-![upload-document](docs/imgs/document/document_upload.png)
+![upload-document](app/docs/imgs/document/document_upload.png)
 
 For a detailed explanation, visit the [Document Upload Documentation]().
 
@@ -60,7 +60,7 @@ For a detailed explanation, visit the [Document Upload Documentation]().
 
 Here's how a user can download a file in DocFlow.
 
-![download-document](docs/imgs/document/docflow_download.png)
+![download-document](app/docs/imgs/document/docflow_download.png)
 
 For detailed explanation, visit the [Document Download Documentation](). 
 
@@ -68,7 +68,7 @@ For detailed explanation, visit the [Document Download Documentation]().
 
 Learn how to share documents in DocFlow:
 
-![share-document](docs/imgs/sharing/document_sharing.png)
+![share-document](app/docs/imgs/sharing/document_sharing.png)
 
 For detailed instructions, visit the [Document Sharing Documentation]().
 
@@ -76,7 +76,7 @@ For detailed instructions, visit the [Document Sharing Documentation]().
 
 Here's how preview of docs works in DocFlow.
 
-![preview-document](docs/imgs/document/document_preview.png)
+![preview-document](app/docs/imgs/document/document_preview.png)
 
 For detailed instructions, visit the [Document Preview Documentation](https://github.com/jiisanda/docflow/blob/master/docs/features/preview.md)
 
