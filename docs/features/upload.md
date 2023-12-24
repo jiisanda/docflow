@@ -151,3 +151,9 @@ A json response, with `"response"` as the key, with value `"file updated"`, if n
 if new file is added. along with the metadata of the uploaded file.
 
 That's too much to handle for one method, I know but will try to improve the quality of the upload functionality.
+
+The following is the figure explaining the complete flow:
+
+![UploadDoc](../imgs/document/document_upload.png)
+
+***
