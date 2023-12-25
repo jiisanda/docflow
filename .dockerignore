@@ -1,6 +1,6 @@
 .git
 .idea/
-app/downloads
+downloads
 app/migrations
 README.md
 docker-compose.yml
