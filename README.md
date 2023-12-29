@@ -34,7 +34,7 @@ Download docker image from [docker-hub](https://hub.docker.com/r/jiisanda/docflo
 
 Or just run
 ```commandline
-docker pull jiisanda/docflow
+docker pull jiisanda/docflow:1
 ```
 
 ## 🧩 Implementation Detail

@@ -1,5 +1,11 @@
 version: '3'
 services:
   api:
-    image: jiisanda/docflow
+    image: jiisanda/docflow:1
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+  nginx:
+    image: nginx:1.25.3-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.dAnd 
