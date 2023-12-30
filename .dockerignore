@@ -1,7 +1,7 @@
 .git
 .idea/
 downloads
-app/migrations
+migrations
 README.md
 docker-compose.yml
 app/.env

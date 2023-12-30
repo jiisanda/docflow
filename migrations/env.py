@@ -5,10 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from db.models import Base
+from app.db.models import Base
 
 from app.core.config import settings
-
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -22,7 +21,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from db.tables.documents.document_sharing import DocumentSharing
+from app.db.tables.documents.document_sharing import DocumentSharing
 
 target_metadata = Base.metadata
 
