@@ -1,6 +1,6 @@
 # Docker Commands
 
-Download the image from [dockehub](https://hub.docker.com/r/jiisanda/docflow).
+Download the image from [DockerHub](https://hub.docker.com/r/jiisanda/docflow).
 
 OR
 

@@ -4,7 +4,7 @@ downloads
 app/migrations
 README.md
 docker-compose.yml
-.env
+app/.env
 *.log
 *.pyc
 __pychache__

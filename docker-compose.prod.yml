@@ -8,4 +8,4 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx:/etc/nginx/conf.dAnd 
+      - ./nginx:/etc/nginx/conf.d
