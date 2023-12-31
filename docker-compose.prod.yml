@@ -10,5 +10,5 @@ services:
       - "80:80"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-  posgres:
+  postgres:
     env_file: /home/jiisanda/.env
