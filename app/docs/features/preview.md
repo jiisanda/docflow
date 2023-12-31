@@ -1,6 +1,6 @@
 # Preview in Docflow
 
-Let's see how preview feature of DocFlow works. 🚀
+Let's see how the preview feature of DocFlow works. 🚀
 
 - 🎯 Endpoint:
 `GET /api/document/preview/:document`
@@ -9,8 +9,8 @@ Let's see how preview feature of DocFlow works. 🚀
 - 🔐 Authorization:
 `Bearer <token>`
 
-➰ cURL:
-```commandline
+➰ cURL: 
+```shell
 curl --location 'localhost:8000/api/document/preview/:document' \
 --header 'Authorization: Bearer <token>'
 ```
@@ -20,8 +20,8 @@ Here in Preview we use two important models, `fastapi.response`'s `FileResponse`
 `FileResponse` is used to return files.
 
 `NamedTemporaryFile` is a function in Python's `tempfile` module that creates a temporary file with a unique name in the 
-system's default location for temporary files. This function returns a file-like object that can be used in similar way 
-to other file objects.
+system's default location for temporary files.
+This function returns a file-like object that can be used in a similar way to other file objects.
 
 Here is the brief explanation on how it works:
 - When we call `NameTemporaryFile()`, it creates a new file in you system's temporary directory.
@@ -33,12 +33,12 @@ by default. This is important to set it `True`, as if not done then it could fil
 
 In our case, we have set `delete=False`, and we have override the `FileResponse` to add a `__del__` method, which
 will be deleting the file once the response is sent (see: `api/dependencies/repositories`). 
-Issue we were experiencing is due to the fact that the temporary file was getting deleted as soon as it's closed, which 
+Issue we were experiencing is because the temporary file was getting deleted as soon as it's closed, which 
 happens when `with` block is exited. We were getting the following error `RuntimeError: File at path /tmp/tmpuc5ru1oh.png 
 does not exist.` And this is expected behaviour when `delete=True` is set in `tempfile.NamedTemporaryFile`.
 
 
-The following figure describes how Preview in DocFlow works. 
+The following figure describes how the Preview in DocFlow works. 
 
 ![preview-document](../imgs/document/document_preview.png)
 

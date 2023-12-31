@@ -61,7 +61,7 @@ Here's how documents are uploaded in DocFlow:
 
 ![upload-document](app/docs/imgs/document/document_upload.png)
 
-For a detailed explanation, visit the [Document Upload Documentation]().
+For a detailed explanation, visit the [Document Upload Documentation](app/docs/features/upload.md).
 
 ### 📥 Document Download
 
@@ -77,15 +77,15 @@ Learn how to share documents in DocFlow:
 
 ![share-document](app/docs/imgs/sharing/document_sharing.png)
 
-For detailed instructions, visit the [Document Sharing Documentation]().
+For detailed instructions, visit the [Document Sharing Documentation](app/docs/features/sharing.md).
 
 ### 👀 Document Preview
 
-Here's how preview of docs works in DocFlow.
+Here's how the preview of docs works in DocFlow.
 
 ![preview-document](app/docs/imgs/document/document_preview.png)
 
-For detailed instructions, visit the [Document Preview Documentation](https://github.com/jiisanda/docflow/blob/master/docs/features/preview.md)
+For detailed instructions, visit the [Document Preview Documentation](app/docs/features/preview.md)
 
 ## 📜 License
 
