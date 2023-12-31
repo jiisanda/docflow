@@ -31,6 +31,8 @@ DocFlow is a powerful Document Management API designed to streamline document ha
 
 Explore the [API Documentation](https://documenter.getpostman.com/view/20984268/2s9YRGxUcp) for detailed information on how to use DocFlow's features.
 
+Details about features and commands can be found [here](app/docs).
+
 Download docker image from [docker-hub](https://hub.docker.com/r/jiisanda/docflow).
 
 Or just run
@@ -40,7 +42,7 @@ docker pull jiisanda/docflow:1
 
 ## 🔸 Setup Docflow 
 
-Follow the steps outlined in the [setup.md](app/docs/setup.md) file
+Follow the steps outlined in the [setup.md](app/docs/setup.md) file.
 
 ## 🧩 Implementation Detail
 

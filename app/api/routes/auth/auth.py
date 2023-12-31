@@ -46,9 +46,5 @@ async def login(
     summary="Get details of currently logged in user"
 )
 async def get_me(user: TokenData = Depends(get_current_user)):
-    """
-    ~TODO: Add an extra db for user profile then return details
-        For now returning {Userid and Username}
-    """
 
     return user
