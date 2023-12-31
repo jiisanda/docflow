@@ -3,12 +3,9 @@ services:
   api:
     image: jiisanda/docflow:1
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-    env_file: /home/jiisanda/.env
   nginx:
     image: nginx:1.25.3-alpine
     ports:
       - "80:80"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-  postgres:
-    env_file: /home/jiisanda/.env
