@@ -219,7 +219,6 @@ class DocumentSharingRepository:
             temp_path = temp.name
 
             subject = f"{owner.username} shared a file with you using DocFlow"
-            print(temp_path)
             for mails in share_to:
                 content = f"""
                 Hello {mails}! 
@@ -229,7 +228,6 @@ class DocumentSharingRepository:
                 Regards,
                 DocFlow
                 """
-                print(f"mail to {mails}")
                 mail_service(mail_to=mails, subject=subject, content=content, file_path=temp_path)
 
         if notify:

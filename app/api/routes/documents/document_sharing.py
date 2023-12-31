@@ -35,13 +35,13 @@ async def share_link_document(
 ):
 
     """
-    Shares a document link with another user, sends a mail and notifies the receiver.
+    Shares a document link with another user, sends mail and notifies the receiver.
 
     Args:
         document (Union[str, UUID]): The ID or name of the document to be shared.
         share_request (SharingRequest): The sharing request containing the details of the sharing operation.
         repository (DocumentSharingRepository): The repository for managing document sharing.
-        auth_repository (AuthRepository): The repository for managing User related queries.
+        auth_repository (AuthRepository): The repository for managing User-related queries.
         metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
         notify_repository (NotifyRepo): The repository for managing notification
         user (TokenData): The token data of the authenticated user.
@@ -159,7 +159,6 @@ async def share_document(
         key = await get_key(s3_url=get_document_metadata["s3_url"])
 
         file = await document_repo.get_s3_file_object_body(key=key)
-        print("Here here")
 
         return await repository.share_document(
             filename=get_document_metadata["name"],
