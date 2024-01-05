@@ -69,6 +69,10 @@ docker-compose up --build
 
 That's it! Docflow is now running on localhost:8000. 
 
+If you face any issues, contact me I will help you set up or start an EC2 instance for testing docflow.
+
 ## ⏭️ Next Step
+
 To test it, use Postman following the steps in 
 [postman.md](features/postman.md).
+***
