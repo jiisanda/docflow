@@ -18,7 +18,7 @@ dnspython==2.4.2
 ecdsa==0.18.0
 email-validator==2.0.0.post2
 fastapi==0.100.0
-fonttools==4.42.1
+fonttools==4.43.0
 greenlet==2.0.2
 h11==0.14.0
 httpcore==0.17.3
