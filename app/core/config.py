@@ -14,7 +14,7 @@ class GlobalConfig(BaseSettings):
     docs_url: str = "/docs"
     redoc_url: str = "/redoc"
     openapi_url: str = "/openapi.json"
-    api_prefix: str = "/api"
+    api_prefix: str = "/v2"
     debug: bool = os.environ.get("DEBUG")
     postgres_user: str = os.environ.get("POSTGRES_USER")
     postgres_password: str = os.environ.get("POSTGRES_PASSWORD")

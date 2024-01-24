@@ -78,7 +78,7 @@ async def upload(
 
 
 @router.get(
-    "/download",
+    "{file_name}/download",
     status_code=status.HTTP_200_OK,
     name="download_document"
 )
@@ -121,7 +121,7 @@ async def download(
 
 
 @router.delete(
-    "/add-to-bin",
+    "/{file_name}",
     status_code=status.HTTP_204_NO_CONTENT,
     name="add_to_bin"
 )
@@ -147,7 +147,7 @@ async def add_to_bin(
 
 
 @router.delete(
-    "/perm-delete",
+    "/trash/{file_name}",
     status_code=status.HTTP_204_NO_CONTENT,
     name="permanently_delete_doc"
 )
