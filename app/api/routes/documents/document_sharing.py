@@ -113,7 +113,7 @@ async def redirect_to_share(
 
 
 @router.post(
-    "share/document",
+    "/share/{document}",
     status_code=status.HTTP_200_OK,
     name="share_document"
 )
