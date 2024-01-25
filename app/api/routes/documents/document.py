@@ -1,8 +1,9 @@
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 from uuid import UUID
 
 from fastapi import APIRouter, status, File, UploadFile, Depends
 from fastapi.responses import FileResponse
+from sqlalchemy.engine import Row
 
 from app.api.dependencies.auth_utils import get_current_user
 from app.api.dependencies.repositories import get_repository
@@ -146,6 +147,32 @@ async def add_to_bin(
     return await metadata_repository.delete(document=file_name, owner=user)
 
 
+@router.get(
+    "/trash",
+    status_code=status.HTTP_200_OK,
+    response_model=None,
+    name="list_of_bin",
+)
+async def list_bin(
+        metadata_repo: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        owner: TokenData = Depends(get_current_user)
+) -> Dict[str, List[Row | Row] | int]:
+
+    """
+    List bin.
+
+    Args:
+        metadata_repo: The document metadata repository.
+        owner: The token data of the owner.
+
+    Returns:
+        Dict[str, List[Row | Row] | int]: The list of bin.
+
+    """
+
+    return await metadata_repo.bin_list(owner=owner)
+
+
 @router.delete(
     "/trash/{file_name}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -191,6 +218,58 @@ async def perm_delete(
         raise HTTP_404(
             msg=f"No file with {file_name}"
         ) from e
+
+
+@router.post(
+    "/restore/{file}",
+    status_code=status.HTTP_200_OK,
+    response_model=DocumentMetadataRead,
+    name="restore_from_bin",
+)
+async def restore_bin(
+        file: str,
+        metadata_repo: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user)
+) -> DocumentMetadataRead:
+
+    """
+    Restore bin.
+
+    Args:
+        file: The file to restore.
+        metadata_repo: The document metadata repository.
+        user: The token data of the user.
+
+    Returns:
+        DocumentMetadataRead: The restored document metadata.
+
+    """
+
+    return await metadata_repo.restore(file=file, owner=user)
+
+
+@router.delete(
+    "/trash",
+    status_code=status.HTTP_204_NO_CONTENT,
+    name="empty_trash",
+)
+async def empty_trash(
+        metadata_repo: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+        user: TokenData = Depends(get_current_user)
+) -> None:
+
+    """
+    Deletes all documents in the trash bin for the authenticated user.
+
+    Args:
+        metadata_repo (DocumentMetadataRepository): The repository for accessing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        None
+    """
+
+    return await metadata_repo.empty_bin(owner=user)
 
 
 @router.get(
