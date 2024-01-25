@@ -2,7 +2,6 @@ from typing import Any, Dict, List, Union
 from uuid import UUID
 
 from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
-from sqlalchemy.engine import Row
 
 from app.api.dependencies.repositories import get_repository
 from app.api.dependencies.auth_utils import get_current_user
@@ -18,7 +17,7 @@ router = APIRouter(tags=["Document MetaData"])
 
 
 @router.post(
-    "/upload-document-metadata",
+    "/upload",
     response_model=DocumentMetadataRead,
     status_code=status.HTTP_201_CREATED,
     name="upload_documents_metadata",
@@ -75,7 +74,7 @@ async def get_documents_metadata(
 
 
 @router.get(
-    "/{document}",
+    "/{document}/detail",
     response_model=None,
     status_code=status.HTTP_200_OK,
     name="get_document-metadata",
@@ -185,91 +184,10 @@ async def delete_document_metadata(
     return await repository.delete(document=document, owner=user)
 
 
-@router.get(
-    "/bin",
-    status_code=status.HTTP_200_OK,
-    response_model=None,
-    name="list_of_bin",
-)
-async def list_bin(
-        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        owner: TokenData = Depends(get_current_user)
-) -> Dict[str, List[Row | Row] | int]:
-
-    """
-    List bin.
-
-    Args:
-        repository: The document metadata repository.
-        owner: The token data of the owner.
-
-    Returns:
-        Dict[str, List[Row | Row] | int]: The list of bin.
-
-    """
-
-    return await repository.bin_list(owner=owner)
-
+# Archiving
 
 @router.post(
-    "/restore",
-    status_code=status.HTTP_200_OK,
-    response_model=DocumentMetadataRead,
-    name="restore_from_bin",
-)
-async def restore_bin(
-        file: str,
-        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user)
-) -> DocumentMetadataRead:
-
-    """
-    Restore bin.
-
-    Args:
-        file: The file to restore.
-        repository: The document metadata repository.
-        user: The token data of the user.
-
-    Returns:
-        DocumentMetadataRead: The restored document metadata.
-
-    """
-
-    return await repository.restore(file=file, owner=user)
-
-
-@router.delete(
-    "/perm-delete",
-    status_code=status.HTTP_204_NO_CONTENT,
-    name="permanently_delete_doc",
-)
-async def perm_delete(
-        document_id: UUID = None,
-        delete_all: bool = False,
-        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user),
-) -> None:
-
-    """
-    Permanently delete document.
-
-    Args:
-        document_id: The ID of the document to delete.
-        delete_all: Flag indicating whether to delete all documents.
-        repository: The document metadata repository.
-        user: The token data of the user.
-
-    Returns:
-        None
-
-    """
-
-    return await repository.perm_delete(document=document_id, owner=user, delete_all=delete_all)
-
-
-@router.post(
-    "/archive",
+    "/archive/{file_name)",
     response_model=DocumentMetadataRead,
     status_code=status.HTTP_200_OK,
     name="archive_a_document",
@@ -323,7 +241,7 @@ async def archive_list(
 
 
 @router.post(
-    "/un-archive",
+    "/un-archive/{file}",
     response_model=DocumentMetadataRead,
     status_code=status.HTTP_200_OK,
     name="remove_doc_from_archive",
