@@ -38,13 +38,12 @@ async def get_notifications(
 
 
 @router.put(
-    path="",
+    path="/{notification_id}",
     status_code=status.HTTP_200_OK,
     name="patch_status",
 )
 async def patch_status(
         updated_status: NotifyPatchStatus = None,
-        mark_as_all_read: bool = False,
         notification_id: UUID = None,
         repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
         user: TokenData = Depends(get_current_user)
@@ -54,7 +53,6 @@ async def patch_status(
 
     Args:
         updated_status (NotifyPatchStatus, optional): The updated status for the notification. Defaults to None.
-        mark_as_all_read (bool, optional): Flag indicating whether to mark all notifications as read. Defaults to False.
         notification_id (UUID, optional): The ID of the notification to update. Defaults to None.
         repository (NotifyRepo): The repository for accessing notification data.
         user (TokenData): The authenticated user.
@@ -65,16 +63,16 @@ async def patch_status(
             Otherwise, raises an HTTP_404 exception.
 
     Raises:
-        HTTP_404: If neither `mark_as_all_read` nor `notification_id` is provided.
+        HTTP_404: If 'notification_id' is not provided and update_status.mark_all is set to False.
     """
 
-    if mark_as_all_read:
+    if updated_status.mark_all:
         return await repository.mark_all_read(user=user)
     elif notification_id:
         return await repository.update_status(n_id=notification_id, updated_status=updated_status, user=user)
     else:
         raise HTTP_404(
-            msg="Bad Request: Make sure to either flag mark_as_all_read "
+            msg="Bad Request: Make sure to either flag mark_all "
                 "or enter notification_id along with correct status as payload."
         )
 
