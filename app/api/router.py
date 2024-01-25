@@ -10,8 +10,8 @@ from app.api.routes.documents.notify import router as notify_router
 router = APIRouter()
 
 router.include_router(auth_router, prefix="/u")
-router.include_router(documents_router, prefix="/document")
+router.include_router(documents_router, prefix="")
 router.include_router(notify_router, prefix="/notifications")
-router.include_router(documents_metadata_router, prefix="/document-metadata")
+router.include_router(documents_metadata_router, prefix="/metadata")
 router.include_router(document_organization_router, prefix="/filter")
 router.include_router(document_sharing_router)
