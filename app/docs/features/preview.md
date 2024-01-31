@@ -3,7 +3,7 @@
 Let's see how the preview feature of DocFlow works. 🚀
 
 - 🎯 Endpoint:
-`GET /api/document/preview/:document`
+`GET /v2/preview/:document`
 - ⚙️ Params:
 `{document: <docuent_id_or_name>}`
 - 🔐 Authorization:
@@ -11,7 +11,7 @@ Let's see how the preview feature of DocFlow works. 🚀
 
 ➰ cURL: 
 ```shell
-curl --location 'localhost:8000/api/document/preview/:document' \
+curl --location 'localhost:8000/v2/preview/:document' \
 --header 'Authorization: Bearer <token>'
 ```
 

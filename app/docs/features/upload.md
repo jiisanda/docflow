@@ -1,7 +1,7 @@
 # Document Upload in DocFlow
 
 - 🎯 Endpoint:
-`GET /api/document/upload`
+`POST /v2/upload`
 - ⚙️ Params:
 `{
     folder: <folder_name>,
@@ -12,7 +12,7 @@
 
 ➰ cURL:
 ```commandline
-curl --location 'localhost:8000/api/document/upload?folder=' \
+curl --location 'localhost:8000/v2/upload?folder=' \
 --header 'Content-Type: multipart/form-data' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer <token>' \

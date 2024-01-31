@@ -10,7 +10,7 @@ For sharing DocFlow has 3-endpoints:
 ### Share Document Link
 
 - 🎯 Endpoint: 
-`POST /api/share-link/:document`
+`POST /v2/share-link/:document`
 - ⚙️ Params:
 `Path Params=document`
 - 📦 Payload:
@@ -27,7 +27,7 @@ For sharing DocFlow has 3-endpoints:
 
 ➰ cURL:
 ```shell
-curl --location 'localhost:8000/api/share-link/:document' \
+curl --location 'localhost:8000/v2/share-link/:document' \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer <token>' \
@@ -74,7 +74,7 @@ Now this `share_this` link can be accessed with the second endpoint, **Redirect 
 ### Redirect to Share
 
 - 🎯 Endpoint: 
-`POST /api/doc/:url_id`
+`POST /v2/doc/:url_id`
 - ⚙️ Params:
 `Path Params=url_id`
 - 🔐 Authorization:
@@ -82,7 +82,7 @@ Now this `share_this` link can be accessed with the second endpoint, **Redirect 
 
 ➰ cURL:
 ```shell
-curl --location 'localhost:8000/api/doc/:url_id' \
+curl --location 'localhost:8000/v2/doc/:url_id' \
 --header 'Accept: application/json' \
 --header 'Authorization: Bearer <token>'
 ```
@@ -105,7 +105,7 @@ of clicks reaches the limit `visits`, the link is no longer valid.
 
 ### Share Document
 - 🎯 Endpoint: 
-`POST /api/share/document?document=&notify=true`
+`POST /v2/share/document?document=&notify=true`
 - ⚙️ Params:
 `document: <str>
 notify:true`
@@ -114,7 +114,7 @@ notify:true`
 
 ➰ cURL:
 ```shell
-curl --location 'localhost:8000/api/share/document?document=&notify=true' \
+curl --location 'localhost:8000/v2/share/document?document=&notify=true' \
 --header 'accept: application/json' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <token>' \
