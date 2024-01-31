@@ -2,6 +2,11 @@
 
 Explore DocFlow's API endpoints effortlessly using Postman! 🚀
 
+> ## Currently, facing issues with postman online documentation!
+Can directly export to postman using [Import for Postman](../DocFlow-DocumentManagementAPI.postman_collection.json)
+
+---
+
 To access the complete list of API endpoints, visit our [Postman Documentation](https://documenter.getpostman.com/view/20984268/2s9YRGxUcp).
 
 ## 📥 Importing the Collection

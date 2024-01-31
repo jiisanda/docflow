@@ -1,0 +1,3455 @@
+{
+	"info": {
+		"_postman_id": "fb26f538-c78a-4354-a392-7d77e3bf78ad",
+		"name": "DocFlow - Document Management API",
+		"description": "DocFlow is a powerful Document Management API designed to streamline document handling, including seamless uploading, downloading, organization, versioning, sharing, and more.\n\n## 🚀 Key Features\n\n💡 Document Upload and Download  \n💡 Organization and Searching  \n💡 Versioning  \n💡 Sharing  \n💡 Authentication and Authorization  \n💡 Access Control List  \n💡 Deletion and Archiving  \n💡 Document Preview  \n💡 Send file via Email  \n💡 Conversion to PDF  \n💡 Full Text Search  \n💡 Text Analysis and OCR\n\n## 🐙 Githib\n\nLink: [https://www.github.com/jiisanda/docflow](https://www.github.com/jiisanda/docflow)\n\n## 🛟 Help and Suppor\n\nFor any questions or support, please [contact](https://harshjaiswal2307@gmail.com).\n\nEnjoy using DocFlow to manage your documents seamlessly!",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20984268"
+	},
+	"item": [
+		{
+			"name": "🦕 api",
+			"item": [
+				{
+					"name": "👤 user",
+					"item": [
+						{
+							"name": "🆕👤 Create new user",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"\",\n  \"email\": \"\",\n  \"password\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/u/signup",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"u",
+										"signup"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"<string>\",\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/u/signup",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"u",
+												"signup"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<string>\",\n  \"email\": \"<email>\",\n  \"user_since\": \"<dateTime>\"\n}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"<string>\",\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/u/signup",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"u",
+												"signup"
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "🔑♻️ Create access and refresh tokens for user",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "username",
+											"value": "",
+											"description": "(Required) "
+										},
+										{
+											"key": "password",
+											"value": "",
+											"description": "(Required) "
+										},
+										{
+											"key": "grant_type",
+											"value": ""
+										},
+										{
+											"key": "scope",
+											"value": ""
+										},
+										{
+											"key": "client_id",
+											"value": ""
+										},
+										{
+											"key": "client_secret",
+											"value": ""
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/u/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"u",
+										"login"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "password",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "grant_type",
+													"value": "<string>"
+												},
+												{
+													"key": "scope",
+													"value": ""
+												},
+												{
+													"key": "client_id",
+													"value": "<string>"
+												},
+												{
+													"key": "client_secret",
+													"value": "<string>"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/u/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"u",
+												"login"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "password",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "grant_type",
+													"value": "<string>"
+												},
+												{
+													"key": "scope",
+													"value": ""
+												},
+												{
+													"key": "client_id",
+													"value": "<string>"
+												},
+												{
+													"key": "client_secret",
+													"value": "<string>"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/u/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"u",
+												"login"
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "👤 Get details of currently logged in user",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/u/me",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"u",
+										"me"
+									]
+								},
+								"description": "~TODO: Add an extra db for user profile then return details\n    For now returning {Userid and Username}"
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/u/me",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"u",
+												"me"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<string>\",\n  \"username\": \"<string>\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "📝 Document",
+					"item": [
+						{
+							"name": "📤 Upload Document",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"description": "(Required) ",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/upload?folder=",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"upload"
+									],
+									"query": [
+										{
+											"key": "folder",
+											"value": ""
+										}
+									]
+								},
+								"description": "Uploads a document to the specified folder.\n\nArgs:\n    file (UploadFile): The file to be uploaded.\n    folder (Optional[str]): The folder where the document will be stored. Defaults to None.\n    repository (DocumentRepository): The repository for managing documents.\n    metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.\n    user_repository (AuthRepository): The repository for managing user authentication.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    Union[DocumentMetadataRead, Dict[str, str]]: If the file is added, returns the uploaded document metadata.\n        If the file is updated, returns the patched document metadata.\n        Otherwise, returns a response dictionary.\n\nRaises:\n    HTTP_400: If no input file is provided."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "file",
+													"value": "<binary>",
+													"description": "(Required) ",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/upload?folder=",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"upload"
+											],
+											"query": [
+												{
+													"key": "folder",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "file",
+													"value": "<binary>",
+													"description": "(Required) ",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/upload?folder=",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"upload"
+											],
+											"query": [
+												{
+													"key": "folder",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "📥 Download Document",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/:file_name/download",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										":file_name",
+										"download"
+									],
+									"variable": [
+										{
+											"key": "file_name",
+											"value": ""
+										}
+									]
+								},
+								"description": "Downloads a document with the specified file name.\n\nArgs:\n    file_name (str): The name of the file to be downloaded.\n    repository (DocumentRepository): The repository for managing documents.\n    metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    object: The downloaded document.\n\nRaises:\n    HTTP_400: If no file name is provided.\n    HTTP_404: If no file with the specified name is found."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/:file_name/download",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												":file_name",
+												"download"
+											],
+											"variable": [
+												{
+													"key": "file_name",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/:file_name/download",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												":file_name",
+												"download"
+											],
+											"variable": [
+												{
+													"key": "file_name",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "🚮 Add To Bin",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/:file_name",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										":file_name"
+									],
+									"variable": [
+										{
+											"key": "file_name",
+											"value": ""
+										}
+									]
+								},
+								"description": "Adds a document to the bin for deletion.\n\nArgs:\n    file_name (str): The name of the file to be added to the bin.\n    metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    None: If the file is added to the bin."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/:file_name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												":file_name"
+											],
+											"variable": [
+												{
+													"key": "file_name",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/:file_name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												":file_name"
+											],
+											"variable": [
+												{
+													"key": "file_name",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "🗑️💥 Permanently Delete Doc",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/trash/:file_name",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"trash",
+										":file_name"
+									],
+									"variable": [
+										{
+											"key": "file_name",
+											"value": ""
+										}
+									]
+								},
+								"description": "Permanently deletes a document.\n\nArgs:\n    file_name (str, optional): The name of the file to be permanently deleted. Defaults to None.\n    delete_all (bool): Flag indicating whether to delete all documents in the bin. Defaults to False.\n    repository (DocumentRepository): The repository for managing documents.\n    metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    None: If the file is permanently deleted.\n\nRaises:\n    HTTP_404: If no file with the specified name is found."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/trash/:file_name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"trash",
+												":file_name"
+											],
+											"variable": [
+												{
+													"key": "file_name",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/trash/:file_name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"trash",
+												":file_name"
+											],
+											"variable": [
+												{
+													"key": "file_name",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "👀 Preview Document",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v2/preview/:document",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"preview",
+										":document"
+									],
+									"variable": [
+										{
+											"key": "document",
+											"value": "article1.png"
+										}
+									]
+								},
+								"description": "```\nGet the preview of a document.\nArgs:\n    document (Union[str, UUID]): The ID or name of the document.\n    repository (DocumentRe\npository): The repository for accessing document data.\n    metadata_repository (DocumentMetadataRepository): The repository for accessing document metadata.\n    user (TokenData): The user token data.\nReturns:\n    FileResponse: The file response containing the document preview.\nRaises:\n    HTTP_404: If the document ID or name is not provided or if the document does not exist.\n    HTTP_400: If the file type is not supported for preview.\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/preview/:document",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"preview",
+												":document"
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": "article1.png"
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						},
+						{
+							"name": "📃🗑️  List Of Bin",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/trash",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"trash"
+									]
+								},
+								"description": "List bin.\n\nArgs:\n    repository: The document metadata repository.\n    owner: The token data of the owner.\n\nReturns:\n    Dict[str, List[Row | Row] | int]: The list of bin."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/trash",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"trash"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								}
+							]
+						},
+						{
+							"name": "🗑️🔄️ Restore From Bin",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/restore/:file",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"restore",
+										":file"
+									],
+									"variable": [
+										{
+											"key": "file",
+											"value": ""
+										}
+									]
+								},
+								"description": "Restore bin.\n\nArgs:\n    file: The file to restore.\n    repository: The document metadata repository.\n    user: The token data of the user.\n\nReturns:\n    DocumentMetadataRead: The restored document metadata."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/restore/:file",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"restore",
+												":file"
+											],
+											"variable": [
+												{
+													"key": "file",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"owner_id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"s3_url\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"size\": \"<integer>\",\n  \"file_type\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"categories\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"status\": \"<string>\",\n  \"file_hash\": \"<string>\",\n  \"access_to\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"id\": \"<uuid>\"\n}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/restore/:file",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"restore",
+												":file"
+											],
+											"variable": [
+												{
+													"key": "file",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "🫗 Empty bin",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v2/trash",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"trash"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/trash",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"trash"
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "🔔 notifications",
+					"item": [
+						{
+							"name": "📫 Get Notifications",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/notifications",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"notifications"
+									]
+								},
+								"description": "Get notifications for a user.\n\nArgs:  \nrepository (NotifyRepo): The repository for accessing notification data.  \nuser (TokenData): The authenticated user.\n\nReturns:  \nList\\[Notification\\]: A list of notifications for the user."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/notifications",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"notifications"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"id\": \"<uuid>\",\n    \"receiver_id\": \"<string>\",\n    \"message\": \"<string>\",\n    \"status\": \"<string>\",\n    \"notified_at\": \"<dateTime>\"\n  },\n  {\n    \"id\": \"<uuid>\",\n    \"receiver_id\": \"<string>\",\n    \"message\": \"<string>\",\n    \"status\": \"<string>\",\n    \"notified_at\": \"<dateTime>\"\n  }\n]"
+								}
+							]
+						},
+						{
+							"name": "🧩🔔 Patch Status",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"unread\",\n  \"mark_all\": false\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/notifications/:notification_id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"notifications",
+										":notification_id"
+									],
+									"variable": [
+										{
+											"key": "notification_id",
+											"value": ""
+										}
+									]
+								},
+								"description": "Patch the status of a notification or mark all notifications as read.\n\nArgs:\n    updated_status (NotifyPatchStatus, optional): The updated status for the notification. Defaults to None.\n    mark_as_all_read (bool, optional): Flag indicating whether to mark all notifications as read. Defaults to False.\n    notification_id (UUID, optional): The ID of the notification to update. Defaults to None.\n    repository (NotifyRepo): The repository for accessing notification data.\n    user (TokenData): The authenticated user.\n\nReturns:\n    Union[List[Notification], Notification]: If `mark_as_all_read` is True, returns a list of all notifications\n        marked as read. If `notification_id` is provided, returns the updated notification.\n        Otherwise, raises an HTTP_404 exception.\n\nRaises:\n    HTTP_404: If neither `mark_as_all_read` nor `notification_id` is provided."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"status\": \"unread\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/notifications/:notification_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"notifications",
+												":notification_id"
+											],
+											"variable": [
+												{
+													"key": "notification_id",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"id\": \"<uuid>\",\n    \"receiver_id\": \"<string>\",\n    \"message\": \"<string>\",\n    \"status\": \"<string>\",\n    \"notified_at\": \"<dateTime>\"\n  },\n  {\n    \"id\": \"<uuid>\",\n    \"receiver_id\": \"<string>\",\n    \"message\": \"<string>\",\n    \"status\": \"<string>\",\n    \"notified_at\": \"<dateTime>\"\n  }\n]"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"status\": \"unread\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/notifications/:notification_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"notifications",
+												":notification_id"
+											],
+											"variable": [
+												{
+													"key": "notification_id",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "🗑️ Clear All Notifications",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v2/notifications",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"notifications"
+									]
+								},
+								"description": "Clear all notifications for a user.\n\nArgs:\n    repository (NotifyRepo): The repository for accessing notification data.\n    user (TokenData): The authenticated user.\n\nReturns:\n    None"
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/notifications",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"notifications"
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Simple Notification System"
+				},
+				{
+					"name": "🏷️ Documents Metadata",
+					"item": [
+						{
+							"name": "📚 archive",
+							"item": [
+								{
+									"name": "📚📃 Archive A Document",
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": [
+												{
+													"key": "accessTokenUrl",
+													"value": "api/u/login",
+													"type": "string"
+												},
+												{
+													"key": "grant_type",
+													"value": "password_credentials",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/archive/:file_name",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												"archive",
+												":file_name"
+											],
+											"variable": [
+												{
+													"key": "file_name",
+													"value": ""
+												}
+											]
+										},
+										"description": "Archive a document.\n\nArgs:\n    file_name (str): The name of the file to be archived.\n    repository (DocumentMetadataRepository): The repository for document metadata.\n    user (TokenData): The user token data.\n\nReturns:\n    DocumentMetadataRead: The archived document metadata."
+									},
+									"response": [
+										{
+											"name": "Successful Response",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: oauth2",
+														"key": "Authorization",
+														"value": "{{token}}"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v2/metadata/archive/:file_name",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v2",
+														"metadata",
+														"archive",
+														":file_name"
+													],
+													"variable": [
+														{
+															"key": "file_name",
+															"value": ""
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"owner_id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"s3_url\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"size\": \"<integer>\",\n  \"file_type\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"categories\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"status\": \"<string>\",\n  \"file_hash\": \"<string>\",\n  \"access_to\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"id\": \"<uuid>\"\n}"
+										},
+										{
+											"name": "Validation Error",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: oauth2",
+														"key": "Authorization",
+														"value": "{{token}}"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/document-metadata/archive?file_name=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"document-metadata",
+														"archive"
+													],
+													"query": [
+														{
+															"key": "file_name",
+															"value": "<string>"
+														}
+													]
+												}
+											},
+											"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+											"code": 422,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+										}
+									]
+								},
+								{
+									"name": "📃📚 Archived Doc List",
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": [
+												{
+													"key": "accessTokenUrl",
+													"value": "api/u/login",
+													"type": "string"
+												},
+												{
+													"key": "grant_type",
+													"value": "password_credentials",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/archive/list",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												"archive",
+												"list"
+											]
+										},
+										"description": "Get the list of archived documents.\n\nArgs:\n    repository (DocumentMetadataRepository): The repository for document metadata.\n    user (TokenData): The user token data.\n\nReturns:\n    Dict[str, List[str] | int]: A dictionary containing the list of archived documents."
+									},
+									"response": [
+										{
+											"name": "Successful Response",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: oauth2",
+														"key": "Authorization",
+														"value": "{{token}}"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v2/metadata/archive/list",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v2",
+														"metadata",
+														"archive",
+														"list"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{}"
+										}
+									]
+								},
+								{
+									"name": "🔄️📚 Remove Doc From Archive",
+									"request": {
+										"auth": {
+											"type": "oauth2",
+											"oauth2": [
+												{
+													"key": "accessTokenUrl",
+													"value": "api/u/login",
+													"type": "string"
+												},
+												{
+													"key": "grant_type",
+													"value": "password_credentials",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/un-archive/:file",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												"un-archive",
+												":file"
+											],
+											"variable": [
+												{
+													"key": "file",
+													"value": ""
+												}
+											]
+										},
+										"description": "Un-archive a document.\n\nArgs:\n    file (str): The name of the file to be un-archived.\n    repository (DocumentMetadataRepository): The repository for document metadata.\n    user (TokenData): The user token data.\n\nReturns:\n    DocumentMetadataRead: The un-archived document metadata."
+									},
+									"response": [
+										{
+											"name": "Successful Response",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: oauth2",
+														"key": "Authorization",
+														"value": "{{token}}"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v2/metadata/un-archive/:file",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v2",
+														"metadata",
+														"un-archive",
+														":file"
+													],
+													"variable": [
+														{
+															"key": "file",
+															"value": ""
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"owner_id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"s3_url\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"size\": \"<integer>\",\n  \"file_type\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"categories\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"status\": \"<string>\",\n  \"file_hash\": \"<string>\",\n  \"access_to\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"id\": \"<uuid>\"\n}"
+										},
+										{
+											"name": "Validation Error",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"description": "Added as a part of security scheme: oauth2",
+														"key": "Authorization",
+														"value": "{{token}}"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v2/metadata/un-archive/:file",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v2",
+														"metadata",
+														"un-archive",
+														":file"
+													],
+													"variable": [
+														{
+															"key": "file",
+															"value": ""
+														}
+													]
+												}
+											},
+											"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+											"code": 422,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "📃🏷️ Get Documents Metadata",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/metadata?limit=10&offset=0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"metadata"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										}
+									]
+								},
+								"description": "Retrieves a list of document metadata.\n\nArgs:\n    limit (int): The maximum number of documents to retrieve. Defaults to 10.\n    offset (int): The number of documents to skip. Defaults to 0.\n    repository (DocumentMetadataRepository): The repository for managing document metadata.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    Dict[str, Union[List[DocumentMetadataRead], Any]]: A dictionary containing the list of document metadata."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata?limit=10&offset=0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata"
+											],
+											"query": [
+												{
+													"key": "limit",
+													"value": "10"
+												},
+												{
+													"key": "offset",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"in_f\": [\n    {\n      \"owner_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"s3_url\": \"<string>\",\n      \"created_at\": \"<dateTime>\",\n      \"size\": \"<integer>\",\n      \"file_type\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"categories\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"status\": \"<string>\",\n      \"file_hash\": \"<string>\",\n      \"access_to\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"id\": \"<uuid>\"\n    },\n    {\n      \"owner_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"s3_url\": \"<string>\",\n      \"created_at\": \"<dateTime>\",\n      \"size\": \"<integer>\",\n      \"file_type\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"categories\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"status\": \"<string>\",\n      \"file_hash\": \"<string>\",\n      \"access_to\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"id\": \"<uuid>\"\n    }\n  ],\n  \"ex40\": [\n    {\n      \"owner_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"s3_url\": \"<string>\",\n      \"created_at\": \"<dateTime>\",\n      \"size\": \"<integer>\",\n      \"file_type\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"categories\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"status\": \"<string>\",\n      \"file_hash\": \"<string>\",\n      \"access_to\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"id\": \"<uuid>\"\n    },\n    {\n      \"owner_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"s3_url\": \"<string>\",\n      \"created_at\": \"<dateTime>\",\n      \"size\": \"<integer>\",\n      \"file_type\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"categories\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"status\": \"<string>\",\n      \"file_hash\": \"<string>\",\n      \"access_to\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"id\": \"<uuid>\"\n    }\n  ]\n}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata?limit=10&offset=0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata"
+											],
+											"query": [
+												{
+													"key": "limit",
+													"value": "10"
+												},
+												{
+													"key": "offset",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "📤🏷️ Upload Documents Metadata",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"<string>\",\n  \"s3_url\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"size\": \"<integer>\",\n  \"file_type\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"categories\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"status\": \"<string>\",\n  \"file_hash\": \"<string>\",\n  \"owner_id\": \"<string>\",\n  \"access_to\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/metadata/upload",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"metadata",
+										"upload"
+									]
+								},
+								"description": "Uploads document metadata.\n\nArgs:\n    document_upload (DocumentMetadataCreate): The document metadata to be uploaded.\n    repository (DocumentMetadataRepository): The repository for managing document metadata.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    DocumentMetadataRead: The uploaded document metadata."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"s3_url\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"size\": \"<integer>\",\n  \"file_type\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"categories\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"status\": \"<string>\",\n  \"file_hash\": \"<string>\",\n  \"owner_id\": \"<string>\",\n  \"access_to\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/upload",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												"upload"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"owner_id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"s3_url\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"size\": \"<integer>\",\n  \"file_type\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"categories\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"status\": \"<string>\",\n  \"file_hash\": \"<string>\",\n  \"access_to\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"id\": \"<uuid>\"\n}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"s3_url\": \"<string>\",\n  \"created_at\": \"<dateTime>\",\n  \"size\": \"<integer>\",\n  \"file_type\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"categories\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"status\": \"<string>\",\n  \"file_hash\": \"<string>\",\n  \"owner_id\": \"<string>\",\n  \"access_to\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/upload",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												"upload"
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "📃 Get Document-Metadata",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/metadata/:document/detail",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"metadata",
+										":document",
+										"detail"
+									],
+									"variable": [
+										{
+											"key": "document",
+											"value": ""
+										}
+									]
+								},
+								"description": "Retrieves the metadata of a specific document.\n\nArgs:\n    document (Union[str, UUID]): The ID or name of the document.\n    repository (DocumentMetadataRepository): The repository for managing document metadata.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    Union[DocumentMetadataRead, HTTPException]: The document metadata if found, otherwise an HTTPException."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/:document/detail",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												":document",
+												"detail"
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/:document/detail",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												":document",
+												"detail"
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "🧩📃 Update Doc Metadata Details",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"\",\n  \"tags\": [\n    \"\"\n  ],\n  \"categories\": [\n    \"\"\n  ],\n  \"access_to\": [\n    \"\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/metadata/:document",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"metadata",
+										":document"
+									],
+									"variable": [
+										{
+											"key": "document",
+											"value": "",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Updates the details of a document's metadata.\n\nArgs:\n    document (Union[str, UUID]): The ID or name of the document.\n    document_patch (DocumentMetadataPatch): The document metadata patch containing the updated details.\n    repository (DocumentMetadataRepository): The repository for managing document metadata.\n    user_repository (AuthRepository): The repository for managing user authentication.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    Union[DocumentMetadataRead, HTTPException]: The updated document metadata if successful,\n    otherwise an HTTPException.\n\nRaises:\n    HTTP_404: If no document with the specified ID or name is found."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"categories\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"access_to\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/:document",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												":document"
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"categories\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"access_to\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/:document",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												":document"
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "🗑️📃 Delete Document Metadata",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/metadata/:document",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"metadata",
+										":document"
+									],
+									"variable": [
+										{
+											"key": "document",
+											"value": "",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Deletes the metadata of a document and moves it to the bin.\n\nArgs:\n    document (Union[str, UUID]): The identifier of the document to delete.\n    repository (DocumentMetadataRepository): The repository for accessing document metadata.\n        Defaults to the result of the `get_repository` function with `DocumentMetadataRepository` as the argument.\n    user (TokenData): The token data of the current user. Defaults to the result of the `get_current_user` function.\n\nReturns:\n    None (204_NO_CONTENT)\n\nRaises:\n    HTTP_404: If no document with the specified identifier is found."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/:document",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												":document"
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/metadata/:document",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"metadata",
+												":document"
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						}
+					],
+					"description": "Handles updating the databases"
+				},
+				{
+					"name": "📨 Sharing",
+					"item": [
+						{
+							"name": "📃📨🔗 Share Document Link",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"visits\": 1,\n  \"share_to\": [\n    \"\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/share-link/:document",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"share-link",
+										":document"
+									],
+									"variable": [
+										{
+											"key": "document",
+											"value": ""
+										}
+									]
+								},
+								"description": "Shares a documents link with another user, sends a mail and notifies the receiver.\n\nArgs:  \ndocument (Union\\[str, UUID\\]): The ID or name of the document to be shared.  \nshare_request (SharingRequest): The sharing request containing the details of the sharing operation.  \nrepository (DocumentSharingRepository): The repository for managing document sharing.  \nauth_repository (AuthRepository): The repository for managing User related queries.  \nmetadata_repository (DocumentMetadataRepository): The repository for managing document metadata.  \nnotify_repository (NotifyRepo): The repository for managing notification  \nuser (TokenData): The token data of the authenticated user.\n\nReturns:  \nDict\\[str, str\\]: A dictionary containing the personal URL and shareable link.\n\nRaises:  \nHTTP_404: If no document with the specified ID or name is found."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"visits\": 1,\n  \"share_to\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/share-link/:document",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"share-link",
+												":document"
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"visits\": 1,\n  \"share_to\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/share-link/:document",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"share-link",
+												":document"
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "🔄️📤 Redirect To Share",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/doc/:url_id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"doc",
+										":url_id"
+									],
+									"variable": [
+										{
+											"key": "url_id",
+											"value": "",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Redirects to a shared document URL.\n\nArgs:\n    url_id (str): The ID of the shared document URL.\n    repository (DocumentSharingRepository): The repository for managing document sharing.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    RedirectResponse: A redirect response to the shared document URL."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/doc/:url_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"doc",
+												":url_id"
+											],
+											"variable": [
+												{
+													"key": "url_id",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/doc/:url_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"doc",
+												":url_id"
+											],
+											"variable": [
+												{
+													"key": "url_id",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "📃📨 Share Document",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"visits\": 1,\n  \"share_to\": [\n    \"\"\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v2/share/:document?notify=true",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"share",
+										":document"
+									],
+									"query": [
+										{
+											"key": "notify",
+											"value": "true"
+										}
+									],
+									"variable": [
+										{
+											"key": "document",
+											"value": ""
+										}
+									]
+								},
+								"description": "```\nShare a document with other users, and notifies if notify is set to True (default).\nArgs:    \n    document (Union[str, UUID]): The ID or UUID of the document to be shared.    \n    share_request (SharingRequest): The sharing request containing the recipients and permissions.    \n    notify (bool, optional): Whether to send notifications to the recipients. Defaults to True.    \n    repository (DocumentSharingRepository, optional): The repository for document sharing operations.    \n    document_repo (DocumentRepository, optional): The repository for document operations.    \n    metadata_repo (DocumentMetadataRepository, optional): The repository for document metadata operations.    \n    notify_repo (NotifyRepo, optional): The repository for notification operations.    \n    auth_repo (AuthRepository, optional): The repository for authentication operations.    \n    user (TokenData, optional): The authenticated user.\nRaises:    \n    HTTP_404: If the document is not found.\nReturns:    \n    None\n\n ```"
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"visits\": 1,\n  \"share_to\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v2/share/:document?notify=true",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"share",
+												":document"
+											],
+											"query": [
+												{
+													"key": "notify",
+													"value": "true"
+												}
+											],
+											"variable": [
+												{
+													"key": "document",
+													"value": ""
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": null,
+									"header": null,
+									"cookie": [],
+									"body": null
+								}
+							]
+						}
+					],
+					"description": "Sharing a Document"
+				},
+				{
+					"name": "🔍 Searching",
+					"item": [
+						{
+							"name": "🔎📃 Search Document",
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessTokenUrl",
+											"value": "api/u/login",
+											"type": "string"
+										},
+										{
+											"key": "grant_type",
+											"value": "password_credentials",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v2/filter?limit=10&offset=0&tag=&category=&file_types=&doc_status=",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v2",
+										"filter"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										},
+										{
+											"key": "tag",
+											"value": ""
+										},
+										{
+											"key": "category",
+											"value": ""
+										},
+										{
+											"key": "file_types",
+											"value": ""
+										},
+										{
+											"key": "doc_status",
+											"value": ""
+										}
+									]
+								},
+								"description": "Searches for documents based on specified criteria.\n\nArgs:\n    limit (int): The maximum number of documents to retrieve. Defaults to 10.\n    offset (int): The number of documents to skip. Defaults to 0.\n    tag (str, optional): The tag to filter documents by. Defaults to None.\n    category (str, optional): The category to filter documents by. Defaults to None.\n    file_types (str, optional): The file types to filter documents by. Defaults to None.\n    doc_status (str, optional): The status of documents to filter by. Defaults to None.\n    repository (DocumentOrgRepository): The repository for managing document organization.\n    repository_metadata (DocumentMetadataRepository): The repository for managing document metadata.\n    user (TokenData): The token data of the authenticated user.\n\nReturns:\n    List[DocumentMetadataRead] or List[Dict[str, Any]]: The list of matching documents."
+							},
+							"response": [
+								{
+									"name": "Successful Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/filter?limit=10&offset=0&tag=&category=&file_types=&doc_status=",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"filter"
+											],
+											"query": [
+												{
+													"key": "limit",
+													"value": "10"
+												},
+												{
+													"key": "offset",
+													"value": "0"
+												},
+												{
+													"key": "tag",
+													"value": ""
+												},
+												{
+													"key": "category",
+													"value": ""
+												},
+												{
+													"key": "file_types",
+													"value": ""
+												},
+												{
+													"key": "doc_status",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Validation Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "Added as a part of security scheme: oauth2",
+												"key": "Authorization",
+												"value": "{{token}}"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v2/filter?limit=10&offset=0&tag=&category=&file_types=&doc_status=",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v2",
+												"filter"
+											],
+											"query": [
+												{
+													"key": "limit",
+													"value": "10"
+												},
+												{
+													"key": "offset",
+													"value": "0"
+												},
+												{
+													"key": "tag",
+													"value": ""
+												},
+												{
+													"key": "category",
+													"value": ""
+												},
+												{
+													"key": "file_types",
+													"value": ""
+												},
+												{
+													"key": "doc_status",
+													"value": ""
+												}
+											]
+										}
+									},
+									"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    },\n    {\n      \"loc\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"msg\": \"<string>\",\n      \"type\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						}
+					],
+					"description": "Searching a document with tags, categories, file type and status..."
+				}
+			],
+			"description": "Contains all the APIs..."
+		},
+		{
+			"name": "Root",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Successful Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{}"
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "/",
+			"type": "string"
+		}
+	]
+}
