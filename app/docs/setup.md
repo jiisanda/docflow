@@ -10,8 +10,8 @@ git clone https://www.github.com/jiisanda/docflow.git
 
 ### 2️⃣ Configure Your Environment
 
-Start by creating your environment file using the provided [sample_env.txt](commands/sample_env.txt). This file contains all the necessary 
-environment variables for Docflow. Save it inside the app/ directory.
+Start by creating your environment file using the provided [.env.template](https://github.com/jiisanda/docflow/blob/master/.env.template).
+This file contains all the necessary environment variables for Docflow. Save it inside the app/ directory.
 
 #### PostgreSQL Setup
 
@@ -40,19 +40,21 @@ Generate `JWT_SECRET_KEY` and `JWT_REFRESH_SECRET_KEY` using Python:
 ```bash
 docflow$ python
 >> import secrets
->> secrets.token_urlsafe(length=32)
+>> secrets.token_urlsafe(32)
 'some-random-secret-of-length-32'
->> secret.token_hex(length=32)
+>> secret.token_hex(32)
 'some-random-secret-of-length-32'
 ```
 #### Email Service
 
 This section explains how to set up the email service using Gmail. Configure the following variables:
+```.ignorelang
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+EMAIL=Your email address used to create the app
+APP_PASSWORD=Generate an app password from your Google Account
+```
 
-`SMTP_SERVER`: `smtp.gmail.com`
-`SMTP_PORT`: `587`
-`EMAIL`: `Your email address used to create the app`.
-`APP_PASSWORD`: `Generate an app password from your Google Account`.
 Before starting, ensure you have enabled "Two-Factor Authentication" and "Less secure app access" for your Gmail account.
 
 >For a deeper understanding of environment variables in Python, check out this article: 
