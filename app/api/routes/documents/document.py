@@ -25,19 +25,19 @@ router = APIRouter(tags=["Document"])
     name="upload_document"
 )
 async def upload(
-    file: UploadFile = File(...),
+    files: List[UploadFile] = File(...),
     folder: Optional[str] = None,
     repository: DocumentRepository = Depends(DocumentRepository),
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
     user_repository: AuthRepository = Depends(get_repository(AuthRepository)),
     user: TokenData = Depends(get_current_user)
-) -> Union[DocumentMetadataRead, Dict[str, str]]:
+) -> Union[DocumentMetadataRead, List[Dict[str, str]]]:
 
     """
     Uploads a document to the specified folder.
 
     Args:
-        file (UploadFile): The file to be uploaded.
+        files (List[UploadFile]): The files to be uploaded.
         folder (Optional[str]): The folder where the document will be stored. Defaults to None.
         repository (DocumentRepository): The repository for managing documents.
         metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
@@ -53,29 +53,31 @@ async def upload(
         HTTP_400: If no input file is provided.
     """
 
-    if not file:
+    if not files:
         raise HTTP_400(
-            msg="No input file..."
+            msg="No input files provided..."
         )
 
-    response = await repository.upload(
-        metadata_repo=metadata_repository,
-        user_repo=user_repository,
-        file=file,
-        folder=folder,
-        user=user
-    )
-    if response["response"] == "file added":
-        return await metadata_repository.upload(document_upload=response["upload"])
-    elif response["response"] == "file updated":
-        return await metadata_repository.patch(
-            document=response["upload"]["name"],
-            document_patch=response["upload"],
-            owner=user,
+    responses = []
+    for file in files:
+        response = await repository.upload(
+            metadata_repo=metadata_repository,
             user_repo=user_repository,
-            is_owner=response["is_owner"]
+            file=file,
+            folder=folder,
+            user=user
         )
-    return response
+        if response["response"] == "file added":
+            return await metadata_repository.upload(document_upload=response["upload"])
+        elif response["response"] == "file updated":
+            return await metadata_repository.patch(
+                document=response["upload"]["name"],
+                document_patch=response["upload"],
+                owner=user,
+                user_repo=user_repository,
+                is_owner=response["is_owner"]
+            )
+    return responses
 
 
 @router.get(
