@@ -149,7 +149,7 @@ class DocumentRepository:
                     file=file, folder=folder, contents=contents, file_type=file_type, user=user
                 )
 
-            print("File already present, checking if there is an update...")
+            print(f"File {file.filename} already present, checking if there is an update...")
 
             if doc["file_hash"] != new_file_hash:
                 print("File has been updated, uploading new version...")

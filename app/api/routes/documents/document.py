@@ -31,7 +31,7 @@ async def upload(
     metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
     user_repository: AuthRepository = Depends(get_repository(AuthRepository)),
     user: TokenData = Depends(get_current_user)
-) -> Union[DocumentMetadataRead, List[Dict[str, str]]]:
+) -> Union[List[DocumentMetadataRead], List[Dict[str, str]]]:
 
     """
     Uploads a document to the specified folder.
@@ -68,15 +68,15 @@ async def upload(
             user=user
         )
         if response["response"] == "file added":
-            return await metadata_repository.upload(document_upload=response["upload"])
+            responses.append(await metadata_repository.upload(document_upload=response["upload"]))
         elif response["response"] == "file updated":
-            return await metadata_repository.patch(
+            responses.append(await metadata_repository.patch(
                 document=response["upload"]["name"],
                 document_patch=response["upload"],
                 owner=user,
                 user_repo=user_repository,
                 is_owner=response["is_owner"]
-            )
+            ))
     return responses
 
 
