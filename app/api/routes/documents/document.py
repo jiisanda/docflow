@@ -67,9 +67,9 @@ async def upload(
             folder=folder,
             user=user
         )
-        if response["response"] == "file added":
+        if response["response"] == "file_added":
             responses.append(await metadata_repository.upload(document_upload=response["upload"]))
-        elif response["response"] == "file updated":
+        elif response["response"] == "file_updated":
             responses.append(await metadata_repository.patch(
                 document=response["upload"]["name"],
                 document_patch=response["upload"],

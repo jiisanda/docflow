@@ -65,7 +65,7 @@ class DocumentRepository:
         self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
 
         return {
-            "response": "file added",
+            "response": "file_added",
             "upload": {
                 "owner_id": user.id,
                 "name": file.filename,
@@ -85,7 +85,7 @@ class DocumentRepository:
         self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
 
         return {
-            "response": "file updated",
+            "response": "file_updated",
             "is_owner": is_owner,
             "upload": {
                 "name": file.filename,
@@ -101,11 +101,11 @@ class DocumentRepository:
         Uploads a file to the specified folder in the document repository.
 
         Args:
-            @param metadata_repo: The repository for accessing metadata.
-            @param user_repo: The repository for accessing user information.
-            @param file: The file to be uploaded.
-            @param folder: The folder in which the file should be uploaded.
-            @param user: The token data of the user.
+            metadata_repo: The repository for accessing metadata.
+            user_repo: The repository for accessing user information.
+            file: The file to be uploaded.
+            folder: The folder in which the file should be uploaded.
+            user: The token data of the user.
 
         Returns:
             @return: A dictionary containing the response and upload information.
@@ -120,7 +120,7 @@ class DocumentRepository:
                 msg=f"File type {file_type} not supported."
             )
 
-        contents = file.file.read()
+        contents = await file.read()
 
         doc = (await metadata_repo.get(document=file.filename, owner=user)).__dict__
         # hash of the file uploaded to check if change in file
