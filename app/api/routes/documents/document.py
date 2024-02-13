@@ -9,7 +9,7 @@ from app.api.dependencies.auth_utils import get_current_user
 from app.api.dependencies.repositories import get_repository
 from app.core.exceptions import HTTP_400, HTTP_404
 from app.db.repositories.auth.auth import AuthRepository
-from app.db.repositories.documents.documents import DocumentRepository
+from app.db.repositories.documents.documents import DocumentRepository, perm_delete as perm_delete_file
 from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from app.schemas.auth.bands import TokenData
 from app.schemas.documents.documents_metadata import DocumentMetadataRead
@@ -183,7 +183,6 @@ async def list_bin(
 async def perm_delete(
         file_name: str = None,
         delete_all: bool = False,
-        repository: DocumentRepository = Depends(DocumentRepository),
         metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
         user: TokenData = Depends(get_current_user),
 ) -> None:
@@ -194,7 +193,6 @@ async def perm_delete(
     Args:
         file_name (str, optional): The name of the file to be permanently deleted. Defaults to None.
         delete_all (bool): Flag indicating whether to delete all documents in the bin. Defaults to False.
-        repository (DocumentRepository): The repository for managing documents.
         metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
         user (TokenData): The token data of the authenticated user.
 
@@ -208,9 +206,8 @@ async def perm_delete(
     try:
         get_documents_metadata = dict(await metadata_repository.bin_list(owner=user))
         if len(get_documents_metadata["response"]) > 0:
-            return await repository.perm_delete(
+            return await perm_delete_file(
                 file=file_name,
-                bin_list=get_documents_metadata["response"],
                 delete_all=delete_all,
                 meta_repo=metadata_repository,
                 user=user
