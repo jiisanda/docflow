@@ -81,7 +81,7 @@ async def upload(
 
 
 @router.get(
-    "file/{file_name}/download",
+    "/file/{file_name}/download",
     status_code=status.HTTP_200_OK,
     name="download_document"
 )
