@@ -161,3 +161,4 @@ cython_debug/
 
 # .pem file
 *.pem
+downloads/

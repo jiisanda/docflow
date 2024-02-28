@@ -445,7 +445,7 @@
 									"mode": "formdata",
 									"formdata": [
 										{
-											"key": "file",
+											"key": "files",
 											"description": "(Required) ",
 											"type": "file",
 											"src": []
@@ -453,7 +453,7 @@
 									]
 								},
 								"url": {
-									"raw": "{{baseUrl}}/v2/upload?folder=",
+									"raw": "{{baseUrl}}/v2/upload",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -464,7 +464,8 @@
 									"query": [
 										{
 											"key": "folder",
-											"value": ""
+											"value": "",
+											"disabled": true
 										}
 									]
 								},
@@ -609,12 +610,13 @@
 									}
 								],
 								"url": {
-									"raw": "{{baseUrl}}/v2/:file_name/download",
+									"raw": "{{baseUrl}}/v2/file/:file_name/download",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"v2",
+										"file",
 										":file_name",
 										"download"
 									],
