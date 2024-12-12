@@ -24,7 +24,6 @@ DocFlow is a powerful Document Management API designed to streamline document ha
 - 🟨 2-factor authentication
 - 🟨 Storage quota per user? (Maybe to enable limit storage per user)
 - 🟨 Bulk file importer
-- 🟨 LDAP authentication
 
 ## 🚀 Key Features
 
