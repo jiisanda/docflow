@@ -11,8 +11,20 @@
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
 ![Github Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)
+![GMail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)
 
 DocFlow is a powerful Document Management API designed to streamline document handling, including seamless uploading, downloading, organization, versioning, sharing, and more.
+
+## 😎 Upcoming Updates
+
+- 🟨 Document Interactions - Adding Comments and Tags
+- 🟨 Import documents from unread emails
+- 🟨 Video Preview
+- 🟨 Adding custom metadata fields to document
+- 🟨 2-factor authentication
+- 🟨 Storage quota per user? (Maybe to enable limit storage per user)
+- 🟨 Bulk file importer
+- 🟨 LDAP authentication
 
 ## 🚀 Key Features
 
