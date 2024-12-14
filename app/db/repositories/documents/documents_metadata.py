@@ -274,10 +274,9 @@ class DocumentMetadataRepository:
             raise http_409(
                 msg="Doc is not deleted"
             )
-        else:
-            raise http_404(
-                msg="Doc does not exists"
-            )
+        raise http_404(
+            msg="Doc does not exists"
+        )
 
     async def perm_delete_a_doc(self, document: UUID | None, owner: TokenData) -> None:
 
