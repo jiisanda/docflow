@@ -17,3 +17,4 @@ class User(Base):
                         nullable=False, server_default=text('now()'))
 
     owner_of = relationship("DocumentMetadata", back_populates="owner")
+    comments = relationship("DocumentComment", back_populates="author")
