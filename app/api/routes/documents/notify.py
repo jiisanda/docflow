@@ -68,13 +68,12 @@ async def patch_status(
 
     if updated_status.mark_all:
         return await repository.mark_all_read(user=user)
-    elif notification_id:
+    if notification_id:
         return await repository.update_status(n_id=notification_id, updated_status=updated_status, user=user)
-    else:
-        raise http_404(
-            msg="Bad Request: Make sure to either flag mark_all "
-                "or enter notification_id along with correct status as payload."
-        )
+    raise http_404(
+        msg="Bad Request: Make sure to either flag mark_all "
+            "or enter notification_id along with correct status as payload."
+    )
 
 
 @router.delete(
