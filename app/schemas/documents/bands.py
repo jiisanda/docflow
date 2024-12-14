@@ -1,11 +1,10 @@
 from datetime import datetime
+from typing import Optional, List
 from uuid import UUID
 
 from pydantic import BaseModel
-from typing import Optional, List
 
-from app.db.tables.base_class import StatusEnum
-from app.db.tables.base_class import NotifyEnum
+from app.db.tables.base_class import StatusEnum, NotifyEnum
 
 
 # Document Metadata

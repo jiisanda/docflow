@@ -38,7 +38,8 @@ async def search_document(
         file_types (str, optional): The file types to filter documents by. Defaults to None.
         doc_status (str, optional): The status of documents to filter by. Defaults to None.
         repository (DocumentOrgRepository): The repository for managing document organization.
-        repository_metadata (DocumentMetadataRepository): The repository for managing document metadata.
+        repository_metadata (DocumentMetadataRepository): The repository for managing
+            document metadata.
         user (TokenData): The token data of the authenticated user.
 
     Returns:
@@ -50,11 +51,10 @@ async def search_document(
     if tag is None and category is None and file_types is None and doc_status is None:
         return doc_list
 
-    else:
-        return await repository.search_doc(
-            docs=doc_list,
-            tags=tag,
-            categories=category,
-            file_types=file_types,
-            status=doc_status
-        )
+    return await repository.search_doc(
+        docs=doc_list,
+        tags=tag,
+        categories=category,
+        file_types=file_types,
+        status=doc_status
+    )

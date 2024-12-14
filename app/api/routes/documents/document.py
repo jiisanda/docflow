@@ -7,7 +7,7 @@ from sqlalchemy.engine import Row
 
 from app.api.dependencies.auth_utils import get_current_user
 from app.api.dependencies.repositories import get_repository
-from app.core.exceptions import HTTP_400, HTTP_404
+from app.core.exceptions import http_400, http_404
 from app.db.repositories.auth.auth import AuthRepository
 from app.db.repositories.documents.documents import DocumentRepository, perm_delete as perm_delete_file
 from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
@@ -28,7 +28,9 @@ async def upload(
     files: List[UploadFile] = File(...),
     folder: Optional[str] = None,
     repository: DocumentRepository = Depends(DocumentRepository),
-    metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    metadata_repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
     user_repository: AuthRepository = Depends(get_repository(AuthRepository)),
     user: TokenData = Depends(get_current_user)
 ) -> Union[List[DocumentMetadataRead], List[Dict[str, str]]]:
@@ -40,12 +42,14 @@ async def upload(
         files (List[UploadFile]): The files to be uploaded.
         folder (Optional[str]): The folder where the document will be stored. Defaults to None.
         repository (DocumentRepository): The repository for managing documents.
-        metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
+        metadata_repository (DocumentMetadataRepository): The repository for managing document
+            metadata.
         user_repository (AuthRepository): The repository for managing user authentication.
         user (TokenData): The token data of the authenticated user.
 
     Returns:
-        Union[DocumentMetadataRead, Dict[str, str]]: If the file is added, returns the uploaded document metadata.
+        Union[DocumentMetadataRead, Dict[str, str]]: If the file is added, returns the
+            uploaded document metadata.
             If the file is updated, returns the patched document metadata.
             Otherwise, returns a response dictionary.
 
@@ -54,7 +58,7 @@ async def upload(
     """
 
     if not files:
-        raise HTTP_400(
+        raise http_400(
             msg="No input files provided..."
         )
 
@@ -110,7 +114,7 @@ async def download(
     """
 
     if not file_name:
-        raise HTTP_400(
+        raise http_400(
             msg="No file name..."
         )
     try:
@@ -118,7 +122,7 @@ async def download(
 
         return await repository.download(s3_url=get_document_metadata["s3_url"], name=get_document_metadata["name"])
     except Exception as e:
-        raise HTTP_404(
+        raise http_404(
             msg=f"No file with {file_name}"
         ) from e
 
@@ -214,7 +218,7 @@ async def perm_delete(
             )
 
     except Exception as e:
-        raise HTTP_404(
+        raise http_404(
             msg=f"No file with {file_name}"
         ) from e
 
@@ -301,17 +305,17 @@ async def get_document_preview(
     """
 
     if not document:
-        raise HTTP_404(
+        raise http_404(
             msg="Enter document id or name."
         )
     try:
         get_document_metadata = dict(await metadata_repository.get(document=document, owner=user))
         return await repository.preview(document=get_document_metadata)
     except TypeError as e:
-        raise HTTP_404(
+        raise http_404(
             msg="Document does not exists."
         ) from e
     except ValueError as e:
-        raise HTTP_400(
+        raise http_400(
             msg="File type is not supported for preview"
         ) from e

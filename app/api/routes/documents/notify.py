@@ -5,7 +5,7 @@ from fastapi import APIRouter, status, Depends
 
 from app.api.dependencies.auth_utils import get_current_user
 from app.api.dependencies.repositories import get_repository
-from app.core.exceptions import HTTP_404
+from app.core.exceptions import http_404
 from app.db.repositories.documents.notify import NotifyRepo
 from app.schemas.auth.bands import TokenData
 from app.schemas.documents.bands import Notification, NotifyPatchStatus
@@ -71,7 +71,7 @@ async def patch_status(
     elif notification_id:
         return await repository.update_status(n_id=notification_id, updated_status=updated_status, user=user)
     else:
-        raise HTTP_404(
+        raise http_404(
             msg="Bad Request: Make sure to either flag mark_all "
                 "or enter notification_id along with correct status as payload."
         )
