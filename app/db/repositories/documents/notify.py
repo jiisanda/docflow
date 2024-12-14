@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import HTTP_500, HTTP_409, HTTP_404
+from app.core.exceptions import http_500, http_409, http_404
 from app.db.repositories.auth.auth import AuthRepository
 from app.db.tables.base_class import NotifyEnum
 from app.db.tables.documents.notify import Notify
@@ -49,11 +49,11 @@ class NotifyRepo:
                     await self.session.commit()
                     await self.session.refresh(notify_entry)
                 except Exception as e:
-                    raise HTTP_500(
+                    raise http_500(
                         msg="Error notifying the user, but the mail has been sent successfully."
                     ) from e
             except Exception as e:
-                raise HTTP_404(
+                raise http_404(
                     msg="The user does not exists, make sure the user has an account on docflow..."
                 ) from e
 
@@ -81,7 +81,7 @@ class NotifyRepo:
             result = (await self.session.execute(stmt)).scalar_one_or_none()
             return Notification(**result.__dict__)
         except Exception as e:
-            raise HTTP_404(
+            raise http_404(
                 msg=f"No notification with id: {n_id}"
             ) from e
 
@@ -132,7 +132,7 @@ class NotifyRepo:
             await self.session.execute(stmt)
             return await self.get_notifications(user=user)
         except Exception as e:
-            raise HTTP_409(
+            raise http_409(
                 msg="Error updating marking notification read..."
             ) from e
 
@@ -162,7 +162,7 @@ class NotifyRepo:
             await self.session.execute(stmt)
             return await self.get_notification_by_id(n_id=n_id, user=user)
         except Exception as e:
-            raise HTTP_409(
+            raise http_409(
                 msg="Error updating notification status..."
             ) from e
 

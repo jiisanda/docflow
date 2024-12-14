@@ -5,7 +5,7 @@ from fastapi import APIRouter, status, Body, Depends, Query, HTTPException
 
 from app.api.dependencies.repositories import get_repository
 from app.api.dependencies.auth_utils import get_current_user
-from app.core.exceptions import HTTP_404
+from app.core.exceptions import http_404
 from app.db.repositories.auth.auth import AuthRepository
 from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from app.schemas.auth.bands import TokenData
@@ -135,7 +135,7 @@ async def update_doc_metadata_details(
     try:
         await repository.get(document=document, owner=user)
     except Exception as e:
-        raise HTTP_404(
+        raise http_404(
             msg=f"No Document with: {document}"
         ) from e
 
@@ -177,7 +177,7 @@ async def delete_document_metadata(
     try:
         await repository.get(document=document, owner=user)
     except Exception as e:
-        raise HTTP_404(
+        raise http_404(
             msg=f"No document with the detail: {document}."
         ) from e
 

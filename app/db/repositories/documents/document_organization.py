@@ -5,12 +5,18 @@ from app.schemas.documents.documents_metadata import DocumentMetadataRead
 
 
 class DocumentOrgRepository:
+    """
+    Repository for managing document organization.
+    """
 
     def __init__(self):
         ...
 
     @staticmethod
-    async def _search_tags(docs: List[DocumentMetadataRead], tags: List[str]) -> List[Dict[str, str]]:
+    async def _search_tags(
+            docs: List[DocumentMetadataRead],
+            tags: List[str]
+    ) -> List[Dict[str, str]]:
 
         result = []
         for doc in docs:
@@ -24,7 +30,9 @@ class DocumentOrgRepository:
         return result or None
 
     @staticmethod
-    async def _search_category(docs: List[DocumentMetadataRead], categories: List[str]) -> List[Dict[str, str]]:
+    async def _search_category(
+            docs: List[DocumentMetadataRead], categories: List[str]
+    ) -> List[Dict[str, str]]:
 
         result = []
         for doc in docs:
@@ -38,7 +46,9 @@ class DocumentOrgRepository:
         return result or None
 
     @staticmethod
-    async def _search_file_type(docs: List[DocumentMetadataRead], file_types: List[str]) -> List[Dict[str, str]]:
+    async def _search_file_type(
+            docs: List[DocumentMetadataRead], file_types: List[str]
+    ) -> List[Dict[str, str]]:
 
         result = []
         for doc in docs:
@@ -54,7 +64,9 @@ class DocumentOrgRepository:
         return result or None
 
     @staticmethod
-    async def _search_by_status(docs: List[DocumentMetadataRead], status: List[str]) -> List[Dict[str, str]]:
+    async def _search_by_status(
+            docs: List[DocumentMetadataRead], status: List[str]
+    ) -> List[Dict[str, str]]:
 
         result = []
         for doc in docs:
@@ -68,11 +80,11 @@ class DocumentOrgRepository:
         return result or None
 
     async def search_doc(
-        self, 
+        self,
         docs: List[DocumentMetadataRead],
-        tags: str, 
+        tags: str,
         categories: str,
-        file_types: str, 
+        file_types: str,
         status: str
     ) -> Union[List[List[Dict[str, Any]]], None]:
 

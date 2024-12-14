@@ -1,12 +1,11 @@
-import os.path
-
-import boto3
 import hashlib
+import os
 import tempfile
 from datetime import datetime, timedelta, timezone
 from random import randint
-from typing import Any, Dict, List, Union
+from typing import Dict, Any, Union, List
 
+import boto3
 from botocore.exceptions import NoCredentialsError
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.dependencies.mail_service import mail_service
 from app.api.dependencies.repositories import get_key
 from app.core.config import settings
-from app.core.exceptions import HTTP_404, HTTP_500
+from app.core.exceptions import http_404, http_500
 from app.db.tables.auth.auth import User
 from app.db.tables.documents.document_sharing import DocumentSharing
 from app.db.repositories.auth.auth import AuthRepository
@@ -24,6 +23,9 @@ from app.schemas.documents.document_sharing import SharingRequest
 
 
 class DocumentSharingRepository:
+    """
+    Repository for managing document sharing.
+    """
 
     def __init__(self, session: AsyncSession) -> None:
         self.client = boto3.client('s3')
@@ -84,9 +86,11 @@ class DocumentSharingRepository:
         try:
             await self.session.execute(stmt)
         except Exception as e:
-            raise HTTP_500() from e
+            raise http_500() from e
 
-    async def get_presigned_url(self, doc: Dict[str, Any]) -> Union[str, Dict[str, str]]:
+    async def get_presigned_url(
+            self, doc: Dict[str, Any]
+    ) -> Union[str, Dict[str, str]]:
         try:
             params = {
                 'Bucket': settings.s3_bucket,
@@ -104,7 +108,9 @@ class DocumentSharingRepository:
 
         return response
 
-    async def get_shareable_link(self, owner_id: str, url: str, visits: int, filename: str, share_to: List[str]):
+    async def get_shareable_link(
+            self, owner_id: str, url: str, visits: int, filename: str, share_to: List[str]
+    ):
 
         # task to clean uo the database for expired links
         await self.cleanup_expired_links()
@@ -140,7 +146,7 @@ class DocumentSharingRepository:
                 "visits": response["visits"]
             }
         except Exception as e:
-            raise HTTP_500() from e
+            raise http_500() from e
 
     async def get_redirect_url(self, url_id: str):
 
@@ -157,24 +163,29 @@ class DocumentSharingRepository:
 
             return result["url"]
         except AttributeError as e:
-            raise HTTP_404(
+            raise http_404(
                 msg="Shared URL link either expired or reached the limit of visits..."
             ) from e
 
-    async def send_mail(self, user: TokenData, mail_to: Union[List[str], None], link: str) -> None:
+    async def send_mail(
+            self, user: TokenData, mail_to: Union[List[str], None], link: str
+    ) -> None:
 
         if mail_to:
 
             user_mail = await self.get_user_mail(user)
             subj = f"DocFlow: {user.username} share a document"
             content = f"""
-                    Visit the link: {link}, to access the document shared by {user.username} | {user_mail}.
+                    Visit the link: {link}, to access the document 
+                    shared by {user.username} | {user_mail}.
                     """
 
             for mails in mail_to:
                 mail_service(mail_to=mails, subject=subj, content=content, file_path=None)
 
-    async def confirm_access(self, user: TokenData, url_id: str | None) -> bool:
+    async def confirm_access(
+            self, user: TokenData, url_id: str | None
+    ) -> bool:
         # check if login user is owner or to whom it is shared
         stmt = (
             select(DocumentSharing)
@@ -192,7 +203,7 @@ class DocumentSharingRepository:
                 or user.username in result.get("share_to")
             )
         except Exception as e:
-            raise HTTP_404(
+            raise http_404(
                 msg="The link has expired..."
             ) from e
 
@@ -221,14 +232,25 @@ class DocumentSharingRepository:
             subject = f"{owner.username} shared a file with you using DocFlow"
             for mails in share_to:
                 content = f"""
-                Hello {mails}! 
+                Hello {mails}!
                 
-                Hope you are well? {owner.username} | {user_mail} shared a file with you as an attachment. 
-                
+                Hope you are well? {owner.username} | {user_mail} shared a file
+                with you as an attachment.
+
                 Regards,
                 DocFlow
                 """
-                mail_service(mail_to=mails, subject=subject, content=content, file_path=temp_path)
+                mail_service(
+                    mail_to=mails,
+                    subject=subject,
+                    content=content,
+                    file_path=temp_path
+                )
 
         if notify:
-            return await notify_repo.notify(user=owner, receivers=share_to, filename=filename, auth_repo=auth_repo)
+            return await notify_repo.notify(
+                user=owner,
+                receivers=share_to,
+                filename=filename,
+                auth_repo=auth_repo
+            )

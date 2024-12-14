@@ -1,18 +1,18 @@
-import os.path
-import tempfile
-from typing import Any, Dict
-import boto3
 import hashlib
+import os
+import tempfile
+from typing import Dict, Any
 
+import boto3
 from botocore.exceptions import ClientError
 from fastapi import File
-from fastapi.responses import FileResponse
+from starlette.responses import FileResponse
 from ulid import ULID
 
 from app.api.dependencies.constants import SUPPORTED_FILE_TYPES
 from app.api.dependencies.repositories import TempFileResponse, get_key, get_s3_url
 from app.core.config import settings
-from app.core.exceptions import HTTP_400, HTTP_404
+from app.core.exceptions import http_400, http_404
 from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from app.schemas.auth.bands import TokenData
 
@@ -91,7 +91,9 @@ class DocumentRepository:
         }
 
     async def _upload_new_version(
-            self, doc: dict, file: File, contents, file_type: str, new_file_hash: str, is_owner: bool
+            self, doc: dict, file: File,
+            contents, file_type: str, new_file_hash: str,
+            is_owner: bool
     ) -> Dict[str, Any]:
 
         key = await get_key(s3_url=doc["s3_url"])
@@ -110,7 +112,9 @@ class DocumentRepository:
             }
         }
 
-    async def upload(self, metadata_repo, user_repo, file: File, folder: str, user: TokenData) -> Dict[str, Any]:
+    async def upload(
+            self, metadata_repo, user_repo, file: File, folder: str, user: TokenData
+    ) -> Dict[str, Any]:
         """
         Uploads a file to the specified folder in the document repository.
 
@@ -130,7 +134,7 @@ class DocumentRepository:
 
         file_type = file.content_type
         if file_type not in SUPPORTED_FILE_TYPES:
-            raise HTTP_400(
+            raise http_400(
                 msg=f"File type {file_type} not supported."
             )
 
@@ -142,11 +146,14 @@ class DocumentRepository:
         try:
             if "status_code" in doc.keys():
                 # getting document irrespective of user
-                if get_doc := (await metadata_repo.get_doc(filename=file.filename)):
+                if get_doc := await metadata_repo.get_doc(filename=file.filename):
                     get_doc = get_doc.__dict__
                     # Check if logged-in user has update access
-                    logged_in_user = (await user_repo.get_user(field="username", detail=user.username)).__dict__
-                    if (get_doc["access_to"] is not None) and logged_in_user["email"] in get_doc["access_to"]:
+                    logged_in_user = (await user_repo.get_user(
+                        field="username", detail=user.username
+                    )).__dict__
+                    if ((get_doc["access_to"] is not None) and
+                            logged_in_user["email"] in get_doc["access_to"]):
                         if get_doc['file_hash'] != new_file_hash:
                             # can upload a version to a file...
                             print(f"Have update access, to a file... owner: {get_doc['owner_id']}")
@@ -157,7 +164,11 @@ class DocumentRepository:
                             )
                     else:
                         return await self._upload_new_file(
-                            file=file, folder=folder, contents=contents, file_type=file_type, user=user
+                            file=file,
+                            folder=folder,
+                            contents=contents,
+                            file_type=file_type,
+                            user=user
                         )
                 return await self._upload_new_file(
                     file=file, folder=folder, contents=contents, file_type=file_type, user=user
@@ -167,15 +178,21 @@ class DocumentRepository:
 
             if doc["file_hash"] != new_file_hash:
                 print("File has been updated, uploading new version...")
-                return await self._upload_new_version(doc=doc, file=file, contents=contents, file_type=file_type,
-                                                      new_file_hash=new_file_hash, is_owner=True)
+                return await self._upload_new_version(
+                    doc=doc,
+                    file=file,
+                    contents=contents,
+                    file_type=file_type,
+                    new_file_hash=new_file_hash,
+                    is_owner=True
+                )
 
             return {
                 "response": "File already present and no changes detected.",
                 "upload": "Noting to update..."
             }
         except Exception as e:
-            raise HTTP_404(msg="Error uploading the file...") from e
+            raise http_404(msg="Error uploading the file...") from e
 
     async def download(self, s3_url: str, name: str) -> Dict[str, str]:
 
@@ -188,7 +205,7 @@ class DocumentRepository:
                 Filename=r"/app/downloads/docflow_" + f"{name}"
             )
         except ClientError as e:
-            raise HTTP_404(
+            raise http_404(
                 msg=f"File not found: {e}"
             ) from e
 

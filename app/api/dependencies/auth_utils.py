@@ -7,7 +7,7 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 
 from app.core.config import settings
-from app.core.exceptions import HTTP_401
+from app.core.exceptions import http_401
 from app.schemas.auth.bands import TokenData
 
 
@@ -62,7 +62,7 @@ def verify_access_token(token: str, credentials_exception):
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTP_401(
+    credentials_exception = http_401(
         msg="Could not validate credentials",
         headers={
             "WWW-Authenticate": "Bearer"
