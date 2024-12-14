@@ -7,6 +7,9 @@ load_dotenv()
 
 
 class GlobalConfig(BaseSettings):
+    """
+    Global Configuration for the FastAPI application.
+    """
     title: str = os.environ.get("TITLE")
     version: str = "1.0.0"
     description: str = os.environ.get("DESCRIPTION")
@@ -15,13 +18,13 @@ class GlobalConfig(BaseSettings):
     redoc_url: str = "/redoc"
     openapi_url: str = "/openapi.json"
     api_prefix: str = "/v2"
-    debug: bool = os.environ.get("DEBUG")
+    debug: bool = str(os.environ.get("DEBUG", "False")).lower() == "true"
     postgres_user: str = os.environ.get("POSTGRES_USER")
     postgres_password: str = os.environ.get("POSTGRES_PASSWORD")
     postgres_hostname: str = os.environ.get("DATABASE_HOSTNAME")
     postgres_port: int = int(os.environ.get("POSTGRES_PORT"))
     postgres_db: str = os.environ.get("POSTGRES_DB")
-    db_echo_log: bool = True if os.environ.get("DEBUG") is True else False
+    db_echo_log: bool = str(os.environ.get("DEBUG", "False")).lower() == "true"
     aws_access_key_id: str = os.environ.get("AWS_ACCESS_KEY_ID")
     aws_secret_key: str = os.environ.get("AWS_SECRET_ACCESS_KEY")
     aws_region: str = os.environ.get("AWS_REGION")

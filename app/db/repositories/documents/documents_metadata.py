@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
-from app.core.exceptions import HTTP_409, HTTP_404
+from app.core.exceptions import http_409, http_404
 from app.db.repositories.auth.auth import AuthRepository
 from app.db.tables.documents.documents_metadata import DocumentMetadata, doc_user_access
 from app.db.tables.base_class import StatusEnum
@@ -73,7 +73,7 @@ class DocumentMetadataRepository:
         try:
             await self.session.execute(stmt)
         except Exception as e:
-            raise HTTP_409(
+            raise http_409(
                 msg=f"Error while updating document: {doc_name}"
             ) from e
 
@@ -88,11 +88,11 @@ class DocumentMetadataRepository:
                 await self._update_doc_user_access(db_document, user_id)
 
             except IntegrityError as e:
-                raise HTTP_409(
+                raise http_409(
                     msg=f"User '{user_email}' already has access..."
                 ) from e
             except AttributeError as e:
-                raise HTTP_404(
+                raise http_404(
                     msg=f"The user with '{user_email}' does not exists, make sure user has account in DocFlow."
                 ) from e
 
@@ -150,7 +150,7 @@ class DocumentMetadataRepository:
             await self.session.commit()
             await self.session.refresh(db_document)
         except IntegrityError as e:
-            raise HTTP_404(
+            raise http_404(
                 msg=f"Document with name: {document_upload.name} already exists.",
             ) from e
 
@@ -182,13 +182,13 @@ class DocumentMetadataRepository:
                 "no_of_docs": len(result)
             }
         except Exception as e:
-            raise HTTP_404(msg="No Documents found") from e
+            raise http_404(msg="No Documents found") from e
 
     async def get(self, document: Union[str, UUID], owner: TokenData) -> Union[DocumentMetadataRead, HTTPException]:
 
         db_document = await self._get_instance(document=document, owner=owner)
         if db_document is None:
-            return HTTP_409(
+            return http_409(
                 msg=f"No Document with {document}"
             )
 
@@ -239,7 +239,7 @@ class DocumentMetadataRepository:
 
             await self.session.commit()
         except Exception as e:
-            raise HTTP_404(
+            raise http_404(
                 msg=f"No file with {document}"
             ) from e
 
@@ -271,14 +271,12 @@ class DocumentMetadataRepository:
                     change = {'status': StatusEnum.private}
                     await self._execute_update(db_document=doc.DocumentMetadata, changes=change)
                     return DocumentMetadataRead(**doc.DocumentMetadata.__dict__)
-            else:
-                raise HTTP_409(
-                    msg="Doc is not deleted"
-                )
-        else:
-            raise HTTP_404(
-                msg="Doc does not exists"
+            raise http_409(
+                msg="Doc is not deleted"
             )
+        raise http_404(
+            msg="Doc does not exists"
+        )
 
     async def perm_delete_a_doc(self, document: UUID | None, owner: TokenData) -> None:
 
@@ -310,11 +308,10 @@ class DocumentMetadataRepository:
             await self._execute_update(db_document=doc, changes=change)
             return DocumentMetadataRead(**doc.__dict__)
 
-        elif doc and doc.status == StatusEnum.archived:
-            raise HTTP_409(msg="Doc is already archived")
+        if doc and doc.status == StatusEnum.archived:
+            raise http_409(msg="Doc is already archived")
 
-        else:
-            raise HTTP_404(msg="Doc does not exist")
+        raise http_404(msg="Doc does not exist")
 
     async def archive_list(self, user: TokenData) -> Dict[str, List[str] | int]:
 
@@ -338,11 +335,10 @@ class DocumentMetadataRepository:
             change = {'status': 'private'}
             await self._execute_update(db_document=doc, changes=change)
             return DocumentMetadataRead(**doc.__dict__)
-        elif doc and doc.status != StatusEnum.archived:
-            raise HTTP_409(
+        if doc and doc.status != StatusEnum.archived:
+            raise http_409(
                 msg="Doc is not archived"
             )
-        else:
-            raise HTTP_404(
-                msg="Doc does not exits"
-            )
+        raise http_404(
+            msg="Doc does not exits"
+        )

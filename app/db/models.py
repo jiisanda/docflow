@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
 from app.core.config import settings
-from app.core.exceptions import HTTP_500
+from app.core.exceptions import http_500
 
 logger = logging.getLogger("sqlalchemy")
 
@@ -48,5 +48,5 @@ async def check_tables():
             _session.commit()
             logger.info("Tables created if they didn't already exist.")
     except OperationalError as e:
-        logger.error(f"Error Creating table: {e}")
-        raise HTTP_500(msg="An error occurred while creating tables.")
+        logger.error("Error Creating table: %s", e)
+        raise http_500(msg="An error occurred while creating tables.") from e

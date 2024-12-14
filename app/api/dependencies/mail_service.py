@@ -8,7 +8,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from app.core.config import settings
-from app.core.exceptions import HTTP_500
+from app.core.exceptions import http_500
 
 
 def mail_service(mail_to: str, subject: str, content: str, file_path: str = None) -> None:
@@ -50,6 +50,6 @@ def mail_service(mail_to: str, subject: str, content: str, file_path: str = None
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message.as_string())
     except Exception as e:
-        raise HTTP_500(
+        raise http_500(
             msg="There was some error sending email..."
         ) from e

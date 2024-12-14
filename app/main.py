@@ -17,12 +17,12 @@ app = FastAPI(
 app.include_router(router=router, prefix=settings.api_prefix)
 
 
-favicon_path = 'favicon.ico'
+FAVICON_PATH = 'favicon.ico'
 
 
-@app.get(favicon_path, include_in_schema=False, tags=["Default"])
+@app.get(FAVICON_PATH, include_in_schema=False, tags=["Default"])
 async def favicon():
-    return FileResponse(favicon_path)
+    return FileResponse(FAVICON_PATH)
 
 
 @app.get("/", tags=["Default"])

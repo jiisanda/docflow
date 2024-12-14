@@ -8,6 +8,10 @@ from alembic import context
 from app.db.models import Base
 
 from app.core.config import settings
+from app.db.tables.documents.documents_metadata import DocumentMetadata, DocumentComment
+from app.db.tables.auth.auth import User
+from app.db.tables.documents.document_sharing import DocumentSharing
+from app.db.tables.documents.notify import Notify
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -21,10 +25,6 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from app.db.tables.documents.documents_metadata import DocumentMetadata, DocumentComment
-from app.db.tables.auth.auth import User
-from app.db.tables.documents.document_sharing import DocumentSharing
-from app.db.tables.documents.notify import Notify
 
 target_metadata = Base.metadata
 
