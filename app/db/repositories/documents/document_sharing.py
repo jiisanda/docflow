@@ -176,7 +176,7 @@ class DocumentSharingRepository:
             user_mail = await self.get_user_mail(user)
             subj = f"DocFlow: {user.username} share a document"
             content = f"""
-                    Visit the link: {link}, to access the document 
+                    Visit the link: {link}, to access the document
                     shared by {user.username} | {user_mail}.
                     """
 
