@@ -13,16 +13,11 @@ from app.schemas.documents.bands import Notification, NotifyPatchStatus
 router = APIRouter(tags=["Notification"])
 
 
-@router.get(
-    "",
-    status_code=status.HTTP_200_OK,
-    name="get_notifications"
-)
+@router.get("", status_code=status.HTTP_200_OK, name="get_notifications")
 async def get_notifications(
-        repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
-        user: TokenData = Depends(get_current_user)
+    repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
+    user: TokenData = Depends(get_current_user),
 ) -> List[Notification]:
-
     """
     Get notifications for a user.
 
@@ -43,10 +38,10 @@ async def get_notifications(
     name="patch_status",
 )
 async def patch_status(
-        updated_status: NotifyPatchStatus = None,
-        notification_id: UUID = None,
-        repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
-        user: TokenData = Depends(get_current_user)
+    updated_status: NotifyPatchStatus = None,
+    notification_id: UUID = None,
+    repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
+    user: TokenData = Depends(get_current_user),
 ) -> Union[List[Notification], Notification]:
     """
     Patch the status of a notification or mark all notifications as read.
@@ -69,10 +64,12 @@ async def patch_status(
     if updated_status.mark_all:
         return await repository.mark_all_read(user=user)
     if notification_id:
-        return await repository.update_status(n_id=notification_id, updated_status=updated_status, user=user)
+        return await repository.update_status(
+            n_id=notification_id, updated_status=updated_status, user=user
+        )
     raise http_404(
         msg="Bad Request: Make sure to either flag mark_all "
-            "or enter notification_id along with correct status as payload."
+        "or enter notification_id along with correct status as payload."
     )
 
 
@@ -82,8 +79,8 @@ async def patch_status(
     name="clear_all_notifications",
 )
 async def clear_all_notifications(
-        repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
-        user: TokenData = Depends(get_current_user)
+    repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
+    user: TokenData = Depends(get_current_user),
 ) -> None:
     """
     Clear all notifications for a user.

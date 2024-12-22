@@ -11,7 +11,9 @@ from app.core.config import settings
 from app.core.exceptions import http_500
 
 
-def mail_service(mail_to: str, subject: str, content: str, file_path: str = None) -> None:
+def mail_service(
+    mail_to: str, subject: str, content: str, file_path: str = None
+) -> None:
     port = settings.smtp_port  # For starttls
     smtp_server = settings.smtp_server
     sender_email = settings.email
@@ -20,8 +22,8 @@ def mail_service(mail_to: str, subject: str, content: str, file_path: str = None
 
     # Creating Multipart message and headers
     message = MIMEMultipart()
-    message['Subject'] = subject
-    message.attach(MIMEText(content, _subtype='plain'))
+    message["Subject"] = subject
+    message.attach(MIMEText(content, _subtype="plain"))
 
     # Open file in binary mode
     if file_path is not None:
@@ -36,7 +38,7 @@ def mail_service(mail_to: str, subject: str, content: str, file_path: str = None
         # header as attachment
         part.add_header(
             "Content-Disposition",
-            f"attachment; filename= {os.path.basename(file_path)}"
+            f"attachment; filename= {os.path.basename(file_path)}",
         )
 
         message.attach(part)
@@ -50,6 +52,4 @@ def mail_service(mail_to: str, subject: str, content: str, file_path: str = None
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message.as_string())
     except Exception as e:
-        raise http_500(
-            msg="There was some error sending email..."
-        ) from e
+        raise http_500(msg="There was some error sending email...") from e

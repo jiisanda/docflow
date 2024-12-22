@@ -15,7 +15,10 @@ from app.db.tables.documents.documents_metadata import DocumentMetadata, doc_use
 from app.db.tables.base_class import StatusEnum
 from app.schemas.auth.bands import TokenData
 from app.schemas.documents.bands import DocumentMetadataPatch
-from app.schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead
+from app.schemas.documents.documents_metadata import (
+    DocumentMetadataCreate,
+    DocumentMetadataRead,
+)
 
 
 class DocumentMetadataRepository:
@@ -53,15 +56,17 @@ class DocumentMetadataRepository:
             return document_patch
         return document_patch.model_dump(exclude_unset=True)
 
-    async def _execute_update(self, db_document: DocumentMetadata | Dict[str, Any], changes: dict) -> None:
+    async def _execute_update(
+        self, db_document: DocumentMetadata | Dict[str, Any], changes: dict
+    ) -> None:
 
         if isinstance(db_document, dict):
             stmt = (
                 update(DocumentMetadata)
-                .where(DocumentMetadata.id == db_document.get('id'))
+                .where(DocumentMetadata.id == db_document.get("id"))
                 .values(changes)
             )
-            doc_name = db_document.get('name')
+            doc_name = db_document.get("name")
         else:
             stmt = (
                 update(DocumentMetadata)
@@ -73,9 +78,7 @@ class DocumentMetadataRepository:
         try:
             await self.session.execute(stmt)
         except Exception as e:
-            raise http_409(
-                msg=f"Error while updating document: {doc_name}"
-            ) from e
+            raise http_409(msg=f"Error while updating document: {doc_name}") from e
 
     async def _update_access_and_permission(self, db_document, changes, user_repo):
 
@@ -83,14 +86,14 @@ class DocumentMetadataRepository:
         # if access_to has email ids, update doc_user_access table with doc_id and user_id
         for user_email in access_given_to:
             try:
-                user_id = (await user_repo.get_user(field="email", detail=user_email)).__dict__["id"]
+                user_id = (
+                    await user_repo.get_user(field="email", detail=user_email)
+                ).__dict__["id"]
                 # update doc_user_access table with doc_id and user_id
                 await self._update_doc_user_access(db_document, user_id)
 
             except IntegrityError as e:
-                raise http_409(
-                    msg=f"User '{user_email}' already has access..."
-                ) from e
+                raise http_409(msg=f"User '{user_email}' already has access...") from e
             except AttributeError as e:
                 raise http_404(
                     msg=f"The user with '{user_email}' does not exists, make sure user has account in DocFlow."
@@ -98,20 +101,23 @@ class DocumentMetadataRepository:
 
     async def _update_doc_user_access(self, db_document, user_id):
 
-        stmt = insert(doc_user_access).values(doc_id=db_document.__dict__["id"], user_id=user_id)
+        stmt = insert(doc_user_access).values(
+            doc_id=db_document.__dict__["id"], user_id=user_id
+        )
         await self.session.execute(stmt)
         await self.session.commit()
 
     async def _delete_access(self, document) -> None:
-        await self.session.execute(doc_user_access.delete().where(doc_user_access.c.doc_id == document.id))
+        await self.session.execute(
+            doc_user_access.delete().where(doc_user_access.c.doc_id == document.id)
+        )
 
     async def _auto_delete(self, bin_items: List) -> bool | None:
 
         for item in bin_items:
             if item.DocumentMetadata.created_at <= datetime.now(timezone.utc):
-                stmt = (
-                    delete(DocumentMetadata)
-                    .where(DocumentMetadata.id == item.DocumentMetadata.id)
+                stmt = delete(DocumentMetadata).where(
+                    DocumentMetadata.id == item.DocumentMetadata.id
                 )
                 await self.session.execute(stmt)
                 return True
@@ -138,7 +144,9 @@ class DocumentMetadataRepository:
 
         return result.scalar_one_or_none()
 
-    async def upload(self, document_upload: DocumentMetadataCreate) -> DocumentMetadataRead:
+    async def upload(
+        self, document_upload: DocumentMetadataCreate
+    ) -> DocumentMetadataRead:
 
         if not isinstance(document_upload, dict):
             db_document = DocumentMetadata(**document_upload.model_dump())
@@ -157,7 +165,7 @@ class DocumentMetadataRepository:
         return DocumentMetadataRead(**db_document.__dict__)
 
     async def doc_list(
-            self, owner: TokenData, limit: int = 10, offset: int = 0
+        self, owner: TokenData, limit: int = 10, offset: int = 0
     ) -> Dict[str, Union[List[DocumentMetadataRead], Any]]:
 
         stmt = (
@@ -174,30 +182,32 @@ class DocumentMetadataRepository:
             result_list = result.fetchall()
 
             for row in result_list:
-                row.doc_cls.__dict__.pop('_sa_instance_state', None)
+                row.doc_cls.__dict__.pop("_sa_instance_state", None)
 
-            result = [DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list]
-            return {
-                f"documents of {owner.username}": result,
-                "no_of_docs": len(result)
-            }
+            result = [
+                DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list
+            ]
+            return {f"documents of {owner.username}": result, "no_of_docs": len(result)}
         except Exception as e:
             raise http_404(msg="No Documents found") from e
 
-    async def get(self, document: Union[str, UUID], owner: TokenData) -> Union[DocumentMetadataRead, HTTPException]:
+    async def get(
+        self, document: Union[str, UUID], owner: TokenData
+    ) -> Union[DocumentMetadataRead, HTTPException]:
 
         db_document = await self._get_instance(document=document, owner=owner)
         if db_document is None:
-            return http_409(
-                msg=f"No Document with {document}"
-            )
+            return http_409(msg=f"No Document with {document}")
 
         return DocumentMetadataRead(**db_document.__dict__)
 
     async def patch(
-            self,
-            document: Union[str, UUID], document_patch: DocumentMetadataPatch, owner: TokenData,
-            user_repo: AuthRepository, is_owner: bool
+        self,
+        document: Union[str, UUID],
+        document_patch: DocumentMetadataPatch,
+        owner: TokenData,
+        user_repo: AuthRepository,
+        is_owner: bool,
     ) -> Union[DocumentMetadataRead, HTTPException]:
 
         if is_owner:
@@ -230,7 +240,11 @@ class DocumentMetadataRepository:
             setattr(db_document, "file_type", None)
             setattr(db_document, "categories", None)
             # considering created_at as delete_at to delete it after 30 days
-            setattr(db_document, "created_at", datetime.now(timezone.utc) + timedelta(days=30))
+            setattr(
+                db_document,
+                "created_at",
+                datetime.now(timezone.utc) + timedelta(days=30),
+            )
 
             # delete entry from doc_user_access table
             await self._delete_access(document=db_document)
@@ -239,9 +253,7 @@ class DocumentMetadataRepository:
 
             await self.session.commit()
         except Exception as e:
-            raise http_404(
-                msg=f"No file with {document}"
-            ) from e
+            raise http_404(msg=f"No file with {document}") from e
 
     async def bin_list(self, owner: TokenData) -> Dict[str, List[Row | Row] | int]:
 
@@ -256,10 +268,7 @@ class DocumentMetadataRepository:
         if await self._auto_delete(result):
             result = (await self.session.execute(stmt)).fetchall()
 
-        return {
-            "response": result,
-            "no_of_docs": len(result)
-        }
+        return {"response": result, "no_of_docs": len(result)}
 
     async def restore(self, file: str, owner: TokenData) -> DocumentMetadataRead:
 
@@ -268,15 +277,13 @@ class DocumentMetadataRepository:
         if doc_list["no_of_docs"] > 0:
             for doc in doc_list["response"]:
                 if doc.DocumentMetadata.name == file:
-                    change = {'status': StatusEnum.private}
-                    await self._execute_update(db_document=doc.DocumentMetadata, changes=change)
+                    change = {"status": StatusEnum.private}
+                    await self._execute_update(
+                        db_document=doc.DocumentMetadata, changes=change
+                    )
                     return DocumentMetadataRead(**doc.DocumentMetadata.__dict__)
-            raise http_409(
-                msg="Doc is not deleted"
-            )
-        raise http_404(
-            msg="Doc does not exists"
-        )
+            raise http_409(msg="Doc is not deleted")
+        raise http_404(msg="Doc does not exists")
 
     async def perm_delete_a_doc(self, document: UUID | None, owner: TokenData) -> None:
 
@@ -304,7 +311,7 @@ class DocumentMetadataRepository:
         doc = await self._get_instance(document=file, owner=user)
 
         if doc and doc.status != StatusEnum.archived:
-            change = {'status': StatusEnum.archived}
+            change = {"status": StatusEnum.archived}
             await self._execute_update(db_document=doc, changes=change)
             return DocumentMetadataRead(**doc.__dict__)
 
@@ -322,23 +329,16 @@ class DocumentMetadataRepository:
         )
 
         result = (await self.session.execute(stmt)).fetchall()
-        return {
-            "response": result,
-            "no_of_docs": len(result)
-        }
+        return {"response": result, "no_of_docs": len(result)}
 
-    async def un_archive(self, file: str,  user: TokenData) -> DocumentMetadataRead:
+    async def un_archive(self, file: str, user: TokenData) -> DocumentMetadataRead:
 
         doc = await self._get_instance(document=file, owner=user)
 
         if doc and doc.status == StatusEnum.archived:
-            change = {'status': 'private'}
+            change = {"status": "private"}
             await self._execute_update(db_document=doc, changes=change)
             return DocumentMetadataRead(**doc.__dict__)
         if doc and doc.status != StatusEnum.archived:
-            raise http_409(
-                msg="Doc is not archived"
-            )
-        raise http_404(
-            msg="Doc does not exits"
-        )
+            raise http_409(msg="Doc is not archived")
+        raise http_404(msg="Doc does not exits")

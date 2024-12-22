@@ -20,24 +20,21 @@ router = APIRouter(tags=["Document Sharing"])
 
 
 @router.post(
-    "/share-link/{document}",
-    status_code=status.HTTP_200_OK,
-    name="share_document_link"
+    "/share-link/{document}", status_code=status.HTTP_200_OK, name="share_document_link"
 )
 async def share_link_document(
     document: Union[str, UUID],
     share_request: SharingRequest,
-    repository: DocumentSharingRepository = Depends(get_repository(DocumentSharingRepository)),
-    auth_repository: AuthRepository = Depends(
-        get_repository(AuthRepository)
+    repository: DocumentSharingRepository = Depends(
+        get_repository(DocumentSharingRepository)
     ),
+    auth_repository: AuthRepository = Depends(get_repository(AuthRepository)),
     metadata_repository: DocumentMetadataRepository = Depends(
         get_repository(DocumentMetadataRepository)
     ),
     notify_repository: NotifyRepo = Depends(get_repository(NotifyRepo)),
-    user: TokenData = Depends(get_current_user)
+    user: TokenData = Depends(get_current_user),
 ):
-
     """
     Shares a document link with another user, sends mail and notifies the receiver.
 
@@ -79,31 +76,26 @@ async def share_link_document(
 
             # send a notification to the receiver
             await notify_repository.notify(
-                user=user, receivers=share_to,
+                user=user,
+                receivers=share_to,
                 filename=doc.__dict__["name"],
                 auth_repo=auth_repository,
             )
 
-        return {
-            "personal_url": pre_signed_url,
-            "share_this": shareable_link
-        }
+        return {"personal_url": pre_signed_url, "share_this": shareable_link}
 
     except KeyError as e:
-        raise http_404(
-            msg=f"No doc: {document}"
-        ) from e
+        raise http_404(msg=f"No doc: {document}") from e
 
 
 @router.get("/doc/{url_id}", tags=["Document Sharing"])
 async def redirect_to_share(
-        url_id: str,
-        repository: DocumentSharingRepository = Depends(get_repository(
-            DocumentSharingRepository)
-        ),
-        user: TokenData = Depends(get_current_user)
+    url_id: str,
+    repository: DocumentSharingRepository = Depends(
+        get_repository(DocumentSharingRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
 ):
-
     """
     Redirects to a shared document URL.
 
@@ -122,27 +114,22 @@ async def redirect_to_share(
         return RedirectResponse(redirect_url)
 
 
-@router.post(
-    "/share/{document}",
-    status_code=status.HTTP_200_OK,
-    name="share_document"
-)
+@router.post("/share/{document}", status_code=status.HTTP_200_OK, name="share_document")
 async def share_document(
-        document: Union[str, UUID],
-        share_request: SharingRequest,
-        notify: bool = True,
-        repository: DocumentSharingRepository = Depends(
-            get_repository(DocumentSharingRepository)
-        ),
-        document_repo: DocumentRepository = Depends(DocumentRepository),
-        metadata_repo: DocumentMetadataRepository = Depends(
-            get_repository(DocumentMetadataRepository)
-        ),
-        notify_repo: NotifyRepo = Depends(get_repository(NotifyRepo)),
-        auth_repo: AuthRepository = Depends(get_repository(AuthRepository)),
-        user: TokenData = Depends(get_current_user),
+    document: Union[str, UUID],
+    share_request: SharingRequest,
+    notify: bool = True,
+    repository: DocumentSharingRepository = Depends(
+        get_repository(DocumentSharingRepository)
+    ),
+    document_repo: DocumentRepository = Depends(DocumentRepository),
+    metadata_repo: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    notify_repo: NotifyRepo = Depends(get_repository(NotifyRepo)),
+    auth_repo: AuthRepository = Depends(get_repository(AuthRepository)),
+    user: TokenData = Depends(get_current_user),
 ) -> None:
-
     """
     Share a document with other users, and notifies if notify is set to True (default).
 
@@ -167,11 +154,11 @@ async def share_document(
     """
 
     if not document:
-        raise http_404(
-            msg="Enter document id or UUID."
-        )
+        raise http_404(msg="Enter document id or UUID.")
     try:
-        get_document_metadata = dict(await metadata_repo.get(document=document, owner=user))
+        get_document_metadata = dict(
+            await metadata_repo.get(document=document, owner=user)
+        )
         key = await get_key(s3_url=get_document_metadata["s3_url"])
 
         file = await document_repo.get_s3_file_object_body(key=key)
@@ -184,7 +171,7 @@ async def share_document(
             notify=notify,
             owner=user,
             notify_repo=notify_repo,
-            auth_repo=auth_repo
+            auth_repo=auth_repo,
         )
     except Exception as e:
         raise http_404() from e

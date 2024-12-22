@@ -17,7 +17,7 @@ app = FastAPI(
 app.include_router(router=router, prefix=settings.api_prefix)
 
 
-FAVICON_PATH = 'favicon.ico'
+FAVICON_PATH = "favicon.ico"
 
 
 @app.get(FAVICON_PATH, include_in_schema=False, tags=["Default"])
@@ -27,7 +27,9 @@ async def favicon():
 
 @app.get("/", tags=["Default"])
 async def root():
-    return {"API": "Document Management API... Docker's up!!! is it? or not... Yes it is!!!"}
+    return {
+        "API": "Document Management API... Docker's up!!! is it? or not... Yes it is!!!"
+    }
 
 
 @app.on_event("startup")

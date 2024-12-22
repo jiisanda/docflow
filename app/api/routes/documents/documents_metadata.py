@@ -10,7 +10,10 @@ from app.db.repositories.auth.auth import AuthRepository
 from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from app.schemas.auth.bands import TokenData
 from app.schemas.documents.bands import DocumentMetadataPatch
-from app.schemas.documents.documents_metadata import DocumentMetadataCreate, DocumentMetadataRead
+from app.schemas.documents.documents_metadata import (
+    DocumentMetadataCreate,
+    DocumentMetadataRead,
+)
 
 
 router = APIRouter(tags=["Document MetaData"])
@@ -24,10 +27,11 @@ router = APIRouter(tags=["Document MetaData"])
 )
 async def upload_document_metadata(
     document_upload: DocumentMetadataCreate = Body(...),
-    repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
     user: TokenData = Depends(get_current_user),
 ) -> DocumentMetadataRead:
-
     """
     Uploads document metadata.
 
@@ -53,10 +57,11 @@ async def upload_document_metadata(
 async def get_documents_metadata(
     limit: int = Query(default=10, lt=100),
     offset: int = Query(default=0),
-    repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
     user: TokenData = Depends(get_current_user),
 ) -> Dict[str, Union[List[DocumentMetadataRead], Any]]:
-
     """
     Retrieves a list of document metadata.
 
@@ -81,10 +86,11 @@ async def get_documents_metadata(
 )
 async def get_document_metadata(
     document: Union[str, UUID],
-    repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
     user: TokenData = Depends(get_current_user),
 ) -> Union[DocumentMetadataRead, HTTPException]:
-
     """
     Retrieves the metadata of a specific document.
 
@@ -109,11 +115,12 @@ async def get_document_metadata(
 async def update_doc_metadata_details(
     document: Union[str, UUID],
     document_patch: DocumentMetadataPatch = Body(...),
-    repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
     user_repository: AuthRepository = Depends(get_repository(AuthRepository)),
     user: TokenData = Depends(get_current_user),
 ) -> Union[DocumentMetadataRead, HTTPException]:
-
     """
     Updates the details of a document's metadata.
 
@@ -135,16 +142,14 @@ async def update_doc_metadata_details(
     try:
         await repository.get(document=document, owner=user)
     except Exception as e:
-        raise http_404(
-            msg=f"No Document with: {document}"
-        ) from e
+        raise http_404(msg=f"No Document with: {document}") from e
 
     return await repository.patch(
         document=document,
         document_patch=document_patch,
         owner=user,
         user_repo=user_repository,
-        is_owner=True
+        is_owner=True,
     )
 
 
@@ -155,7 +160,9 @@ async def update_doc_metadata_details(
 )
 async def delete_document_metadata(
     document: Union[str, UUID],
-    repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
     user: TokenData = Depends(get_current_user),
 ) -> None:
     """
@@ -177,14 +184,13 @@ async def delete_document_metadata(
     try:
         await repository.get(document=document, owner=user)
     except Exception as e:
-        raise http_404(
-            msg=f"No document with the detail: {document}."
-        ) from e
+        raise http_404(msg=f"No document with the detail: {document}.") from e
 
     return await repository.delete(document=document, owner=user)
 
 
 # Archiving
+
 
 @router.post(
     "/archive/{file_name)",
@@ -193,11 +199,12 @@ async def delete_document_metadata(
     name="archive_a_document",
 )
 async def archive(
-        file_name: str,
-        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user),
+    file_name: str,
+    repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
 ) -> DocumentMetadataRead:
-
     """
     Archive a document.
 
@@ -221,10 +228,11 @@ async def archive(
     name="archived_doc_list",
 )
 async def archive_list(
-        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user),
+    repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
 ) -> Dict[str, List[str] | int]:
-
     """
     Get the list of archived documents.
 
@@ -247,11 +255,12 @@ async def archive_list(
     name="remove_doc_from_archive",
 )
 async def un_archive(
-        file: str,
-        repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user),
+    file: str,
+    repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
 ) -> DocumentMetadataRead:
-
     """
     Un-archive a document.
 

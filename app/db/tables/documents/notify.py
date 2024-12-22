@@ -9,9 +9,11 @@ from app.db.models import Base
 
 
 class Notify(Base):
-    __tablename__ = 'notify'
+    __tablename__ = "notify"
 
-    id: UUID = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, index=True, nullable=False)
+    id: UUID = Column(
+        UUID(as_uuid=True), default=uuid4, primary_key=True, index=True, nullable=False
+    )
     receiver_id: str = Column(String, nullable=False)
     message: str = Column(Text, nullable=False)
     status: Enum = Column(Enum(NotifyEnum), default=NotifyEnum.unread)
@@ -19,5 +21,5 @@ class Notify(Base):
         DateTime(timezone=True),
         default=datetime.now(timezone.utc),
         nullable=False,
-        server_default=text("NOW()")
+        server_default=text("NOW()"),
     )

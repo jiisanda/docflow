@@ -9,7 +9,10 @@ from app.api.dependencies.auth_utils import get_current_user
 from app.api.dependencies.repositories import get_repository
 from app.core.exceptions import http_400, http_404
 from app.db.repositories.auth.auth import AuthRepository
-from app.db.repositories.documents.documents import DocumentRepository, perm_delete as perm_delete_file
+from app.db.repositories.documents.documents import (
+    DocumentRepository,
+    perm_delete as perm_delete_file,
+)
 from app.db.repositories.documents.documents_metadata import DocumentMetadataRepository
 from app.schemas.auth.bands import TokenData
 from app.schemas.documents.documents_metadata import DocumentMetadataRead
@@ -22,7 +25,7 @@ router = APIRouter(tags=["Document"])
     "/upload",
     response_model=None,
     status_code=status.HTTP_201_CREATED,
-    name="upload_document"
+    name="upload_document",
 )
 async def upload(
     files: List[UploadFile] = File(...),
@@ -32,9 +35,8 @@ async def upload(
         get_repository(DocumentMetadataRepository)
     ),
     user_repository: AuthRepository = Depends(get_repository(AuthRepository)),
-    user: TokenData = Depends(get_current_user)
+    user: TokenData = Depends(get_current_user),
 ) -> Union[List[DocumentMetadataRead], List[Dict[str, str]]]:
-
     """
     Uploads a document to the specified folder.
 
@@ -58,9 +60,7 @@ async def upload(
     """
 
     if not files:
-        raise http_400(
-            msg="No input files provided..."
-        )
+        raise http_400(msg="No input files provided...")
 
     responses = []
     for file in files:
@@ -69,33 +69,38 @@ async def upload(
             user_repo=user_repository,
             file=file,
             folder=folder,
-            user=user
+            user=user,
         )
         if response["response"] == "file_added":
-            responses.append(await metadata_repository.upload(document_upload=response["upload"]))
+            responses.append(
+                await metadata_repository.upload(document_upload=response["upload"])
+            )
         elif response["response"] == "file_updated":
-            responses.append(await metadata_repository.patch(
-                document=response["upload"]["name"],
-                document_patch=response["upload"],
-                owner=user,
-                user_repo=user_repository,
-                is_owner=response["is_owner"]
-            ))
+            responses.append(
+                await metadata_repository.patch(
+                    document=response["upload"]["name"],
+                    document_patch=response["upload"],
+                    owner=user,
+                    user_repo=user_repository,
+                    is_owner=response["is_owner"],
+                )
+            )
     return responses
 
 
 @router.get(
     "/file/{file_name}/download",
     status_code=status.HTTP_200_OK,
-    name="download_document"
+    name="download_document",
 )
 async def download(
     file_name: str,
     repository: DocumentRepository = Depends(DocumentRepository),
-    metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    metadata_repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
     user: TokenData = Depends(get_current_user),
 ) -> object:
-
     """
     Downloads a document with the specified file name.
 
@@ -114,30 +119,29 @@ async def download(
     """
 
     if not file_name:
-        raise http_400(
-            msg="No file name..."
-        )
+        raise http_400(msg="No file name...")
     try:
-        get_document_metadata = dict(await metadata_repository.get(document=file_name, owner=user))
+        get_document_metadata = dict(
+            await metadata_repository.get(document=file_name, owner=user)
+        )
 
-        return await repository.download(s3_url=get_document_metadata["s3_url"], name=get_document_metadata["name"])
+        return await repository.download(
+            s3_url=get_document_metadata["s3_url"], name=get_document_metadata["name"]
+        )
     except Exception as e:
-        raise http_404(
-            msg=f"No file with {file_name}"
-        ) from e
+        raise http_404(msg=f"No file with {file_name}") from e
 
 
 @router.delete(
-    "/{file_name}",
-    status_code=status.HTTP_204_NO_CONTENT,
-    name="add_to_bin"
+    "/{file_name}", status_code=status.HTTP_204_NO_CONTENT, name="add_to_bin"
 )
 async def add_to_bin(
-        file_name: str,
-        metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user),
+    file_name: str,
+    metadata_repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
 ) -> None:
-
     """
     Adds a document to the bin for deletion.
 
@@ -160,10 +164,11 @@ async def add_to_bin(
     name="list_of_bin",
 )
 async def list_bin(
-        metadata_repo: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        owner: TokenData = Depends(get_current_user)
+    metadata_repo: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    owner: TokenData = Depends(get_current_user),
 ) -> Dict[str, List[Row | Row] | int]:
-
     """
     List bin.
 
@@ -182,15 +187,16 @@ async def list_bin(
 @router.delete(
     "/trash/{file_name}",
     status_code=status.HTTP_204_NO_CONTENT,
-    name="permanently_delete_doc"
+    name="permanently_delete_doc",
 )
 async def perm_delete(
-        file_name: str = None,
-        delete_all: bool = False,
-        metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user),
+    file_name: str = None,
+    delete_all: bool = False,
+    metadata_repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
 ) -> None:
-
     """
     Permanently deletes a document.
 
@@ -214,13 +220,11 @@ async def perm_delete(
                 file=file_name,
                 delete_all=delete_all,
                 meta_repo=metadata_repository,
-                user=user
+                user=user,
             )
 
     except Exception as e:
-        raise http_404(
-            msg=f"No file with {file_name}"
-        ) from e
+        raise http_404(msg=f"No file with {file_name}") from e
 
 
 @router.post(
@@ -230,11 +234,12 @@ async def perm_delete(
     name="restore_from_bin",
 )
 async def restore_bin(
-        file: str,
-        metadata_repo: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user)
+    file: str,
+    metadata_repo: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
 ) -> DocumentMetadataRead:
-
     """
     Restore bin.
 
@@ -257,10 +262,11 @@ async def restore_bin(
     name="empty_trash",
 )
 async def empty_trash(
-        metadata_repo: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user)
+    metadata_repo: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
 ) -> None:
-
     """
     Deletes all documents in the trash bin for the authenticated user.
 
@@ -278,15 +284,16 @@ async def empty_trash(
 @router.get(
     "/preview/{document}",
     status_code=status.HTTP_204_NO_CONTENT,
-    name="preview_document"
+    name="preview_document",
 )
 async def get_document_preview(
-        document: Union[str, UUID],
-        repository: DocumentRepository = Depends(DocumentRepository),
-        metadata_repository: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
-        user: TokenData = Depends(get_current_user)
+    document: Union[str, UUID],
+    repository: DocumentRepository = Depends(DocumentRepository),
+    metadata_repository: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
 ) -> FileResponse:
-
     """
     Get the preview of a document.
 
@@ -305,17 +312,13 @@ async def get_document_preview(
     """
 
     if not document:
-        raise http_404(
-            msg="Enter document id or name."
-        )
+        raise http_404(msg="Enter document id or name.")
     try:
-        get_document_metadata = dict(await metadata_repository.get(document=document, owner=user))
+        get_document_metadata = dict(
+            await metadata_repository.get(document=document, owner=user)
+        )
         return await repository.preview(document=get_document_metadata)
     except TypeError as e:
-        raise http_404(
-            msg="Document does not exists."
-        ) from e
+        raise http_404(msg="Document does not exists.") from e
     except ValueError as e:
-        raise http_400(
-            msg="File type is not supported for preview"
-        ) from e
+        raise http_400(msg="File type is not supported for preview") from e

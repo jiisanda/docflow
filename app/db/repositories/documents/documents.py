@@ -18,8 +18,7 @@ from app.schemas.auth.bands import TokenData
 
 
 async def perm_delete(
-        file: str,
-        delete_all: bool, meta_repo: DocumentMetadataRepository, user: TokenData
+    file: str, delete_all: bool, meta_repo: DocumentMetadataRepository, user: TokenData
 ) -> None:
 
     if delete_all:
@@ -35,14 +34,11 @@ async def perm_delete(
 class DocumentRepository:
 
     def __init__(self):
-        self.s3_client = boto3.resource('s3')
-        self.client = boto3.client('s3')
+        self.s3_client = boto3.resource("s3")
+        self.client = boto3.client("s3")
         self.s3_bucket = self.s3_client.Bucket(settings.s3_bucket)
         self.client.put_bucket_versioning(
-            Bucket=settings.s3_bucket,
-            VersioningConfiguration={
-                'Status': 'Enabled'
-            }
+            Bucket=settings.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
         )
 
     @staticmethod
@@ -56,7 +52,7 @@ class DocumentRepository:
 
     async def get_s3_file_object_body(self, key: str):
         s3_object = self.client.get_object(Bucket=settings.s3_bucket, Key=key)
-        file = s3_object['Body'].read()
+        file = s3_object["Body"].read()
 
         return file
 
@@ -68,7 +64,7 @@ class DocumentRepository:
             raise e
 
     async def _upload_new_file(
-            self, file: File, folder: str, contents, file_type: str, user: TokenData
+        self, file: File, folder: str, contents, file_type: str, user: TokenData
     ) -> Dict[str, Any]:
 
         if folder is None:
@@ -86,14 +82,18 @@ class DocumentRepository:
                 "s3_url": await get_s3_url(key=key),
                 "size": len(contents),
                 "file_type": file_type,
-                "file_hash": await self._calculate_file_hash(file=file)
-            }
+                "file_hash": await self._calculate_file_hash(file=file),
+            },
         }
 
     async def _upload_new_version(
-            self, doc: dict, file: File,
-            contents, file_type: str, new_file_hash: str,
-            is_owner: bool
+        self,
+        doc: dict,
+        file: File,
+        contents,
+        file_type: str,
+        new_file_hash: str,
+        is_owner: bool,
     ) -> Dict[str, Any]:
 
         key = await get_key(s3_url=doc["s3_url"])
@@ -108,12 +108,12 @@ class DocumentRepository:
                 "s3_url": await get_s3_url(key=key),
                 "size": len(contents),
                 "file_type": file_type,
-                "file_hash": new_file_hash
-            }
+                "file_hash": new_file_hash,
+            },
         }
 
     async def upload(
-            self, metadata_repo, user_repo, file: File, folder: str, user: TokenData
+        self, metadata_repo, user_repo, file: File, folder: str, user: TokenData
     ) -> Dict[str, Any]:
         """
         Uploads a file to the specified folder in the document repository.
@@ -134,9 +134,7 @@ class DocumentRepository:
 
         file_type = file.content_type
         if file_type not in SUPPORTED_FILE_TYPES:
-            raise http_400(
-                msg=f"File type {file_type} not supported."
-            )
+            raise http_400(msg=f"File type {file_type} not supported.")
 
         contents = await file.read()
 
@@ -149,18 +147,26 @@ class DocumentRepository:
                 if get_doc := await metadata_repo.get_doc(filename=file.filename):
                     get_doc = get_doc.__dict__
                     # Check if logged-in user has update access
-                    logged_in_user = (await user_repo.get_user(
-                        field="username", detail=user.username
-                    )).__dict__
-                    if ((get_doc["access_to"] is not None) and
-                            logged_in_user["email"] in get_doc["access_to"]):
-                        if get_doc['file_hash'] != new_file_hash:
+                    logged_in_user = (
+                        await user_repo.get_user(field="username", detail=user.username)
+                    ).__dict__
+                    if (get_doc["access_to"] is not None) and logged_in_user[
+                        "email"
+                    ] in get_doc["access_to"]:
+                        if get_doc["file_hash"] != new_file_hash:
                             # can upload a version to a file...
-                            print(f"Have update access, to a file... owner: {get_doc['owner_id']}")
+                            print(
+                                f"Have update access, to a file... owner: {get_doc['owner_id']}"
+                            )
                             return await self._upload_new_version(
-                                doc=get_doc, file=file, contents=contents, file_type=file_type,
-                                new_file_hash=await self._calculate_file_hash(file=file),
-                                is_owner=False
+                                doc=get_doc,
+                                file=file,
+                                contents=contents,
+                                file_type=file_type,
+                                new_file_hash=await self._calculate_file_hash(
+                                    file=file
+                                ),
+                                is_owner=False,
                             )
                     else:
                         return await self._upload_new_file(
@@ -168,13 +174,19 @@ class DocumentRepository:
                             folder=folder,
                             contents=contents,
                             file_type=file_type,
-                            user=user
+                            user=user,
                         )
                 return await self._upload_new_file(
-                    file=file, folder=folder, contents=contents, file_type=file_type, user=user
+                    file=file,
+                    folder=folder,
+                    contents=contents,
+                    file_type=file_type,
+                    user=user,
                 )
 
-            print(f"File {file.filename} already present, checking if there is an update...")
+            print(
+                f"File {file.filename} already present, checking if there is an update..."
+            )
 
             if doc["file_hash"] != new_file_hash:
                 print("File has been updated, uploading new version...")
@@ -184,12 +196,12 @@ class DocumentRepository:
                     contents=contents,
                     file_type=file_type,
                     new_file_hash=new_file_hash,
-                    is_owner=True
+                    is_owner=True,
                 )
 
             return {
                 "response": "File already present and no changes detected.",
-                "upload": "Noting to update..."
+                "upload": "Noting to update...",
             }
         except Exception as e:
             raise http_404(msg="Error uploading the file...") from e
@@ -202,12 +214,10 @@ class DocumentRepository:
             self.s3_client.meta.client.download_file(
                 Bucket=settings.s3_bucket,
                 Key=await key,
-                Filename=r"/app/downloads/docflow_" + f"{name}"
+                Filename=r"/app/downloads/docflow_" + f"{name}",
             )
         except ClientError as e:
-            raise http_404(
-                msg=f"File not found: {e}"
-            ) from e
+            raise http_404(msg=f"File not found: {e}") from e
 
         return {"message": f"successfully downloaded {name} in downloads folder."}
 
@@ -219,10 +229,10 @@ class DocumentRepository:
 
         # Determining the file extension from the key and media type for File Response
         _, extension = os.path.splitext(key)
-        if extension.lower() in ['.jpg', '.jpeg', '.png', '.gif']:
-            media_type = 'image/' + extension.lower().lstrip('.')
-        elif extension.lower() == '.pdf':
-            media_type = 'application/pdf'
+        if extension.lower() in [".jpg", ".jpeg", ".png", ".gif"]:
+            media_type = "image/" + extension.lower().lstrip(".")
+        elif extension.lower() == ".pdf":
+            media_type = "application/pdf"
         else:
             raise ValueError("Unsupported file type.")
 
