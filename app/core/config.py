@@ -10,6 +10,7 @@ class GlobalConfig(BaseSettings):
     """
     Global Configuration for the FastAPI application.
     """
+
     title: str = os.environ.get("TITLE")
     version: str = "1.0.0"
     description: str = os.environ.get("DESCRIPTION")
@@ -44,13 +45,17 @@ class GlobalConfig(BaseSettings):
 
     @property
     def sync_database_url(self) -> str:
-        return (f"postgresql://{self.postgres_user}:{self.postgres_password}@"
-                f"{self.postgres_hostname}:{self.postgres_port}/{self.postgres_db}")
+        return (
+            f"postgresql://{self.postgres_user}:{self.postgres_password}@"
+            f"{self.postgres_hostname}:{self.postgres_port}/{self.postgres_db}"
+        )
 
     @property
     def async_database_url(self) -> str:
-        return (f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@"
-                f"{self.postgres_hostname}:{self.postgres_port}/{self.postgres_db}")
+        return (
+            f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@"
+            f"{self.postgres_hostname}:{self.postgres_port}/{self.postgres_db}"
+        )
 
 
 settings = GlobalConfig()

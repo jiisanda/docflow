@@ -9,9 +9,13 @@ def http_400(msg: str = "Bad Request...") -> HTTPException:
     return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=msg)
 
 
-def http_401(msg: str = "Unauthorized", headers: Dict[str, str] = None) -> HTTPException:
+def http_401(
+    msg: str = "Unauthorized", headers: Dict[str, str] = None
+) -> HTTPException:
     """Unauthorized Access"""
-    return HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=msg, headers=headers)
+    return HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, detail=msg, headers=headers
+    )
 
 
 def http_403(msg: str = "Forbidden") -> HTTPException:

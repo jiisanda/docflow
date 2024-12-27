@@ -4,7 +4,9 @@ import logging.config
 
 
 LOGGER_NAME: str = "docflow"
-LOG_FORMAT: str = "%(asctime)s [%(levelname)s] | %(name)s | %(filename)s | %(funcName)s | %(lineno)d | %(message)s"
+LOG_FORMAT: str = (
+    "%(asctime)s [%(levelname)s] | %(name)s | %(filename)s | %(funcName)s | %(lineno)d | %(message)s"
+)
 LOG_LEVEL: int = logging.DEBUG
 
 BASE_DIR = abspath(dirname(__file__))
@@ -14,7 +16,7 @@ LOG_FILE: str = join(BASE_DIR, "docflow.log")
 LOGGING = {
     "version": 1,
     "disable_existing_logger": False,
-    "formatters":  {
+    "formatters": {
         "standard": {
             "format": LOG_FORMAT,
             "datefmt": "%Y-%m-%d %H:%M:%S",
@@ -31,47 +33,25 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "standard",
             "level": "DEBUG",
-            "filename": 'docflow.log',
-            "mode": 'a',
+            "filename": "docflow.log",
+            "mode": "a",
             "encoding": "utf-8",
             "maxBytes": 500000,
-            "backupCount": 4
-        }
+            "backupCount": 4,
+        },
     },
     "loggers": {
-        "": {
-            "handlers": ["default"],
-            "level": "INFO",
-            "propagate": True
-        },
+        "": {"handlers": ["default"], "level": "INFO", "propagate": True},
         LOGGER_NAME: {
             "handlers": ["default", "file"],
             "level": LOG_LEVEL,
-            "propagate": False
+            "propagate": False,
         },
-        "sqlalchemy": {
-            "handlers": ["file"],
-            "level": "WARNING"
-        },
-        "s3": {
-            "handlers": ["file"],
-            "level": "WARNING"
-        },
-        "uvicorn.error": {
-            "level": "INFO",
-            "handlers": ["default"],
-            "propagate": False
-        },
-        "uvicorn.access": {
-            "level": "INFO",
-            "handlers": ["default"],
-            "propagate": True
-        },
-        "uvicorn.asgi": {
-            "level": "INFO",
-            "handlers": ["default"],
-            "propagate": True
-        },
+        "sqlalchemy": {"handlers": ["file"], "level": "WARNING"},
+        "s3": {"handlers": ["file"], "level": "WARNING"},
+        "uvicorn.error": {"level": "INFO", "handlers": ["default"], "propagate": False},
+        "uvicorn.access": {"level": "INFO", "handlers": ["default"], "propagate": True},
+        "uvicorn.asgi": {"level": "INFO", "handlers": ["default"], "propagate": True},
     },
 }
 

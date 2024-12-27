@@ -17,7 +17,13 @@ class NotifyRepo:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def notify(self, user: TokenData, receivers: List[str], filename: str, auth_repo: AuthRepository) -> None:
+    async def notify(
+        self,
+        user: TokenData,
+        receivers: List[str],
+        filename: str,
+        auth_repo: AuthRepository,
+    ) -> None:
         """
         Notify users about a shared file.
 
@@ -41,7 +47,7 @@ class NotifyRepo:
                 notify_entry = Notify(
                     receiver_id=receiver_details.__dict__["id"],
                     message=f"{user.username} shared {filename} with you! Access the shared file via mail...",
-                    status=NotifyEnum.unread
+                    status=NotifyEnum.unread,
                 )
 
                 try:
@@ -72,18 +78,13 @@ class NotifyRepo:
             HTTP_404: If no notification with the given ID is found.
         """
 
-        stmt = (
-            select(Notify)
-            .where(Notify.receiver_id == user.id and Notify.id == n_id)
-        )
+        stmt = select(Notify).where(Notify.receiver_id == user.id and Notify.id == n_id)
 
         try:
             result = (await self.session.execute(stmt)).scalar_one_or_none()
             return Notification(**result.__dict__)
         except Exception as e:
-            raise http_404(
-                msg=f"No notification with id: {n_id}"
-            ) from e
+            raise http_404(msg=f"No notification with id: {n_id}") from e
 
     async def get_notifications(self, user: TokenData) -> List[Notification]:
         """
@@ -96,10 +97,7 @@ class NotifyRepo:
             List[Notification]: A list of notification objects.
         """
 
-        stmt = (
-            select(Notify)
-            .where(Notify.receiver_id == user.id)
-        )
+        stmt = select(Notify).where(Notify.receiver_id == user.id)
 
         notifications = (await self.session.execute(stmt)).fetchall()
 
@@ -132,12 +130,11 @@ class NotifyRepo:
             await self.session.execute(stmt)
             return await self.get_notifications(user=user)
         except Exception as e:
-            raise http_409(
-                msg="Error updating marking notification read..."
-            ) from e
+            raise http_409(msg="Error updating marking notification read...") from e
 
-    async def update_status(self, n_id: UUID, updated_status: NotifyPatchStatus, user: TokenData):
-
+    async def update_status(
+        self, n_id: UUID, updated_status: NotifyPatchStatus, user: TokenData
+    ):
         """
         Update the status of a notification for a specific user.
 
@@ -154,7 +151,11 @@ class NotifyRepo:
         """
         stmt = (
             update(Notify)
-            .where(Notify.receiver_id == user.id and Notify.id == n_id and Notify.status != updated_status.status)
+            .where(
+                Notify.receiver_id == user.id
+                and Notify.id == n_id
+                and Notify.status != updated_status.status
+            )
             .values({Notify.status: updated_status.status})
         )
 
@@ -162,9 +163,7 @@ class NotifyRepo:
             await self.session.execute(stmt)
             return await self.get_notification_by_id(n_id=n_id, user=user)
         except Exception as e:
-            raise http_409(
-                msg="Error updating notification status..."
-            ) from e
+            raise http_409(msg="Error updating notification status...") from e
 
     async def clear_notification(self, user: TokenData) -> None:
         """
@@ -180,10 +179,7 @@ class NotifyRepo:
             Exception: If an error occurs while clearing the notifications.
         """
 
-        stmt = (
-            delete(Notify)
-            .where(Notify.receiver_id == user.id)
-        )
+        stmt = delete(Notify).where(Notify.receiver_id == user.id)
 
         try:
             await self.session.execute(stmt)

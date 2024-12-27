@@ -14,11 +14,10 @@ router = APIRouter(tags=["User Auth"])
     response_model=UserOut,
     status_code=status.HTTP_201_CREATED,
     name="signup",
-    summary="Create new user"
+    summary="Create new user",
 )
 async def signup(
-    data: UserAuth,
-    repository: AuthRepository = Depends(get_repository(AuthRepository))
+    data: UserAuth, repository: AuthRepository = Depends(get_repository(AuthRepository))
 ):
 
     return await repository.signup(userdata=data)
@@ -28,11 +27,11 @@ async def signup(
     "/login",
     status_code=status.HTTP_200_OK,
     name="login",
-    summary="Create access and refresh tokens for user"
+    summary="Create access and refresh tokens for user",
 )
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
-    repository: AuthRepository = Depends(get_repository(AuthRepository))
+    repository: AuthRepository = Depends(get_repository(AuthRepository)),
 ):
 
     return await repository.login(ipdata=form_data)
@@ -43,7 +42,7 @@ async def login(
     status_code=status.HTTP_200_OK,
     response_model=TokenData,
     name="get_user_data",
-    summary="Get details of currently logged in user"
+    summary="Get details of currently logged in user",
 )
 async def get_me(user: TokenData = Depends(get_current_user)):
 

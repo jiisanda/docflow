@@ -23,10 +23,11 @@ async def search_document(
     file_types: str = None,
     doc_status: str = None,
     repository: DocumentOrgRepository = Depends(DocumentOrgRepository),
-    repository_metadata: DocumentMetadataRepository = Depends(get_repository(DocumentMetadataRepository)),
+    repository_metadata: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
     user: TokenData = Depends(get_current_user),
 ):
-
     """
     Searches for documents based on specified criteria.
 
@@ -46,7 +47,9 @@ async def search_document(
         List[DocumentMetadataRead] or List[Dict[str, Any]]: The list of matching documents.
     """
 
-    doc_list = await repository_metadata.doc_list(limit=limit, offset=offset, owner=user)
+    doc_list = await repository_metadata.doc_list(
+        limit=limit, offset=offset, owner=user
+    )
     doc_list = doc_list[f"documents of {user.username}"]
     if tag is None and category is None and file_types is None and doc_status is None:
         return doc_list
@@ -56,5 +59,5 @@ async def search_document(
         tags=tag,
         categories=category,
         file_types=file_types,
-        status=doc_status
+        status=doc_status,
     )

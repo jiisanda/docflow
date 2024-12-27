@@ -22,18 +22,14 @@ async_engine = create_async_engine(
     query_cache_size=0,
 )
 
-session = sessionmaker(
-    bind=engine,
-    autocommit=False,
-    autoflush=False
-)
+session = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 async_session = sessionmaker(
     bind=async_engine,
     class_=AsyncSession,
     autocommit=False,
     autoflush=False,
-    expire_on_commit=False
+    expire_on_commit=False,
 )
 
 Base = declarative_base()

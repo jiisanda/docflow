@@ -28,16 +28,13 @@ class DocumentSharingRepository:
     """
 
     def __init__(self, session: AsyncSession) -> None:
-        self.client = boto3.client('s3')
+        self.client = boto3.client("s3")
 
         self.session = session
 
     async def get_user_mail(self, user: TokenData):
 
-        stmt = (
-            select(User)
-            .where(User.id == user.id)
-        )
+        stmt = select(User).where(User.id == user.id)
 
         execute = await self.session.execute(stmt)
 
@@ -46,18 +43,15 @@ class DocumentSharingRepository:
     @staticmethod
     async def _generate_id(url: str) -> str:
         hash_object = hashlib.md5()
-        hash_object.update(url.encode('utf-8'))
+        hash_object.update(url.encode("utf-8"))
 
         n = randint(0, 25)
 
-        return hash_object.hexdigest()[n:n+6]
+        return hash_object.hexdigest()[n : n + 6]
 
     async def _get_saved_links(self, filename: str) -> Dict[str, Any]:
 
-        stmt = (
-            select(DocumentSharing)
-            .where(DocumentSharing.filename == filename)
-        )
+        stmt = select(DocumentSharing).where(DocumentSharing.filename == filename)
 
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
@@ -67,49 +61,41 @@ class DocumentSharingRepository:
             await self.session.execute(
                 update(DocumentSharing)
                 .where(DocumentSharing.filename == filename)
-                .values(visits=visits_left-1)
+                .values(visits=visits_left - 1)
             )
         elif visits_left == 1:
             await self.session.execute(
-                delete(DocumentSharing)
-                .where(DocumentSharing.filename == filename)
+                delete(DocumentSharing).where(DocumentSharing.filename == filename)
             )
 
     async def cleanup_expired_links(self):
 
         now = datetime.now(timezone.utc)
 
-        stmt = (
-            delete(DocumentSharing)
-            .where(DocumentSharing.expires_at <= now)
-        )
+        stmt = delete(DocumentSharing).where(DocumentSharing.expires_at <= now)
         try:
             await self.session.execute(stmt)
         except Exception as e:
             raise http_500() from e
 
     async def get_presigned_url(
-            self, doc: Dict[str, Any]
+        self, doc: Dict[str, Any]
     ) -> Union[str, Dict[str, str]]:
         try:
             params = {
-                'Bucket': settings.s3_bucket,
-                'Key': await get_key(s3_url=doc["s3_url"])
+                "Bucket": settings.s3_bucket,
+                "Key": await get_key(s3_url=doc["s3_url"]),
             }
             response = self.client.generate_presigned_url(
-                'get_object',
-                Params=params,
-                ExpiresIn=3600
+                "get_object", Params=params, ExpiresIn=3600
             )
         except NoCredentialsError as e:
-            return {
-                "error": f"Invalid AWS Credentials: {e}"
-            }
+            return {"error": f"Invalid AWS Credentials: {e}"}
 
         return response
 
     async def get_shareable_link(
-            self, owner_id: str, url: str, visits: int, filename: str, share_to: List[str]
+        self, owner_id: str, url: str, visits: int, filename: str, share_to: List[str]
     ):
 
         # task to clean uo the database for expired links
@@ -121,8 +107,8 @@ class DocumentSharingRepository:
                 "note": f"Links already shared... valid Till {ans['expires_at']}",
                 "response": {
                     "shareable_link": f"{settings.host_url}{settings.api_prefix}/doc/{ans['url_id']}",
-                    "visits_left": ans["visits"]
-                }
+                    "visits_left": ans["visits"],
+                },
             }
 
         url_id = await self._generate_id(url=url)
@@ -133,7 +119,7 @@ class DocumentSharingRepository:
             url=url,
             expires_at=datetime.now(timezone.utc) + timedelta(seconds=3599),
             visits=visits,
-            share_to=share_to
+            share_to=share_to,
         )
         try:
             self.session.add(share_entry)
@@ -143,23 +129,22 @@ class DocumentSharingRepository:
             response = share_entry.__dict__
             return {
                 "shareable_link": f"{settings.host_url}{settings.api_prefix}/doc/{response['url_id']}",
-                "visits": response["visits"]
+                "visits": response["visits"],
             }
         except Exception as e:
             raise http_500() from e
 
     async def get_redirect_url(self, url_id: str):
 
-        stmt = (
-            select(DocumentSharing)
-            .where(DocumentSharing.url_id == url_id)
-        )
+        stmt = select(DocumentSharing).where(DocumentSharing.url_id == url_id)
 
         result = await self.session.execute(stmt)
         try:
             result = result.scalar_one_or_none().__dict__
 
-            await self.update_visits(filename=result["filename"], visits_left=result["visits"])
+            await self.update_visits(
+                filename=result["filename"], visits_left=result["visits"]
+            )
 
             return result["url"]
         except AttributeError as e:
@@ -168,7 +153,7 @@ class DocumentSharingRepository:
             ) from e
 
     async def send_mail(
-            self, user: TokenData, mail_to: Union[List[str], None], link: str
+        self, user: TokenData, mail_to: Union[List[str], None], link: str
     ) -> None:
 
         if mail_to:
@@ -181,16 +166,13 @@ class DocumentSharingRepository:
                     """
 
             for mails in mail_to:
-                mail_service(mail_to=mails, subject=subj, content=content, file_path=None)
+                mail_service(
+                    mail_to=mails, subject=subj, content=content, file_path=None
+                )
 
-    async def confirm_access(
-            self, user: TokenData, url_id: str | None
-    ) -> bool:
+    async def confirm_access(self, user: TokenData, url_id: str | None) -> bool:
         # check if login user is owner or to whom it is shared
-        stmt = (
-            select(DocumentSharing)
-            .where(DocumentSharing.url_id == url_id)
-        )
+        stmt = select(DocumentSharing).where(DocumentSharing.url_id == url_id)
 
         result = await self.session.execute(stmt)
         try:
@@ -203,19 +185,18 @@ class DocumentSharingRepository:
                 or user.username in result.get("share_to")
             )
         except Exception as e:
-            raise http_404(
-                msg="The link has expired..."
-            ) from e
+            raise http_404(msg="The link has expired...") from e
 
     async def share_document(
-            self, filename: str,
-            document_key: str,
-            file: Any,
-            share_request: SharingRequest,
-            notify: bool,
-            owner: TokenData,
-            notify_repo: NotifyRepo,
-            auth_repo: AuthRepository,
+        self,
+        filename: str,
+        document_key: str,
+        file: Any,
+        share_request: SharingRequest,
+        notify: bool,
+        owner: TokenData,
+        notify_repo: NotifyRepo,
+        auth_repo: AuthRepository,
     ) -> None:
 
         user_mail = await self.get_user_mail(owner)
@@ -241,16 +222,10 @@ class DocumentSharingRepository:
                 DocFlow
                 """
                 mail_service(
-                    mail_to=mails,
-                    subject=subject,
-                    content=content,
-                    file_path=temp_path
+                    mail_to=mails, subject=subject, content=content, file_path=temp_path
                 )
 
         if notify:
             return await notify_repo.notify(
-                user=owner,
-                receivers=share_to,
-                filename=filename,
-                auth_repo=auth_repo
+                user=owner, receivers=share_to, filename=filename, auth_repo=auth_repo
             )
