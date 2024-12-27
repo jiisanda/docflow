@@ -8,8 +8,7 @@ class CommentCreate(CommentBase):
     doc_id: UUID
 
 
-class CommentUpdate(CommentBase):
-    ...
+class CommentUpdate(CommentBase): ...
 
 
 class CommentRead(CommentBase):

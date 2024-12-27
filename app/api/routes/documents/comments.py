@@ -2,7 +2,6 @@ from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter, status, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.auth_utils import get_current_user
 from app.api.dependencies.repositories import get_repository
@@ -21,12 +20,11 @@ router = APIRouter(tags=["Comments"])
     name="create_comment",
 )
 async def create_comment(
-        comment: CommentCreate,
-        user: TokenData = Depends(get_current_user),
-        doc_repo: DocumentRepository = Depends(get_repository(DocumentRepository)),
-        repository: CommentRepository = Depends(get_repository(CommentRepository)),
-) -> CommentRead:
-    ...
+    comment: CommentCreate,
+    user: TokenData = Depends(get_current_user),
+    doc_repo: DocumentRepository = Depends(get_repository(DocumentRepository)),
+    repository: CommentRepository = Depends(get_repository(CommentRepository)),
+) -> CommentRead: ...
 
 
 @router.get(
@@ -36,12 +34,11 @@ async def create_comment(
     name="get_comments",
 )
 async def get_document_comments(
-        doc_id: UUID,
-        user: TokenData = Depends(get_current_user),
-        doc_repo: DocumentRepository = Depends(get_repository(DocumentRepository)),
-        repository: CommentRepository = Depends(get_repository(CommentRepository)),
-) -> List[CommentRead]:
-    ...
+    doc_id: UUID,
+    user: TokenData = Depends(get_current_user),
+    doc_repo: DocumentRepository = Depends(get_repository(DocumentRepository)),
+    repository: CommentRepository = Depends(get_repository(CommentRepository)),
+) -> List[CommentRead]: ...
 
 
 @router.put(
@@ -51,12 +48,11 @@ async def get_document_comments(
     name="update_comment",
 )
 async def update_comment(
-        comment_id: UUID,
-        comment_update: CommentUpdate,
-        user: TokenData = Depends(get_current_user),
-        repository: CommentRepository = Depends(get_repository(CommentRepository)),
-) -> CommentRead:
-    ...
+    comment_id: UUID,
+    comment_update: CommentUpdate,
+    user: TokenData = Depends(get_current_user),
+    repository: CommentRepository = Depends(get_repository(CommentRepository)),
+) -> CommentRead: ...
 
 
 @router.delete(
@@ -65,8 +61,7 @@ async def update_comment(
     name="delete_comment",
 )
 async def delete_comment(
-        comment_id: UUID,
-        user: TokenData = Depends(get_current_user),
-        repository: CommentRepository = Depends(get_repository(CommentRepository)),
-) -> None:
-    ...
+    comment_id: UUID,
+    user: TokenData = Depends(get_current_user),
+    repository: CommentRepository = Depends(get_repository(CommentRepository)),
+) -> None: ...
