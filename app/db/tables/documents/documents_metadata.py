@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from typing import List, Optional
+from typing import List, Optional, Text
 from sqlalchemy import (
     Column,
     String,
@@ -61,3 +61,35 @@ class DocumentMetadata(Base):
         "User", secondary=doc_user_access, passive_deletes=True
     )
     owner = relationship("User", back_populates="owner_of")
+    comments = relationship(
+        "DocumentComment", back_populates="document", cascade="all, delete-orphan"
+    )
+
+
+class DocumentComment(Base):
+    __tablename__ = "document_comments"
+
+    id: UUID = Column(
+        UUID(as_uuid=True), default=uuid4, primary_key=True, index=True, nullable=False
+    )
+    doc_id: UUID = Column(
+        UUID(as_uuid=True), ForeignKey("document_metadata.id", ondelete="CASCADE")
+    )
+    author_id: str = Column(String, ForeignKey("users.id"), nullable=False)
+    comment: str = Column(Text, nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        default=datetime.now(timezone.utc),
+        nullable=False,
+        server_default=text("NOW()"),
+    )
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=datetime.now(timezone.utc),
+        onupdate=datetime.now(timezone.utc),
+        nullable=False,
+        server_default=text("NOW()"),
+    )
+
+    document = relationship("DocumentMetadata", back_populates="comments")
+    author = relationship("User", back_populates="comments")

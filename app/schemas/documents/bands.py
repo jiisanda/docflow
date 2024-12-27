@@ -67,3 +67,8 @@ class Notification(BaseModel):
 class NotifyPatchStatus(BaseModel):
     status: NotifyEnum = NotifyEnum.unread
     mark_all: bool = False
+
+
+# comments
+class CommentBase(BaseModel):
+    comment: str

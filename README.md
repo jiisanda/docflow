@@ -17,7 +17,7 @@ DocFlow is a powerful Document Management API designed to streamline document ha
 
 ## 😎 Upcoming Updates
 
-- 🟨 Document Interactions - Adding Comments and Tags
+- 🟨 Document Interactions - Adding Comments
 - 🟨 Import documents from unread emails
 - 🟨 Video Preview
 - 🟨 Adding custom metadata fields to document
