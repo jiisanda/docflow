@@ -39,7 +39,7 @@ class DocumentRepository:
             "aws_secret_access_key": settings.aws_secret_key,
             "region_name": settings.aws_region,
         }
-        
+
         if settings.s3_endpoint_url:
             boto3_config["endpoint_url"] = settings.s3_endpoint_url
 

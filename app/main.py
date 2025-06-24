@@ -13,7 +13,7 @@ from app.scripts.init_bucket import create_bucket_if_not_exists
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     docflow_logger.info("Starting DocFlow...")
-    
+
     try:
         docflow_logger.info("Initializing Tables and Storage buckets...")
         await check_tables()
@@ -22,7 +22,8 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         docflow_logger.error(f"Error during startup: {e}")
         raise
-    yield 
+    yield
+
 
 app = FastAPI(
     title=settings.title,
@@ -50,15 +51,11 @@ async def root():
         "API": "DocFlow - Document Management API is running! 🚀",
         "version": settings.version,
         "docs": f"{settings.host_url}{settings.docs_url}",
-        "storage": "MinIO" if settings.s3_endpoint_url else "AWS S3"
+        "storage": "MinIO" if settings.s3_endpoint_url else "AWS S3",
     }
 
 
 @app.get("/health", tags=["Default"])
 async def health_check():
     """Health check endpoint"""
-    return {
-        "status": "healthy",
-        "service": "DocFlow API",
-        "version": settings.version
-    }
+    return {"status": "healthy", "service": "DocFlow API", "version": settings.version}

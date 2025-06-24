@@ -68,11 +68,7 @@ LOGGING = {
         },
     },
     "loggers": {
-        "": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False
-        },
+        "": {"handlers": ["console"], "level": "INFO", "propagate": False},
         LOGGER_NAME: {
             "handlers": ["console", "error_console"],
             "level": LOG_LEVEL,
@@ -88,21 +84,13 @@ LOGGING = {
             "level": "WARNING",
             "propagate": False,
         },
-        "uvicorn.error": {
-            "level": "INFO",
-            "handlers": ["console"],
-            "propagate": False
-        },
+        "uvicorn.error": {"level": "INFO", "handlers": ["console"], "propagate": False},
         "uvicorn.access": {
             "level": "INFO",
             "handlers": ["console"],
-            "propagate": False
+            "propagate": False,
         },
-        "uvicorn.asgi": {
-            "level": "INFO",
-            "handlers": ["console"],
-            "propagate": False
-        },
+        "uvicorn.asgi": {"level": "INFO", "handlers": ["console"], "propagate": False},
     },
 }
 
@@ -126,9 +114,7 @@ try:
     logging.config.dictConfig(LOGGING)
 except Exception as e:
     logging.basicConfig(
-        level=LOG_LEVEL,
-        format=LOG_FORMAT,
-        handlers=[logging.StreamHandler()]
+        level=LOG_LEVEL, format=LOG_FORMAT, handlers=[logging.StreamHandler()]
     )
     print(f"Warning: Failed to configure logging: {e}")
 
