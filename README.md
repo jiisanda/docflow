@@ -36,6 +36,7 @@ DocFlow is a powerful Document Management API designed to streamline document ha
 - 💡 Deletion and Archiving
 - 💡 Document Preview
 - 💡 Send file via Email
+- 💡 Minio Support—for on-premise object storage
 
 
 ## 📖 API Documentation and Image
