@@ -34,12 +34,25 @@ async def perm_delete(
 class DocumentRepository:
 
     def __init__(self):
-        self.s3_client = boto3.resource("s3")
-        self.client = boto3.client("s3")
+        boto3_config = {
+            "aws_access_key_id": settings.aws_access_key_id,
+            "aws_secret_access_key": settings.aws_secret_key,
+            "region_name": settings.aws_region,
+        }
+        
+        if settings.s3_endpoint_url:
+            boto3_config["endpoint_url"] = settings.s3_endpoint_url
+
+        self.s3_client = boto3.resource("s3", **boto3_config)
+        self.client = boto3.client("s3", **boto3_config)
         self.s3_bucket = self.s3_client.Bucket(settings.s3_bucket)
-        self.client.put_bucket_versioning(
-            Bucket=settings.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
-        )
+        try:
+            self.client.put_bucket_versioning(
+                Bucket=settings.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+            )
+        except Exception as e:
+            # Minio does not support versioning in all configurations
+            ...
 
     @staticmethod
     async def _calculate_file_hash(file: File) -> str:
@@ -72,7 +85,7 @@ class DocumentRepository:
         else:
             key = f"{user.id}/{folder}/{str(ULID())}.{SUPPORTED_FILE_TYPES[file_type]}"
 
-        self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
+        self.s3_bucket.put_object(Key=key, Body=contents)
 
         return {
             "response": "file_added",
@@ -98,7 +111,7 @@ class DocumentRepository:
 
         key = await get_key(s3_url=doc["s3_url"])
 
-        self.s3_bucket.put_object(Bucket=settings.s3_bucket, Key=key, Body=contents)
+        self.s3_bucket.put_object(Key=key, Body=contents)
 
         return {
             "response": "file_updated",

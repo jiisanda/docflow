@@ -1,9 +1,28 @@
-version: '3'
 services:
   api:
-    build: .
+    build:
+        context: .
+        dockerfile: api.Dockerfile
     # Bind mounts
     volumes:
       - ./:/usr/src/app:ro
       - ./downloads:/app/downloads
+      - ./logs:/usr/src/app/logs
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+  
+  minio:
+    image: minio/minio:RELEASE.2025-05-24T17-08-30Z-cpuv1
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - app/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      
+volumes:
+  minio-data:

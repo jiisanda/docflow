@@ -26,9 +26,11 @@ class GlobalConfig(BaseSettings):
     postgres_port: int = int(os.environ.get("POSTGRES_PORT"))
     postgres_db: str = os.environ.get("POSTGRES_DB")
     db_echo_log: bool = str(os.environ.get("DEBUG", "False")).lower() == "true"
+    # s3 / minio configurations
     aws_access_key_id: str = os.environ.get("AWS_ACCESS_KEY_ID")
     aws_secret_key: str = os.environ.get("AWS_SECRET_ACCESS_KEY")
-    aws_region: str = os.environ.get("AWS_REGION")
+    aws_region: str = os.environ.get("AWS_REGION", "us-east-1")     # minio doesn't care about a region
+    s3_endpoint_url: str = os.environ.get("S3_ENDPOINT_URL")
     s3_bucket: str = os.environ.get("S3_BUCKET")
     s3_test_bucket: str = os.environ.get("S3_TEST_BUCKET")
     # user config
