@@ -42,7 +42,7 @@ docflow$ python
 >> import secrets
 >> secrets.token_urlsafe(32)
 'some-random-secret-of-length-32'
->> secret.token_hex(32)
+>> secrets.token_hex(32)
 'some-random-secret-of-length-32'
 ```
 #### Email Service
