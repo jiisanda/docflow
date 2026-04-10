@@ -112,15 +112,17 @@ class DocumentMetadataRepository:
             doc_user_access.delete().where(doc_user_access.c.doc_id == document.id)
         )
 
-    async def _auto_delete(self, bin_items: List) -> bool | None:
+    async def _auto_delete(self, bin_items: List) -> bool:
 
+        now = datetime.now(timezone.utc)
+        deleted_any = False
         for item in bin_items:
-            if item.DocumentMetadata.created_at <= datetime.now(timezone.utc):
-                stmt = delete(DocumentMetadata).where(
-                    DocumentMetadata.id == item.DocumentMetadata.id
-                )
+            doc = item.DocumentMetadata
+            if doc.deleted_at is not None and doc.deleted_at <= now:
+                stmt = delete(DocumentMetadata).where(DocumentMetadata.id == doc.id)
                 await self.session.execute(stmt)
-                return True
+                deleted_any = True
+        return deleted_any
 
     async def get_doc(self, filename: str) -> Dict[str, Any]:
         """
@@ -140,7 +142,6 @@ class DocumentMetadataRepository:
             .where(self.doc_cls.status != StatusEnum.deleted)
         )
         result = await self.session.execute(stmt)
-        result.fetchall()
 
         return result.scalar_one_or_none()
 
@@ -187,7 +188,7 @@ class DocumentMetadataRepository:
             result = [
                 DocumentMetadataRead(**row.doc_cls.__dict__) for row in result_list
             ]
-            return {f"documents of {owner.username}": result, "no_of_docs": len(result)}
+            return {"response": result, "no_of_docs": len(result)}
         except Exception as e:
             raise http_404(msg="No Documents found") from e
 
@@ -239,10 +240,9 @@ class DocumentMetadataRepository:
             setattr(db_document, "access_to", None)
             setattr(db_document, "file_type", None)
             setattr(db_document, "categories", None)
-            # considering created_at as delete_at to delete it after 30 days
             setattr(
                 db_document,
-                "created_at",
+                "deleted_at",
                 datetime.now(timezone.utc) + timedelta(days=30),
             )
 

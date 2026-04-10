@@ -16,7 +16,7 @@ class Notify(Base):
     )
     receiver_id: str = Column(String, nullable=False)
     message: str = Column(Text, nullable=False)
-    status: Enum = Column(Enum(NotifyEnum), default=NotifyEnum.unread)
+    status: NotifyEnum = Column(Enum(NotifyEnum), default=NotifyEnum.unread)
     notified_at = Column(
         DateTime(timezone=True),
         default=datetime.now(timezone.utc),

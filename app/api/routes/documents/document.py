@@ -132,31 +132,6 @@ async def download(
         raise http_404(msg=f"No file with {file_name}") from e
 
 
-@router.delete(
-    "/{file_name}", status_code=status.HTTP_204_NO_CONTENT, name="add_to_bin"
-)
-async def add_to_bin(
-    file_name: str,
-    metadata_repository: DocumentMetadataRepository = Depends(
-        get_repository(DocumentMetadataRepository)
-    ),
-    user: TokenData = Depends(get_current_user),
-) -> None:
-    """
-    Adds a document to the bin for deletion.
-
-    Args:
-        file_name (str): The name of the file to be added to the bin.
-        metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
-        user (TokenData): The token data of the authenticated user.
-
-    Returns:
-        None: If the file is added to the bin.
-    """
-
-    return await metadata_repository.delete(document=file_name, owner=user)
-
-
 @router.get(
     "/trash",
     status_code=status.HTTP_200_OK,
@@ -182,6 +157,31 @@ async def list_bin(
     """
 
     return await metadata_repo.bin_list(owner=owner)
+
+
+@router.delete(
+    "/trash",
+    status_code=status.HTTP_204_NO_CONTENT,
+    name="empty_trash",
+)
+async def empty_trash(
+    metadata_repo: DocumentMetadataRepository = Depends(
+        get_repository(DocumentMetadataRepository)
+    ),
+    user: TokenData = Depends(get_current_user),
+) -> None:
+    """
+    Deletes all documents in the trash bin for the authenticated user.
+
+    Args:
+        metadata_repo (DocumentMetadataRepository): The repository for accessing document metadata.
+        user (TokenData): The token data of the authenticated user.
+
+    Returns:
+        None
+    """
+
+    return await metadata_repo.empty_bin(owner=user)
 
 
 @router.delete(
@@ -257,33 +257,33 @@ async def restore_bin(
 
 
 @router.delete(
-    "/trash",
-    status_code=status.HTTP_204_NO_CONTENT,
-    name="empty_trash",
+    "/{file_name}", status_code=status.HTTP_204_NO_CONTENT, name="add_to_bin"
 )
-async def empty_trash(
-    metadata_repo: DocumentMetadataRepository = Depends(
+async def add_to_bin(
+    file_name: str,
+    metadata_repository: DocumentMetadataRepository = Depends(
         get_repository(DocumentMetadataRepository)
     ),
     user: TokenData = Depends(get_current_user),
 ) -> None:
     """
-    Deletes all documents in the trash bin for the authenticated user.
+    Adds a document to the bin for deletion.
 
     Args:
-        metadata_repo (DocumentMetadataRepository): The repository for accessing document metadata.
+        file_name (str): The name of the file to be added to the bin.
+        metadata_repository (DocumentMetadataRepository): The repository for managing document metadata.
         user (TokenData): The token data of the authenticated user.
 
     Returns:
-        None
+        None: If the file is added to the bin.
     """
 
-    return await metadata_repo.empty_bin(owner=user)
+    return await metadata_repository.delete(document=file_name, owner=user)
 
 
 @router.get(
     "/preview/{document}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
     name="preview_document",
 )
 async def get_document_preview(

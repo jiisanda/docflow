@@ -1,8 +1,8 @@
-import hashlib
+import asyncio
 import os
+import secrets
 import tempfile
 from datetime import datetime, timedelta, timezone
-from random import randint
 from typing import Dict, Any, Union, List
 
 import boto3
@@ -18,6 +18,7 @@ from app.db.tables.auth.auth import User
 from app.db.tables.documents.document_sharing import DocumentSharing
 from app.db.repositories.auth.auth import AuthRepository
 from app.db.repositories.documents.notify import NotifyRepo
+from app.logs.logger import docflow_logger
 from app.schemas.auth.bands import TokenData
 from app.schemas.documents.document_sharing import SharingRequest
 
@@ -28,8 +29,15 @@ class DocumentSharingRepository:
     """
 
     def __init__(self, session: AsyncSession) -> None:
-        self.client = boto3.client("s3")
+        boto3_config = {
+            "aws_access_key_id": settings.aws_access_key_id,
+            "aws_secret_access_key": settings.aws_secret_key,
+            "region_name": settings.aws_region,
+        }
+        if settings.s3_endpoint_url:
+            boto3_config["endpoint_url"] = settings.s3_endpoint_url
 
+        self.client = boto3.client("s3", **boto3_config)
         self.session = session
 
     async def get_user_mail(self, user: TokenData):
@@ -41,13 +49,8 @@ class DocumentSharingRepository:
         return execute.scalar_one_or_none().__dict__["email"]
 
     @staticmethod
-    async def _generate_id(url: str) -> str:
-        hash_object = hashlib.md5()
-        hash_object.update(url.encode("utf-8"))
-
-        n = randint(0, 25)
-
-        return hash_object.hexdigest()[n : n + 6]
+    async def _generate_id() -> str:
+        return secrets.token_urlsafe(8)
 
     async def _get_saved_links(self, filename: str) -> Dict[str, Any]:
 
@@ -67,6 +70,7 @@ class DocumentSharingRepository:
             await self.session.execute(
                 delete(DocumentSharing).where(DocumentSharing.filename == filename)
             )
+        await self.session.commit()
 
     async def cleanup_expired_links(self):
 
@@ -86,8 +90,11 @@ class DocumentSharingRepository:
                 "Bucket": settings.s3_bucket,
                 "Key": await get_key(s3_url=doc["s3_url"]),
             }
-            response = self.client.generate_presigned_url(
-                "get_object", Params=params, ExpiresIn=3600
+            response = await asyncio.to_thread(
+                self.client.generate_presigned_url,
+                "get_object",
+                Params=params,
+                ExpiresIn=3600,
             )
         except NoCredentialsError as e:
             return {"error": f"Invalid AWS Credentials: {e}"}
@@ -111,7 +118,7 @@ class DocumentSharingRepository:
                 },
             }
 
-        url_id = await self._generate_id(url=url)
+        url_id = await self._generate_id()
         share_entry = DocumentSharing(
             url_id=url_id,
             owner_id=owner_id,
@@ -205,18 +212,22 @@ class DocumentSharingRepository:
         # Determining extension
         _, extension = os.path.splitext(document_key)
 
-        # Creating temp file to share
-        with tempfile.NamedTemporaryFile(delete=True, suffix=extension) as temp:
+        # Creating temp file to share; delete=False so the file exists when mail_service reads it
+        temp = tempfile.NamedTemporaryFile(delete=False, suffix=extension)
+        try:
             temp.write(file)
+            temp.close()
             temp_path = temp.name
 
             subject = f"{owner.username} shared a file with you using DocFlow"
             for mails in share_to:
                 content = f"""
                 Hello {mails}!
-                
+
                 Hope you are well? {owner.username} | {user_mail} shared a file
                 with you as an attachment.
+
+                Message: {share_request.message}
 
                 Regards,
                 DocFlow
@@ -224,8 +235,11 @@ class DocumentSharingRepository:
                 mail_service(
                     mail_to=mails, subject=subject, content=content, file_path=temp_path
                 )
+        finally:
+            os.unlink(temp_path)
 
         if notify:
             return await notify_repo.notify(
                 user=owner, receivers=share_to, filename=filename, auth_repo=auth_repo
             )
+        return None

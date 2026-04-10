@@ -56,6 +56,7 @@ class DocumentMetadata(Base):
     status: Enum = Column(Enum(StatusEnum), default=StatusEnum.private)
     file_hash: Optional[str] = Column(String)
     access_to: Optional[List[str]] = Column(ARRAY(String))
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     update_access = relationship(
         "User", secondary=doc_user_access, passive_deletes=True

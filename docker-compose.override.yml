@@ -23,6 +23,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    volumes:
+      - minio-data:/data
       
 volumes:
   minio-data:
