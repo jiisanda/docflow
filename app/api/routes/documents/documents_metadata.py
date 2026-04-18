@@ -193,7 +193,7 @@ async def delete_document_metadata(
 
 
 @router.post(
-    "/archive/{file_name)",
+    "/archive/{file_name}",
     response_model=DocumentMetadataRead,
     status_code=status.HTTP_200_OK,
     name="archive_a_document",
