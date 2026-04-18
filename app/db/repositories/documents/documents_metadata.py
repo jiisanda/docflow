@@ -116,12 +116,13 @@ class DocumentMetadataRepository:
 
         now = datetime.now(timezone.utc)
         deleted_any = False
-        for item in bin_items:
-            doc = item.DocumentMetadata
+        for doc in bin_items:
             if doc.deleted_at is not None and doc.deleted_at <= now:
                 stmt = delete(DocumentMetadata).where(DocumentMetadata.id == doc.id)
                 await self.session.execute(stmt)
                 deleted_any = True
+        if deleted_any:
+            await self.session.commit()
         return deleted_any
 
     async def get_doc(self, filename: str) -> Dict[str, Any]:
@@ -263,27 +264,33 @@ class DocumentMetadataRepository:
             .where(DocumentMetadata.status == StatusEnum.deleted)
         )
 
-        result = (await self.session.execute(stmt)).fetchall()
-        # delete documents that lived 30 days in bin
+        result = (await self.session.execute(stmt)).scalars().all()
         if await self._auto_delete(result):
-            result = (await self.session.execute(stmt)).fetchall()
+            result = (await self.session.execute(stmt)).scalars().all()
 
-        return {"response": result, "no_of_docs": len(result)}
+        serialized = []
+        for doc in result:
+            d = {k: v for k, v in doc.__dict__.items() if k != "_sa_instance_state"}
+            serialized.append(DocumentMetadataRead(**d))
+
+        return {"response": serialized, "no_of_docs": len(serialized)}
 
     async def restore(self, file: str, owner: TokenData) -> DocumentMetadataRead:
 
-        doc_list = await self.bin_list(owner=owner)
+        stmt = (
+            select(DocumentMetadata)
+            .where(DocumentMetadata.owner_id == owner.id)
+            .where(DocumentMetadata.name == file)
+            .where(DocumentMetadata.status == StatusEnum.deleted)
+        )
+        db_doc = (await self.session.execute(stmt)).scalar_one_or_none()
+        if db_doc is None:
+            raise http_404(msg=f"'{file}' not found in trash")
 
-        if doc_list["no_of_docs"] > 0:
-            for doc in doc_list["response"]:
-                if doc.DocumentMetadata.name == file:
-                    change = {"status": StatusEnum.private}
-                    await self._execute_update(
-                        db_document=doc.DocumentMetadata, changes=change
-                    )
-                    return DocumentMetadataRead(**doc.DocumentMetadata.__dict__)
-            raise http_409(msg="Doc is not deleted")
-        raise http_404(msg="Doc does not exists")
+        await self._execute_update(db_document=db_doc, changes={"status": StatusEnum.private, "deleted_at": None})
+        await self.session.commit()
+        d = {k: v for k, v in db_doc.__dict__.items() if k != "_sa_instance_state"}
+        return DocumentMetadataRead(**d)
 
     async def perm_delete_a_doc(self, document: UUID | None, owner: TokenData) -> None:
 
@@ -310,15 +317,16 @@ class DocumentMetadataRepository:
 
         doc = await self._get_instance(document=file, owner=user)
 
-        if doc and doc.status != StatusEnum.archived:
-            change = {"status": StatusEnum.archived}
-            await self._execute_update(db_document=doc, changes=change)
-            return DocumentMetadataRead(**doc.__dict__)
-
         if doc and doc.status == StatusEnum.archived:
             raise http_409(msg="Doc is already archived")
 
-        raise http_404(msg="Doc does not exist")
+        if doc is None:
+            raise http_404(msg="Doc does not exist")
+
+        await self._execute_update(db_document=doc, changes={"status": StatusEnum.archived})
+        await self.session.commit()
+        d = {k: v for k, v in doc.__dict__.items() if k != "_sa_instance_state"}
+        return DocumentMetadataRead(**d)
 
     async def archive_list(self, user: TokenData) -> Dict[str, List[str] | int]:
 
@@ -328,8 +336,12 @@ class DocumentMetadataRepository:
             .where(DocumentMetadata.status == StatusEnum.archived)
         )
 
-        result = (await self.session.execute(stmt)).fetchall()
-        return {"response": result, "no_of_docs": len(result)}
+        result = (await self.session.execute(stmt)).scalars().all()
+        serialized = [
+            DocumentMetadataRead(**{k: v for k, v in doc.__dict__.items() if k != "_sa_instance_state"})
+            for doc in result
+        ]
+        return {"response": serialized, "no_of_docs": len(serialized)}
 
     async def un_archive(self, file: str, user: TokenData) -> DocumentMetadataRead:
 

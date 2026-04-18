@@ -247,10 +247,17 @@ class DocumentRepository:
         file = await self.get_s3_file_object_body(key)
 
         _, extension = os.path.splitext(key)
-        if extension.lower() in [".jpg", ".jpeg", ".png", ".gif"]:
-            media_type = "image/" + extension.lower().lstrip(".")
-        elif extension.lower() == ".pdf":
+        ext = extension.lower()
+        if ext in [".jpg", ".jpeg", ".png", ".gif"]:
+            media_type = "image/" + ext.lstrip(".")
+        elif ext == ".pdf":
             media_type = "application/pdf"
+        elif ext == ".json":
+            media_type = "application/json"
+        elif ext == ".xml":
+            media_type = "application/xml"
+        elif ext == ".txt":
+            media_type = "text/plain"
         else:
             raise ValueError("Unsupported file type.")
 
