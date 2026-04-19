@@ -8,7 +8,7 @@ from alembic import context
 from app.db.models import Base
 
 from app.core.config import settings
-from app.db.tables.documents.documents_metadata import DocumentMetadata
+from app.db.tables.documents.documents_metadata import DocumentMetadata, DocumentComment
 from app.db.tables.auth.auth import User
 from app.db.tables.documents.document_sharing import DocumentSharing
 from app.db.tables.documents.notify import Notify
