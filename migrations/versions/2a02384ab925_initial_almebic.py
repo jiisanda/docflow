@@ -1,7 +1,7 @@
 """Initial Almebic
 
 Revision ID: 2a02384ab925
-Revises: 
+Revises:
 Create Date: 2023-11-01 20:51:23.621851
 
 """
