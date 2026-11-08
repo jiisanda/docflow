@@ -39,7 +39,7 @@ try:
         Bucket=settings.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
     )
 except Exception:
-    # MinIO does not support versioning in all configurations
+    # Some S3-compatible backends don't support versioning in all configurations
     pass
 
 

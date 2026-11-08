@@ -15,7 +15,6 @@ from app.schemas.documents.documents_metadata import (
     DocumentMetadataRead,
 )
 
-
 router = APIRouter(tags=["Document MetaData"])
 
 

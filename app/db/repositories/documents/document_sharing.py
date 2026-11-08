@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, Union, List
 
 import boto3
+from botocore.config import Config
 from botocore.exceptions import NoCredentialsError
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -34,10 +35,16 @@ class DocumentSharingRepository:
             "aws_secret_access_key": settings.aws_secret_key,
             "region_name": settings.aws_region,
         }
-        if settings.s3_endpoint_url:
-            boto3_config["endpoint_url"] = settings.s3_endpoint_url
+        # This client only signs URLs that browsers open, so it must use the public
+        # endpoint: the signature covers the host. Signing is local (no network call).
+        if endpoint := settings.s3_public_endpoint_url or settings.s3_endpoint_url:
+            boto3_config["endpoint_url"] = endpoint
 
-        self.client = boto3.client("s3", **boto3_config)
+        self.client = boto3.client(
+            "s3",
+            config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
+            **boto3_config,
+        )
         self.session = session
 
     async def get_user_mail(self, user: TokenData):

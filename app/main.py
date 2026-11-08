@@ -51,7 +51,7 @@ async def root():
         "API": "DocFlow - Document Management API is running! 🚀",
         "version": settings.version,
         "docs": f"{settings.host_url}{settings.docs_url}",
-        "storage": "MinIO" if settings.s3_endpoint_url else "AWS S3",
+        "storage": "RustFS (S3-compatible)" if settings.s3_endpoint_url else "AWS S3",
     }
 
 

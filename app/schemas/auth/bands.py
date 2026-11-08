@@ -4,7 +4,6 @@ from ulid import ULID
 
 from pydantic import BaseModel, EmailStr, Field
 
-
 PydanticULID = Annotated[str, ULID]
 
 

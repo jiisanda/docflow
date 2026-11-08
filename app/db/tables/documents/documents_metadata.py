@@ -20,7 +20,6 @@ from sqlalchemy.orm import Mapped, relationship
 from app.db.models import Base
 from app.db.tables.base_class import StatusEnum
 
-
 doc_user_access = Table(
     "doc_user_access",
     Base.metadata,

@@ -17,7 +17,6 @@ from app.db.repositories.documents.documents_metadata import DocumentMetadataRep
 from app.schemas.auth.bands import TokenData
 from app.schemas.documents.documents_metadata import DocumentMetadataRead
 
-
 router = APIRouter(tags=["Document"])
 
 
