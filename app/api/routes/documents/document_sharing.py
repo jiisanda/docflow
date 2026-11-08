@@ -15,7 +15,6 @@ from app.db.repositories.documents.notify import NotifyRepo
 from app.schemas.auth.bands import TokenData
 from app.schemas.documents.document_sharing import SharingRequest
 
-
 router = APIRouter(tags=["Document Sharing"])
 
 

@@ -38,14 +38,14 @@ def get_repository(repository):
 
 async def get_s3_url(key: str) -> str:
     if settings.s3_endpoint_url:
-        # minio URL format
+        # S3-compatible (path-style) URL format
         return f"{settings.s3_endpoint_url}/{settings.s3_bucket}/{key}"
     return f"https://{settings.s3_bucket}.s3.{settings.aws_region}.amazonaws.com/{key}"
 
 
 async def get_key(s3_url: str) -> Optional[str]:
     if settings.s3_endpoint_url:
-        # minio url format: http://host:9000/bucket/key
+        # path-style url format: http://host:9000/bucket/key
         # remove the endpoint and bucket form the URL
         url_without_endpoint = s3_url.replace(settings.s3_endpoint_url, "")
         url_without_bucket = url_without_endpoint.replace(f"/{settings.s3_bucket}/", "")

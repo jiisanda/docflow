@@ -287,7 +287,10 @@ class DocumentMetadataRepository:
         if db_doc is None:
             raise http_404(msg=f"'{file}' not found in trash")
 
-        await self._execute_update(db_document=db_doc, changes={"status": StatusEnum.private, "deleted_at": None})
+        await self._execute_update(
+            db_document=db_doc,
+            changes={"status": StatusEnum.private, "deleted_at": None},
+        )
         await self.session.commit()
         d = {k: v for k, v in db_doc.__dict__.items() if k != "_sa_instance_state"}
         return DocumentMetadataRead(**d)
@@ -323,7 +326,9 @@ class DocumentMetadataRepository:
         if doc is None:
             raise http_404(msg="Doc does not exist")
 
-        await self._execute_update(db_document=doc, changes={"status": StatusEnum.archived})
+        await self._execute_update(
+            db_document=doc, changes={"status": StatusEnum.archived}
+        )
         await self.session.commit()
         d = {k: v for k, v in doc.__dict__.items() if k != "_sa_instance_state"}
         return DocumentMetadataRead(**d)
@@ -338,7 +343,9 @@ class DocumentMetadataRepository:
 
         result = (await self.session.execute(stmt)).scalars().all()
         serialized = [
-            DocumentMetadataRead(**{k: v for k, v in doc.__dict__.items() if k != "_sa_instance_state"})
+            DocumentMetadataRead(
+                **{k: v for k, v in doc.__dict__.items() if k != "_sa_instance_state"}
+            )
             for doc in result
         ]
         return {"response": serialized, "no_of_docs": len(serialized)}

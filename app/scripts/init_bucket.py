@@ -8,7 +8,7 @@ from app.logs.logger import s3_logger
 
 
 async def create_bucket_if_not_exists():
-    """Create S3/MinIO bucket if it doesn't exist"""
+    """Create S3/RustFS bucket if it doesn't exist"""
     try:
         boto3_config = {
             "aws_access_key_id": settings.aws_access_key_id,

@@ -10,7 +10,6 @@ from app.core.config import settings
 from app.core.exceptions import http_401
 from app.schemas.auth.bands import TokenData
 
-
 # Password Hashing
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # oauth2 scheme

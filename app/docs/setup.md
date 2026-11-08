@@ -69,7 +69,22 @@ Ensure Docker is installed, then run:
 docker-compose up --build
 ```
 
-That's it! Docflow is now running on localhost:8000. 
+That's it! Docflow is now running behind nginx:
+
+| URL | What |
+| --- | --- |
+| <http://docflow.localhost> | UI, with the API at `/v2/` and Swagger at `/docs` |
+| <http://store.docflow.localhost> | RustFS S3 API (presigned URLs point here) |
+| <http://console.docflow.localhost> | RustFS console |
+| <http://localhost:8000> | API directly, bypassing nginx (dev only) |
+
+`*.localhost` resolves to 127.0.0.1 in browsers, so no `/etc/hosts` edits are needed. For `curl`, use
+`curl --resolve docflow.localhost:80:127.0.0.1 http://docflow.localhost/...` if your resolver
+doesn't handle `.localhost`.
+
+nginx config lives in [nginx/](../../nginx): `conf.d/` and `snippets/` are shared, `dev/` and `prod/`
+hold the environment-specific parts. In prod, `nginx.Dockerfile` builds the UI and bakes it into the
+nginx image.
 
 If you face any issues, contact me I will help you set up or start an EC2 instance for testing docflow.
 
