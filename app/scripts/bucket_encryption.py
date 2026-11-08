@@ -35,7 +35,9 @@ _SSE_S3_RULE = {
 _EMPTY_BODY_SHA256 = hashlib.sha256(b"").hexdigest()
 
 
-async def _rustfs_admin(client: httpx.AsyncClient, method: str, path: str) -> httpx.Response:
+async def _rustfs_admin(
+    client: httpx.AsyncClient, method: str, path: str
+) -> httpx.Response:
     """Call the RustFS admin API, which uses the same SigV4 signing as S3."""
 
     url = f"{settings.s3_endpoint_url}/rustfs/admin/v3{path}"
