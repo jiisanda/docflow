@@ -3,28 +3,77 @@ services:
     build:
         context: .
         dockerfile: api.Dockerfile
+    # Direct access (localhost:8000) kept for dev; nginx is the main entrypoint.
+    ports:
+      - "8000:8000"
     # Bind mounts
     volumes:
       - ./:/usr/src/app:ro
       - ./downloads:/app/downloads
       - ./logs:/usr/src/app/logs
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-  
-  minio:
-    image: minio/minio:RELEASE.2025-05-24T17-08-30Z-cpuv1
-    command: server /data --console-address ":9001"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --proxy-headers --forwarded-allow-ips=*
+
+  postgres:
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "5432:5432"
+
+  # S3-compatible object storage (credentials: RUSTFS_ACCESS_KEY / RUSTFS_SECRET_KEY in app/.env)
+  rustfs:
+    image: rustfs/rustfs:1.0.4
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # console, at /rustfs/console/
     env_file:
       - app/.env
+    environment:
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
-      - minio-data:/data
-      
+      - rustfs-data:/data
+
+  ui:
+    image: node:22-alpine
+    working_dir: /ui
+    # Reinstall only when package-lock.json changes (npm ci wipes node_modules, ~1 min).
+    command:
+      - sh
+      - -c
+      - |
+        h=$$(md5sum package-lock.json)
+        [ "$$(cat node_modules/.lock-hash 2>/dev/null)" = "$$h" ] || { npm ci && echo "$$h" > node_modules/.lock-hash; }
+        exec npm run dev -- --host 0.0.0.0 --port 5173 --strictPort
+    volumes:
+      - ./ui:/ui
+      - ui-node-modules:/ui/node_modules
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:5173/"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 180s   # first start runs npm ci
+
+  nginx:
+    image: nginx:1.28.0-alpine
+    depends_on:
+      api:
+        condition: service_started
+      ui:
+        condition: service_healthy
+      rustfs:
+        condition: service_healthy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/snippets:/etc/nginx/snippets:ro
+      - ./nginx/dev:/etc/nginx/docflow:ro
+
 volumes:
-  minio-data:
+  rustfs-data:
+  ui-node-modules:

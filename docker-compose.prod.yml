@@ -1,10 +1,20 @@
 services:
   api:
     image: jiisanda/docflow:1
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips=*
+    restart: unless-stopped
+
   nginx:
-    image: nginx:1.25.3-alpine
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    depends_on:
+      - api
     ports:
       - "80:80"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/nginx-health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

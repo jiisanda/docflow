@@ -8,3 +8,5 @@ app/.env
 *.log
 *.pyc
 __pychache__
+ui/node_modules
+ui/dist
