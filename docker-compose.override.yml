@@ -17,9 +17,20 @@ services:
     ports:
       - "5432:5432"
 
+  # RustFS runs as uid 10001; a fresh named volume is root-owned, so hand it over first.
+  rustfs-kms-perms:
+    image: alpine:3.22
+    user: root
+    command: chown -R 10001:10001 /kms
+    volumes:
+      - rustfs-kms:/kms
+
   # S3-compatible object storage (credentials: RUSTFS_ACCESS_KEY / RUSTFS_SECRET_KEY in app/.env)
   rustfs:
     image: rustfs/rustfs:1.0.4
+    depends_on:
+      rustfs-kms-perms:
+        condition: service_completed_successfully
     ports:
       - "9000:9000"   # S3 API
       - "9001:9001"   # console, at /rustfs/console/
@@ -29,6 +40,11 @@ services:
       RUSTFS_ADDRESS: ":9000"
       RUSTFS_CONSOLE_ADDRESS: ":9001"
       RUSTFS_CONSOLE_ENABLE: "true"
+      # Encryption at rest (SSE-S3): built-in KMS with local key files, wrapped by
+      # RUSTFS_KMS_LOCAL_MASTER_KEY from app/.env. Lose that key and the data is gone.
+      RUSTFS_KMS_ENABLE: "true"
+      RUSTFS_KMS_BACKEND: local
+      RUSTFS_KMS_KEY_DIR: /kms
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
       interval: 10s
@@ -36,6 +52,7 @@ services:
       retries: 5
     volumes:
       - rustfs-data:/data
+      - rustfs-kms:/kms   # key files kept apart from object data
 
   ui:
     image: node:22-alpine
@@ -76,4 +93,5 @@ services:
 
 volumes:
   rustfs-data:
+  rustfs-kms:
   ui-node-modules:

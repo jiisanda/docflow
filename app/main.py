@@ -7,6 +7,7 @@ from app.api.router import router
 from app.core.config import settings
 from app.db.models import check_tables
 from app.logs.logger import docflow_logger
+from app.scripts.bucket_encryption import ensure_bucket_encryption
 from app.scripts.init_bucket import create_bucket_if_not_exists
 
 
@@ -18,6 +19,7 @@ async def lifespan(app: FastAPI):
         docflow_logger.info("Initializing Tables and Storage buckets...")
         await check_tables()
         await create_bucket_if_not_exists()
+        await ensure_bucket_encryption()
         docflow_logger.info("Tables and Storage buckets successfully created.")
     except Exception as e:
         docflow_logger.error(f"Error during startup: {e}")

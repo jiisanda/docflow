@@ -82,6 +82,18 @@ That's it! Docflow is now running behind nginx:
 `curl --resolve docflow.localhost:80:127.0.0.1 http://docflow.localhost/...` if your resolver
 doesn't handle `.localhost`.
 
+### 🔒 Encryption at rest
+
+Every stored document is encrypted by the storage server (SSE-S3, AES256). On startup the API
+applies a default encryption rule to the buckets and refuses to start if it can't, so nothing is
+stored unencrypted. Uploads, presigned URLs and previews need no changes: encryption happens
+inside the storage server.
+
+- **Local (RustFS):** keys live in RustFS's built-in KMS (`rustfs-kms` volume), wrapped by
+  `RUSTFS_KMS_LOCAL_MASTER_KEY` in `app/.env`. **Back that key up.** Without it, the stored files
+  can't be decrypted, and there is no recovery.
+- **AWS S3:** SSE-S3 is the AWS default; the API sets it explicitly on the bucket.
+
 nginx config lives in [nginx/](../../nginx): `conf.d/` and `snippets/` are shared, `dev/` and `prod/`
 hold the environment-specific parts. In prod, `nginx.Dockerfile` builds the UI and bakes it into the
 nginx image.
